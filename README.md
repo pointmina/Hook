@@ -28,6 +28,7 @@ Tech Stacks
 - Material 3
 - Room DAO
 - Navigation
+- Coroutines 
 
 
 
