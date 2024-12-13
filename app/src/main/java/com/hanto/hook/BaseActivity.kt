@@ -29,8 +29,5 @@ abstract class BaseActivity() : AppCompatActivity() {
         }
         return super.dispatchTouchEvent(event)
     }
-/*    override fun onDestroy() {
-        _binding = null
-        super.onDestroy()
-    }*/
+
 }

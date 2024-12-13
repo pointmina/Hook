@@ -4,10 +4,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.hanto.hook.api.SelectedTagAndHookResponse
 import com.hanto.hook.databinding.ItemSelectedTagHookListBinding
 import com.hanto.hook.model.Hook
-import okhttp3.internal.notify
 
 class SelectedTagHookListAdapter(
     private var hooks: ArrayList<Hook>,
@@ -34,12 +32,6 @@ class SelectedTagHookListAdapter(
     // 아이템 개수 반환
     override fun getItemCount(): Int = hooks.size
 
-    fun updateData(response: SelectedTagAndHookResponse) {
-        hooks.clear()
-        hooks.addAll(response.hooks)
-        //this.hooks = response.hooks
-        notifyDataSetChanged() // 데이터셋 변경을 알림
-    }
 
     // 특정 위치의 Hook 객체 반환
     fun getItem(position: Int): Hook = hooks[position]

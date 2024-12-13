@@ -1,22 +1,15 @@
 package com.hanto.hook.adapter
 
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.hanto.hook.databinding.ItemHookBinding
 import com.hanto.hook.model.Hook
-import com.hanto.hook.api.SuccessResponse
 import com.hanto.hook.model.Tag
 
 class HookAdapter(
@@ -109,9 +102,6 @@ class HookAdapter(
         return hooks[position]
     }
 
-    fun updateData(response: SuccessResponse) {
-        this.tag = response.tag
-        this.hooks = response.hooks
-        notifyDataSetChanged() // 데이터셋 변경을 알림
+    fun updateData() {
     }
 }

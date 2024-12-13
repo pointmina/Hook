@@ -2,7 +2,6 @@ package com.hanto.hook.view
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,7 +33,6 @@ class TagListFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // arguments로부터 multiChoiceList 값을 받아옵니다.
         arguments?.let {
             multiChoiceList = it.getSerializable("multiChoiceList") as LinkedHashMap<String, Boolean>
         }
@@ -70,7 +68,6 @@ class TagListFragment : DialogFragment() {
         // OK 버튼에 클릭 리스너 설정
         binding.btnOk.setOnClickListener {
             val selectedTags = multiChoiceList.filterValues { it }.keys.toList()
-            Log.d("minaminamina", "Selected tags: $selectedTags")
             tagSelectionListener?.onTagsSelected(selectedTags)
             dismiss()
         }

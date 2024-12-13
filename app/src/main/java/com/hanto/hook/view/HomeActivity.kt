@@ -24,7 +24,6 @@ class HomeActivity : BaseActivity() {
     }
 
     private fun setBottomNavigation() {
-        //액티비티 홈 안의 bottom_navigation_home에 접근 요기는 fragment에 관한 접근이기때문에 viewBinding x
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.container_home) as NavHostFragment
         val navController = navHostFragment.navController

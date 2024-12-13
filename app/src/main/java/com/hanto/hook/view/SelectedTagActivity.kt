@@ -4,32 +4,20 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.ResourcesCompat
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.hanto.hook.BaseActivity
 import com.hanto.hook.R
 import com.hanto.hook.adapter.SelectedTagHookListAdapter
-import com.hanto.hook.api.ApiServiceManager
 import com.hanto.hook.databinding.ActivitySelectedTagBinding
 import com.hanto.hook.model.Hook
-import com.hanto.hook.viewmodel.MainViewModel
-import com.hanto.hook.viewmodel.ViewModelFactory
 
 class SelectedTagActivity : BaseActivity() {
 
     private lateinit var binding: ActivitySelectedTagBinding
     private lateinit var selectedTagHookListAdapter: SelectedTagHookListAdapter
-
-    private val apiServiceManager by lazy { ApiServiceManager() }
-    private val viewModelFactory by lazy { ViewModelFactory(apiServiceManager) }
-    private val viewModel: MainViewModel by lazy {
-        ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
-    }
 
     private var selectedTagId: Int = -1
 
@@ -49,23 +37,10 @@ class SelectedTagActivity : BaseActivity() {
         binding.tvSelectedTag.text = selectedTagName
 
         val ivTagChange = binding.ivTagChange
-        ivTagChange.setOnClickListener {
-            val changeTagFragment = ChangeTagFragment { newTagName ->
-                viewModel.loadFindMyTags() // 태그 목록 새로고침
-                setResult(RESULT_OK)
-                binding.tvSelectedTag.text = newTagName // 텍스트 뷰 업데이트
-            }.apply {
-                arguments = Bundle().apply {
-                    putString("selectedTag", selectedTagName)
-                    putInt("selectedTagId", selectedTagId)
-                }
-            }
-            changeTagFragment.show(supportFragmentManager, "ChangeTagFragment")
-        }
+
 
         val ivTagDelete = binding.ivTagDelete
         ivTagDelete.setOnClickListener {
-            deleteDialog(selectedTagId)
         }
 
         selectedTagHookListAdapter = SelectedTagHookListAdapter(
@@ -96,53 +71,9 @@ class SelectedTagActivity : BaseActivity() {
 
         binding.rvUrlHookList.addItemDecoration(dividerItemDecoration)
 
-        // Observing LiveData in onCreate
-        observeViewModel()
-        loadMyHook()
     }
 
-    private fun observeViewModel() {
-        viewModel.tagFilteredHooks.observe(this) { tagFilteredHooks ->
-            if (tagFilteredHooks != null) {
-                selectedTagHookListAdapter.updateData(tagFilteredHooks)
-                val countString = "${tagFilteredHooks.count}개의 훅"
-                binding.tvTagCount.text = countString
-            } else {
-                selectedTagHookListAdapter.notifyDataSetChanged()
-                binding.tvTagCount.text = "0개의 훅"
-                Toast.makeText(this, "불러오기 실패", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
 
-    private fun loadMyHook() {
-        if (selectedTagId != -1) {
-            viewModel.loadFindMyHookByTag(tagID = selectedTagId)
-            selectedTagHookListAdapter.notifyDataSetChanged()
-        }
-    }
-
-    private fun deleteDialog(selectedTagId: Int) {
-        val dialogBuilder = AlertDialog.Builder(this)
-        dialogBuilder.setTitle("정말 삭제하시겠습니까?")
-        dialogBuilder.setMessage("저장하신 태그가 삭제됩니다.")
-        dialogBuilder.setPositiveButton("예") { dialog, _ ->
-            viewModel.loadDeleteTag(selectedTagId)
-            viewModel.successData.observe(this@SelectedTagActivity) { successData ->
-                Toast.makeText(
-                    this@SelectedTagActivity,
-                    "${successData?.result?.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
-                dialog.dismiss()
-                finish()
-            }
-        }
-        dialogBuilder.setNegativeButton("아니오") { dialog, _ ->
-            dialog.dismiss()
-        }
-        dialogBuilder.show()
-    }
 
     @SuppressLint("InflateParams")
     private fun showBottomSheetDialog(selectedItem: Hook) {
@@ -167,23 +98,18 @@ class SelectedTagActivity : BaseActivity() {
         }
 
         val btHookDelete = view.findViewById<Button>(R.id.bt_HookDelete)
-        btHookDelete.setOnClickListener {
-            selectedItem.id?.let { it1 -> viewModel.loadDeleteHook(it1) }
-            dialog.dismiss()
-            loadMyHook()
-            Toast.makeText(this, "삭제 완료!", Toast.LENGTH_SHORT).show()
-        }
+
         dialog.show()
+    }
+
+
+    override fun onResume() {
+        super.onResume()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        // ViewModel의 관찰자를 해제하여 메모리 누수 방지
-        viewModel.tagFilteredHooks.removeObservers(this)
     }
 
-    override fun onResume() {
-        super.onResume()
-        loadMyHook()
-    }
+
 }

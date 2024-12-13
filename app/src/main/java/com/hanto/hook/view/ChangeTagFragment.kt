@@ -10,11 +10,8 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.ViewModelProvider
-import com.hanto.hook.api.ApiServiceManager
 import com.hanto.hook.databinding.FragmentChangeTagBinding
 import com.hanto.hook.viewmodel.MainViewModel
-import com.hanto.hook.viewmodel.ViewModelFactory
 
 
 class ChangeTagFragment(private val onTagUpdated: (String) -> Unit) : DialogFragment() {
@@ -23,9 +20,9 @@ class ChangeTagFragment(private val onTagUpdated: (String) -> Unit) : DialogFrag
     private val binding get() = _binding!!
 
     private lateinit var viewModel: MainViewModel
+
     private var selectedTagId: Int = -1
 
-//    private var selectedTag: String? = null // 선택된 태그의 이름을 저장할 변수 추가
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,10 +36,6 @@ class ChangeTagFragment(private val onTagUpdated: (String) -> Unit) : DialogFrag
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val apiServiceManager = ApiServiceManager()
-        val viewModelFactory = ViewModelFactory(apiServiceManager)
-        viewModel =
-            ViewModelProvider(requireActivity(), viewModelFactory)[MainViewModel::class.java]
 
         val selectedTag = arguments?.getString("selectedTag")
         selectedTagId = arguments?.getInt("selectedTagId", -1) ?: -1
@@ -50,10 +43,6 @@ class ChangeTagFragment(private val onTagUpdated: (String) -> Unit) : DialogFrag
         binding.tvChangeTagName.text =
             selectedTag?.let { Editable.Factory.getInstance().newEditable(it) }
 
-//        val changeTagName = binding.tvChangeTagName
-//        changeTagName.setOnClickListener {
-//            showKeyboardAndFocus(changeTagName)
-//        }
 
         binding.btnChangeTagName.setOnClickListener {
             val newTagName = binding.tvChangeTagName.text.toString()
@@ -67,23 +56,6 @@ class ChangeTagFragment(private val onTagUpdated: (String) -> Unit) : DialogFrag
         val changeTagName = binding.tvChangeTagName
         changeTagName.setOnClickListener {
             showKeyboardAndFocus(changeTagName)
-        }
-        viewModel.successData.observe(viewLifecycleOwner) { successResponse ->
-            successResponse?.let {
-                Toast.makeText(requireContext(), "태그 이름이 수정되었습니다.", Toast.LENGTH_SHORT).show()
-                onTagUpdated(binding.tvChangeTagName.text.toString()) // 수정된 태그 이름을 반환
-                dismiss()
-            }
-        }
-
-        viewModel.errorData.observe(viewLifecycleOwner) { errorResponse ->
-            errorResponse?.let {
-                Toast.makeText(
-                    requireContext(),
-                    "태그 이름 수정에 실패했습니다: ${it.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
         }
     }
 

@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.hanto.hook.databinding.ItemTagBinding
 
-@Suppress("DEPRECATION")
 class TagListAdapter(private val context: Context, private val tagMap: MutableMap<String, Boolean>) :
     RecyclerView.Adapter<TagListAdapter.TagViewHolder>() {
 

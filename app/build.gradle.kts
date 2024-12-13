@@ -5,6 +5,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("androidx.navigation.safeargs.kotlin")
     id("kotlin-parcelize")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -21,20 +22,6 @@ android {
     }
 
     buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro")
-            buildConfigField("String", "BASE_URL", "\"http://ec2-3-39-192-148.ap-northeast-2.compute.amazonaws.com:3030\"")
-            buildConfigField("String", "KAKAO_LOGIN_URL", "\"http://ec2-3-39-192-148.ap-northeast-2.compute.amazonaws.com:3030/api/auth/kakao/signin\"")
-            buildConfigField("String", "KAKAO_REDIRECT", "\"http://ec2-3-39-192-148.ap-northeast-2.compute.amazonaws.com:3030/api/auth/kakao/get-authorization-code?code=\"")
-        }
-        debug {
-            buildConfigField("String", "BASE_URL", "\"http://ec2-3-39-192-148.ap-northeast-2.compute.amazonaws.com:3030\"")
-            buildConfigField("String", "KAKAO_LOGIN_URL", "\"http://ec2-3-39-192-148.ap-northeast-2.compute.amazonaws.com:3030/api/auth/kakao/signin\"")
-            buildConfigField("String", "KAKAO_REDIRECT", "\"http://ec2-3-39-192-148.ap-northeast-2.compute.amazonaws.com:3030/api/auth/kakao/get-authorization-code?code=\"")
-        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -47,7 +34,6 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
-        //noinspection DataBindingWithoutKapt
         dataBinding = true
     }
 
@@ -80,6 +66,12 @@ dependencies {
     implementation("com.google.android.flexbox:flexbox:3.0.0")
     // Shimmer
     implementation("com.facebook.shimmer:shimmer:0.5.0")
+
+    //Database
+    implementation("androidx.room:room-runtime:2.6.1")
+    annotationProcessor("androidx.room:room-compiler:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
 
 
     // 저장소 관련 (토큰)

@@ -32,6 +32,7 @@ class TagHomeAdapter(private val tags: List<String?>, private val selectedHook: 
         // 태그 클릭 이벤트 설정
         holder.itemView.setOnClickListener {
             val context = holder.itemView.context
+
             // 클릭한 태그에 관련된 작업 수행
             // 여기에 HookDetailActivity로 이동하는 코드를 추가
             Intent(context, HookDetailActivity::class.java).apply {

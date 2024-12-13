@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,73 +8,74 @@
     android:background="@color/white"
     tools:context=".view.HomeFragment">
 
-    <include layout="@layout/appbar_home" />
-
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipeLayout"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <include
+            layout="@layout/appbar_home"
+            android:id="@+id/appbar_home"
+            app:layout_constraintBottom_toTopOf="@id/tv_recent_hooks"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Recent Hooks 텍스트뷰 -->
+        <TextView
+            android:id="@+id/tv_recent_hooks"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:layout_height="40dp"
+            android:layout_marginStart="24dp"
+            android:fontFamily="@font/notosans_m"
+            android:paddingTop="10dp"
+            android:paddingBottom="5dp"
+            android:text="@string/label_recent_tag"
+            android:textColor="@color/gray_300"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toTopOf="@id/rv_home"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/appbar_home" />
 
-            <TextView
-                android:id="@+id/tv_recent_hooks"
+        <!-- RecyclerView -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_home"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_recent_hooks"
+            tools:listitem="@layout/item_hook" />
+
+        <!-- ShimmerFrameLayout -->
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/sf_loading"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="@id/rv_home"
+            app:shimmer_auto_start="true">
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginStart="24dp"
-                android:fontFamily="@font/notosans_m"
-                android:paddingTop="10dp"
-                android:paddingBottom="5dp"
-                android:text="@string/label_recent_tag"
-                android:textColor="@color/gray_300"
-                android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_home"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_recent_hooks"
-                tools:listitem="@layout/item_hook" />
+                <include layout="@layout/item_shimmer" />
+                <include layout="@layout/item_shimmer" />
+                <include layout="@layout/item_shimmer" />
+                <include layout="@layout/item_shimmer" />
+                <include layout="@layout/item_shimmer" />
+                <include layout="@layout/item_shimmer" />
+                <include layout="@layout/item_shimmer" />
+            </LinearLayout>
+        </com.facebook.shimmer.ShimmerFrameLayout>
 
-            <com.facebook.shimmer.ShimmerFrameLayout
-                android:id="@+id/sf_loading"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/rv_home"
-                app:shimmer_auto_start="true">
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                    <include layout="@layout/item_shimmer" />
-
-                    <include layout="@layout/item_shimmer" />
-
-                    <include layout="@layout/item_shimmer" />
-
-                    <include layout="@layout/item_shimmer" />
-
-                    <include layout="@layout/item_shimmer" />
-
-                    <include layout="@layout/item_shimmer" />
-
-                    <include layout="@layout/item_shimmer" />
-                </LinearLayout>
-            </com.facebook.shimmer.ShimmerFrameLayout>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

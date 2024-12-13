@@ -2,8 +2,6 @@ package com.hanto.hook.view
 
 import android.content.ClipboardManager
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -16,24 +14,13 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.hanto.hook.BaseActivity
 import com.hanto.hook.R
-import com.hanto.hook.api.ApiServiceManager
 import com.hanto.hook.data.TagSelectionListener
 import com.hanto.hook.databinding.ActivityAddHookBinding
 import com.hanto.hook.viewmodel.MainViewModel
-import com.hanto.hook.viewmodel.ViewModelFactory
 
 @Suppress("DEPRECATION")
 class AddHookActivity : BaseActivity(), TagSelectionListener {
     private lateinit var binding: ActivityAddHookBinding
-
-    private val apiServiceManager by lazy { ApiServiceManager() }
-    private val viewModelFactory by lazy { ViewModelFactory(apiServiceManager) }
-    private val viewModel: MainViewModel by lazy {
-        ViewModelProvider(
-            this,
-            viewModelFactory
-        )[MainViewModel::class.java]
-    }
 
     private var isUrlValid = false
     private var isTitleValid = false
@@ -47,18 +34,6 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
         binding = ActivityAddHookBinding.inflate(layoutInflater)
         val view = binding.root
 
-        viewModel.loadFindMyTags()
-        viewModel.tagData.observe(this) { tagData ->
-            tagData?.let {
-                for (tag in tagData.tag) {
-                    tag.displayName?.let { displayName ->
-                        if (!multiChoiceList.containsKey(displayName)) {
-                            multiChoiceList[displayName] = false
-                        }
-                    }
-                }
-            }
-        }
 
         val tags = intent.getStringArrayListExtra("item_tag_list")
         tags?.forEach { tag ->
@@ -72,7 +47,6 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
             finish()
         }
 
-        // 클립보드에서 바로 붙여넣기
         binding.ivUrlLink.setOnClickListener {
             val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
             if (clipboard.hasPrimaryClip()) {
@@ -193,32 +167,6 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
             toggleExpandCollapse(tvUrlDescription, tvTag, containerTag, downArrow, tvLimit2)
         }
 
-        binding.ivAddNewHook.setOnClickListener {
-            //여러번 추가 방지
-            binding.ivAddNewHook.isEnabled = false
-            val tags = ArrayList(binding.containerTag.text.split(" ")
-                .map { it.trim().replace("#", "") }
-                .filter { it.isNotEmpty() })
-            val title = binding.tvUrlTitle.text.toString()
-            val description = binding.tvUrlDescription.text.toString()
-            val url = binding.tvUrlLink.text.toString()
-
-            viewModel.loadCreateHook(title, description, url, tags, suggestTags = false)
-            viewModel.createHookSuccessData.observe(this) { createHookSuccessData ->
-                if (createHookSuccessData != null) {
-                    Toast.makeText(this, "훅이 추가됐어요!", Toast.LENGTH_SHORT).show()
-                }
-                finish()
-                binding.ivAddNewHook.isEnabled = true
-            }
-            viewModel.createFailData.observe(this) { createFailData ->
-                if (createFailData != null) {
-                    val errorMessage = createFailData.message.joinToString(separator = "\n")
-                    Toast.makeText(this@AddHookActivity, errorMessage, Toast.LENGTH_SHORT).show()
-                }
-                binding.ivAddNewHook.isEnabled = true
-            }
-        }
     }
 
     private fun updateButtonState() {
@@ -233,7 +181,6 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
         }
     }
 
-    //펼쳐져있는게 낫다는 피드백이 있어서 일단 주석처리해놈
     private fun toggleExpandCollapse(
         tvUrlDescription: TextView,
         tvTag: TextView,

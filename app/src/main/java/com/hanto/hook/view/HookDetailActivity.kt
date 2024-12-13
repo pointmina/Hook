@@ -10,26 +10,14 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.ViewModelProvider
 import com.hanto.hook.BaseActivity
 import com.hanto.hook.R
-import com.hanto.hook.api.ApiServiceManager
 import com.hanto.hook.data.TagSelectionListener
 import com.hanto.hook.databinding.ActivityHookDetailBinding
-import com.hanto.hook.viewmodel.MainViewModel
-import com.hanto.hook.viewmodel.ViewModelFactory
 
 class HookDetailActivity : BaseActivity(), TagSelectionListener {
     private lateinit var binding: ActivityHookDetailBinding
 
-    private val apiServiceManager by lazy { ApiServiceManager() }
-    private val viewModelFactory by lazy { ViewModelFactory(apiServiceManager) }
-    private val viewModel: MainViewModel by lazy {
-        ViewModelProvider(
-            this,
-            viewModelFactory
-        )[MainViewModel::class.java]
-    }
 
     private var isUrlValid = true
     private var isTitleValid = true
@@ -40,18 +28,6 @@ class HookDetailActivity : BaseActivity(), TagSelectionListener {
         binding = ActivityHookDetailBinding.inflate(layoutInflater)
         val view = binding.root
 
-        viewModel.loadFindMyTags()
-        viewModel.tagData.observe(this) { tagData ->
-            tagData?.let {
-                for (tag in tagData.tag) {
-                    tag.displayName?.let { displayName ->
-                        if (!multiChoiceList.containsKey(displayName)) {
-                            multiChoiceList[displayName] = false
-                        }
-                    }
-                }
-            }
-        }
         setContentView(view)
 
         updateButtonState()
@@ -190,16 +166,6 @@ class HookDetailActivity : BaseActivity(), TagSelectionListener {
                     .map { it.trim().replace("#", "") }
                     .filter { it.isNotEmpty() })
 
-            if (intId != null) {
-                viewModel.loadUpdateHook(
-                    intId,
-                    newTitle,
-                    newDesc,
-                    newUrl,
-                    newTag,
-                    suggestTags = false
-                )
-            }
             finish()
         }
     }
