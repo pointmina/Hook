@@ -20,8 +20,8 @@ class MainApplication : Application() {
         database = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java,
-            "app_database"
-        ).fallbackToDestructiveMigration() // 스키마 변경 시 데이터 삭제 옵션
+            "hook_database"
+        ).fallbackToDestructiveMigration()
             .build()
     }
 }

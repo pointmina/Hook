@@ -1,5 +1,6 @@
 package com.hanto.hook.ui.view
 
+import HookRepository
 import android.content.ClipboardManager
 import android.os.Bundle
 import android.text.Editable
@@ -11,18 +12,26 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import com.hanto.hook.BaseActivity
 import com.hanto.hook.R
+import com.hanto.hook.data.Hook
 import com.hanto.hook.data.TagSelectionListener
+import com.hanto.hook.database.AppDatabase
 import com.hanto.hook.databinding.ActivityAddHookBinding
+import kotlinx.coroutines.launch
 
 @Suppress("DEPRECATION")
 class AddHookActivity : BaseActivity(), TagSelectionListener {
     private lateinit var binding: ActivityAddHookBinding
 
+    val TAG = "ActivityAddHook"
+
     private var isUrlValid = false
     private var isTitleValid = false
     private var isExpanded = false
+
+    private lateinit var hookRepository: HookRepository
 
     private var selectedTags: List<String> = emptyList()
     private val multiChoiceList = linkedMapOf<String, Boolean>()
@@ -31,6 +40,10 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
         super.onCreate(savedInstanceState)
         binding = ActivityAddHookBinding.inflate(layoutInflater)
         val view = binding.root
+
+        // 데이터베이스 초기화
+        val appDatabase = AppDatabase.getDatabase(this)
+        hookRepository = HookRepository(appDatabase.hookDao())
 
 
         val tags = intent.getStringArrayListExtra("item_tag_list")
@@ -150,7 +163,6 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
         binding.containerTag.setOnClickListener {
             val fragment = TagListFragment.newInstance(multiChoiceList)
             fragment.setTagSelectionListener(this)
-            Log.d("minamina", "Sending tags to TagListFragment: $multiChoiceList")
             fragment.show(supportFragmentManager, "TagListFragment")
         }
 
@@ -165,7 +177,34 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
             toggleExpandCollapse(tvUrlDescription, tvTag, containerTag, downArrow, tvLimit2)
         }
 
+        binding.ivAddNewHook.setOnClickListener {
+            insertHookIntoDB()
+        }
     }
+
+    private fun insertHookIntoDB() {
+        val url = binding.tvUrlLink.text.toString()
+        val title = binding.tvUrlTitle.text.toString()
+        val description = binding.tvUrlDescription.text.toString()
+
+        // Hook 객체 생성
+        val hook = Hook(
+            title = title,
+            url = url,
+            description = description
+        )
+
+        lifecycleScope.launch {
+            try {
+                hookRepository.insertHook(hook, selectedTags)
+                Toast.makeText(this@AddHookActivity, "Hook added successfully!", Toast.LENGTH_SHORT).show()
+                finish()
+            } catch (e: Exception) {
+                Toast.makeText(this@AddHookActivity, "Failed to add Hook.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
 
     private fun updateButtonState() {
         val isValid = isUrlValid && isTitleValid
@@ -205,5 +244,7 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
 
     override fun onTagsSelected(tags: List<String>) {
         binding.containerTag.text = tags.joinToString(" ") { "#$it" }
+        selectedTags = tags.distinct()
+        Log.d(TAG,"onTagsSelected : ${tags.toString()}")
     }
 }

@@ -16,7 +16,6 @@ class HookAdapter(
 
 
     inner class ViewHolder(val binding: ItemHookBinding) : RecyclerView.ViewHolder(binding.root) {
-
         init {
 
         }
@@ -40,6 +39,4 @@ class HookAdapter(
         return hooks[position]
     }
 
-    fun updateData() {
-    }
 }

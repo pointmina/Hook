@@ -7,6 +7,6 @@ import androidx.room.Entity
     primaryKeys = ["hookId", "tagId"]
 )
 data class HookTagMapping(
-    val hookId: Int,
-    val tagId: Int
+    val hookId: Long,
+    val tagId: Long
 )

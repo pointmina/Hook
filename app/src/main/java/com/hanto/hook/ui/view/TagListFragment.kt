@@ -8,9 +8,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.hanto.hook.ui.adapter.TagListAdapter
 import com.hanto.hook.data.TagSelectionListener
 import com.hanto.hook.databinding.FragmentTagListBinding
+import com.hanto.hook.ui.adapter.TagListAdapter
 
 class TagListFragment : DialogFragment() {
 
