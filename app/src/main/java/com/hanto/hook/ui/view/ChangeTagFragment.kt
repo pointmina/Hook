@@ -1,4 +1,4 @@
-package com.hanto.hook.view
+package com.hanto.hook.ui.view
 
 import android.os.Bundle
 import android.text.Editable
@@ -11,7 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import com.hanto.hook.databinding.FragmentChangeTagBinding
-import com.hanto.hook.viewmodel.MainViewModel
+import com.hanto.hook.viewmodel.HookViewModel
 
 
 class ChangeTagFragment(private val onTagUpdated: (String) -> Unit) : DialogFragment() {
@@ -19,7 +19,7 @@ class ChangeTagFragment(private val onTagUpdated: (String) -> Unit) : DialogFrag
     private var _binding: FragmentChangeTagBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: MainViewModel
+    private lateinit var viewModel: HookViewModel
 
     private var selectedTagId: Int = -1
 
@@ -72,6 +72,6 @@ class ChangeTagFragment(private val onTagUpdated: (String) -> Unit) : DialogFrag
     }
 
     private fun updateTagName(tagId: Int, newTagName: String) {
-        viewModel.loadUpdateTag(tagId, newTagName)
+
     }
 }

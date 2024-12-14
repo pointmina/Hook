@@ -1,4 +1,4 @@
-package com.hanto.hook.view
+package com.hanto.hook.ui.view
 
 import android.os.Bundle
 import com.hanto.hook.BaseActivity

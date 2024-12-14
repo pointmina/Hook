@@ -1,4 +1,4 @@
-package com.hanto.hook.view
+package com.hanto.hook.ui.view
 
 import android.content.ClipboardManager
 import android.os.Bundle

@@ -36,7 +36,7 @@
     <string name="appbar_title_tag_screen">태 그</string>
     <string name="appbar_title_home_fragment">H o o k !</string>
     <string name="add_new_hook">훅 추가</string>
-    <string name="etc_info">기타 정보 보기</string>
+    <string name="see_etc_info">기타 정보 보기</string>
     <string name="hint_url_link">https://</string>
     <string name="open_in_browser">브라우저에서 열기</string>
     <string name="share">공유하기</string>
@@ -45,5 +45,14 @@
     <string name="add_hook">훅 추가</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="not_vaild_url">유효한 URL 주소가 아닙니다. 다시 확인해주세요.</string>
+    <string name="title">제목</string>
+    <string name="not_allow_initial_blank">제목의 첫 글자는 공백 문자가 허용되지 않습니다.</string>
+    <string name="etc_info">기타 정보</string>
+    <string name="link_info">링크 정보</string>
+    <string name="description">설명</string>
+    <string name="tag">태그</string>
+    <string name="sharp">#</string>
+    <string name="add">추가하기</string>
 
 </resources>

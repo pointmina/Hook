@@ -1,4 +1,4 @@
-package com.hanto.hook.view
+package com.hanto.hook.ui.view
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.hanto.hook.BaseActivity
 import com.hanto.hook.R
-import com.hanto.hook.adapter.SelectedTagHookListAdapter
+import com.hanto.hook.data.Hook
+import com.hanto.hook.ui.adapter.SelectedTagHookListAdapter
 import com.hanto.hook.databinding.ActivitySelectedTagBinding
-import com.hanto.hook.model.Hook
 
 class SelectedTagActivity : BaseActivity() {
 
@@ -82,24 +82,7 @@ class SelectedTagActivity : BaseActivity() {
         dialog.setContentView(view)
         dialog.setCancelable(true)
 
-        val btonWeb = view.findViewById<Button>(R.id.bt_onWeb)
-        btonWeb.setOnClickListener {
-            Intent(this, HookDetailActivity::class.java).also { intent ->
-                intent.putExtra("item_id", selectedItem.id.toString())
-                intent.putExtra("item_title", selectedItem.title)
-                intent.putExtra("item_url", selectedItem.url)
-                intent.putExtra("item_description", selectedItem.description)
-                selectedItem.tags?.map { it.displayName }?.let {
-                    intent.putStringArrayListExtra("item_tag_list", ArrayList(it))
-                }
-                startActivity(intent)
-            }
-            dialog.dismiss()
-        }
 
-        val btHookDelete = view.findViewById<Button>(R.id.bt_HookDelete)
-
-        dialog.show()
     }
 
 

@@ -1,4 +1,4 @@
-package com.hanto.hook.adapter
+package com.hanto.hook.ui.adapter
 
 import android.content.Context
 import android.view.LayoutInflater

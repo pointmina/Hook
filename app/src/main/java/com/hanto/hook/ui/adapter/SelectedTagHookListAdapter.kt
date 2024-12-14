@@ -1,11 +1,11 @@
-package com.hanto.hook.adapter
+package com.hanto.hook.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.hanto.hook.data.Hook
 import com.hanto.hook.databinding.ItemSelectedTagHookListBinding
-import com.hanto.hook.model.Hook
 
 class SelectedTagHookListAdapter(
     private var hooks: ArrayList<Hook>,

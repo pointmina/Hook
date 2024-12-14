@@ -7,8 +7,7 @@
     android:background="@color/white"
     android:paddingStart="24dp"
     android:paddingEnd="24dp"
-    tools:context=".view.AddHookActivity"
-    tools:ignore="MissingDefaultResource">
+    tools:context=".ui.view.AddHookActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar_new_hook"
@@ -35,8 +34,8 @@
         android:layout_width="match_parent"
         android:layout_height="28dp"
         android:layout_marginTop="8dp"
-        android:text=" 링크 정보"
-        android:textSize="14dp"
+        android:text="@string/link_info"
+        android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/tv_url_link"
         app:layout_constraintTop_toBottomOf="@id/toolbar_new_hook" />
@@ -68,9 +67,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:padding="4dp"
-        android:text="유효한 URL 주소가 아닙니다. 다시 확인해주세요."
+        android:text="@string/not_vaild_url"
         android:textColor="@color/purple"
-        android:textSize="12dp"
+        android:textSize="12sp"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/tv_url_title"
         app:layout_constraintEnd_toEndOf="parent"
@@ -100,9 +99,8 @@
         android:autofillHints="제목"
         android:background="@drawable/textview_detail_border"
         android:gravity="top|start"
-        android:hint="제목"
+        android:hint="@string/title"
         android:imeOptions="actionNext"
-        android:inputType="text"
         android:maxLength="120"
         android:minHeight="40dp"
         android:paddingStart="16dp"
@@ -123,9 +121,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:padding="4dp"
-        android:text="제목의 첫 글자는 공백 문자가 허용되지 않습니다."
+        android:text="@string/not_allow_initial_blank"
         android:textColor="@color/purple"
-        android:textSize="12dp"
+        android:textSize="12sp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -154,8 +152,8 @@
         android:layout_width="wrap_content"
         android:layout_height="28dp"
         android:layout_marginTop="20dp"
-        android:text=" 기타 정보"
-        android:textSize="14dp"
+        android:text="@string/etc_info"
+        android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvGuideTitle" />
@@ -164,7 +162,7 @@
         android:id="@+id/iv_downArrow"
         android:layout_width="25dp"
         android:layout_height="25dp"
-        android:contentDescription="@string/etc_info"
+        android:contentDescription="@string/see_etc_info"
         android:src="@drawable/ic_down_arrow"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/tv_link_info_etc" />
@@ -178,9 +176,8 @@
         android:autofillHints="설명"
         android:background="@drawable/textview_detail_border"
         android:gravity="top|start"
-        android:hint="설명"
+        android:hint="@string/description"
         android:imeOptions="actionNext"
-        android:inputType="textMultiLine"
         android:maxLength="80"
         android:minHeight="40dp"
         android:paddingStart="16dp"
@@ -193,7 +190,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_link_info_etc" />
-    <!--        android:visibility="invisible"-->
 
     <TextView
         android:id="@+id/tv_limit_2"
@@ -210,8 +206,8 @@
         android:layout_width="wrap_content"
         android:layout_height="28dp"
         android:layout_marginTop="20dp"
-        android:text=" 태그"
-        android:textSize="14dp"
+        android:text="@string/tag"
+        android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="@id/tv_link_info_etc"
         app:layout_constraintTop_toBottomOf="@id/tv_url_description" />
@@ -221,12 +217,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/textview_detail_border"
-        android:hint="#"
+        android:hint="@string/sharp"
         android:paddingStart="16dp"
         android:paddingTop="15dp"
         android:paddingEnd="16dp"
         android:paddingBottom="15dp"
-        android:text="#"
+        android:text="@string/sharp"
         android:textAppearance="@style/AppTexTitle.S16"
         android:textColor="@color/gray_300"
         android:theme="@style/MyCheckBox"
@@ -243,7 +239,7 @@
         android:backgroundTint="@color/purple"
         android:contentDescription="@string/description_save_changes"
         android:elevation="4dp"
-        android:text="추가하기"
+        android:text="@string/add"
         android:textAppearance="@style/AppTexTitle.S14"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -251,5 +247,3 @@
         app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <!--android:src="@drawable/ic_add_tag_btn"-->

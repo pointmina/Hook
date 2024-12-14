@@ -11,7 +11,7 @@
         android:background="@color/white"
         android:paddingStart="24dp"
         android:paddingEnd="24dp"
-        tools:context=".view.SettingActivity">
+        tools:context=".ui.view.SettingActivity">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar_setting"

@@ -1,4 +1,4 @@
-package com.hanto.hook.view
+package com.hanto.hook.ui.view
 
 import android.content.ClipboardManager
 import android.os.Bundle
@@ -11,12 +11,10 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.lifecycle.ViewModelProvider
 import com.hanto.hook.BaseActivity
 import com.hanto.hook.R
 import com.hanto.hook.data.TagSelectionListener
 import com.hanto.hook.databinding.ActivityAddHookBinding
-import com.hanto.hook.viewmodel.MainViewModel
 
 @Suppress("DEPRECATION")
 class AddHookActivity : BaseActivity(), TagSelectionListener {
@@ -207,6 +205,5 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
 
     override fun onTagsSelected(tags: List<String>) {
         binding.containerTag.text = tags.joinToString(" ") { "#$it" }
-        Log.d("minamina", "Received tags from TagListFragment: $tags")
     }
 }

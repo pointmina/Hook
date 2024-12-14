@@ -1,7 +1,6 @@
-package com.hanto.hook.view
+package com.hanto.hook.ui.view
 
 import android.app.Dialog
-import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -18,9 +17,8 @@ import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.hanto.hook.R
-import com.hanto.hook.adapter.TagAdapter
 import com.hanto.hook.databinding.FragmentTagBinding
-import java.util.ArrayList
+import com.hanto.hook.ui.adapter.TagAdapter
 
 class TagFragment : Fragment() {
     private var _binding: FragmentTagBinding? = null
@@ -78,26 +76,6 @@ class TagFragment : Fragment() {
             flexDirection = FlexDirection.ROW
         }
 
-        tagAdapter = TagAdapter(
-            tags = ArrayList(),
-            object : TagAdapter.OnItemClickListener {
-                override fun onClick(position: Int) {
-                    val selectedTag = tagAdapter.getItem(position)
-                    val name = selectedTag.displayName
-                    if (name != null) {
-                        val intent = Intent(requireContext(), SelectedTagActivity::class.java).apply {
-                            putExtra("selectedTagName", selectedTag.displayName)
-                            putExtra("selectedTagId", selectedTag.id)
-                        }
-                        startActivity(intent)
-                    }
-                }
-            })
-
-        binding.rvTagViewTagContainer.apply {
-            layoutManager = flexboxLayoutManager
-            adapter = tagAdapter
-        }
     }
 
 
