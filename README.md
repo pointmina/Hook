@@ -15,10 +15,9 @@
 ---
 
 ## Features
-- 🌟 **링크 저장 (Hook)**
-- 📂 **주제별로 훅 정리 및 관리**
-- 📝 **훅 별 주석 기능 제공**
-
+- 🌟 Save Links (Hook)
+- 📂 Organize and Manage Hooks by Topics
+- 📝 Provide Annotation Feature for Each Hook
 ---
 
 ## Tech Stacks
