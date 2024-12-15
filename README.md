@@ -39,6 +39,9 @@
 
 # Android Architecture Overview
 
+
+This modular architecture ensures a clean and maintainable codebase, adhering to the MVVM (Model-View-ViewModel) design pattern.
+
 ```
 [UI] ↔ [ViewModel] ↔ [Repository] ↔ [DAO] ↔ [Database]
 ```
@@ -125,4 +128,3 @@ graph TD
 
 ---
 
-This modular architecture ensures a clean and maintainable codebase, adhering to the MVVM (Model-View-ViewModel) design pattern.
