@@ -28,15 +28,17 @@
 
 ## Tech Stacks
 
-| **Category** | **Technology** |
-|--------------|----------------|
-| Architecture | MVVM, Android App Architecture |
-| UI           | XML, Material 3 |
-| Database     | Room DAO       |
-| Navigation   | Jetpack Navigation |
-| Language     | Kotlin         |
-| Concurrency  | Coroutines     |
-| App Design   | Modularization |
+| **Category**    | **Technology**           |
+|-----------------|--------------------------|
+| Language        | Kotlin                   |
+| Architecture    | MVVM, Android App Architecture |
+| UI              | XML, Material 3          |
+| Concurrency     | Coroutines               |
+| Database        | Room DAO                 |
+| Paging          | Paging3                  |
+| Navigation      | Jetpack Navigation       |
+| App Design      | Modularization           |
+
 
 ---
 
