@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.hanto.hook.data.Hook
+import com.hanto.hook.data.model.Hook
 import com.hanto.hook.databinding.ItemSelectedTagHookListBinding
 
 class SelectedTagHookListAdapter(

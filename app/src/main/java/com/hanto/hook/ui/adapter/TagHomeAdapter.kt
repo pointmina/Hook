@@ -4,7 +4,7 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.hanto.hook.data.Hook
+import com.hanto.hook.data.model.Hook
 import com.hanto.hook.databinding.ItemHomeTagBinding
 import com.hanto.hook.ui.view.HookDetailActivity
 

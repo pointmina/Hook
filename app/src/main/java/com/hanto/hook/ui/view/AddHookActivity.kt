@@ -12,14 +12,20 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.lifecycle.lifecycleScope
 import com.hanto.hook.BaseActivity
 import com.hanto.hook.R
-import com.hanto.hook.data.Hook
 import com.hanto.hook.data.TagSelectionListener
+import com.hanto.hook.data.model.Hook
+import com.hanto.hook.data.model.Tag
 import com.hanto.hook.database.AppDatabase
+import com.hanto.hook.database.DatabaseModule
 import com.hanto.hook.databinding.ActivityAddHookBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 @Suppress("DEPRECATION")
 class AddHookActivity : BaseActivity(), TagSelectionListener {
@@ -32,6 +38,7 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
     private var isExpanded = false
 
     private lateinit var hookRepository: HookRepository
+    private lateinit var appDatabase: AppDatabase
 
     private var selectedTags: List<String> = emptyList()
     private val multiChoiceList = linkedMapOf<String, Boolean>()
@@ -42,8 +49,8 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
         val view = binding.root
 
         // 데이터베이스 초기화
-        val appDatabase = AppDatabase.getDatabase(this)
-        hookRepository = HookRepository(appDatabase.hookDao())
+        appDatabase = DatabaseModule.getDatabase()
+        hookRepository = HookRepository(appDatabase)
 
 
         val tags = intent.getStringArrayListExtra("item_tag_list")
@@ -186,21 +193,36 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
         val url = binding.tvUrlLink.text.toString()
         val title = binding.tvUrlTitle.text.toString()
         val description = binding.tvUrlDescription.text.toString()
+        val hookId = getCurrentTimeAsString()
 
-        // Hook 객체 생성
         val hook = Hook(
+            hookId = hookId,
             title = title,
             url = url,
             description = description
         )
 
-        lifecycleScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             try {
-                hookRepository.insertHook(hook, selectedTags)
-                Toast.makeText(this@AddHookActivity, "Hook added successfully!", Toast.LENGTH_SHORT).show()
-                finish()
+                // 1. Hook 삽입
+                hookRepository.insertHook(hook)
+
+                // 2. Tag 삽입 (Hook 삽입이 완료된 후 실행)
+                if (selectedTags.isEmpty()) {
+                    Log.d(TAG, "선택된 태그가 없습니다.")
+                } else {
+                    selectedTags.forEach { tagName ->
+                        val tag = Tag(
+                            hookId = hookId,
+                            name = tagName
+                        )
+                        hookRepository.insertTag(tag)
+                    }
+                }
+
+                Log.d(TAG, "모든 데이터가 성공적으로 삽입되었습니다.")
             } catch (e: Exception) {
-                Toast.makeText(this@AddHookActivity, "Failed to add Hook.", Toast.LENGTH_SHORT).show()
+                Log.d(TAG, "데이터 삽입 중 오류 발생: ${e.message}")
             }
         }
     }
@@ -245,6 +267,13 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
     override fun onTagsSelected(tags: List<String>) {
         binding.containerTag.text = tags.joinToString(" ") { "#$it" }
         selectedTags = tags.distinct()
-        Log.d(TAG,"onTagsSelected : ${tags.toString()}")
+        Log.d(TAG, "onTagsSelected : ${tags.toString()}")
     }
+
+    private fun getCurrentTimeAsString(): String {
+        val dateFormat = SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault())
+        val currentTime = Calendar.getInstance().time
+        return dateFormat.format(currentTime)
+    }
+
 }

@@ -3,14 +3,13 @@ package com.hanto.hook.ui.view
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.hanto.hook.BaseActivity
 import com.hanto.hook.R
-import com.hanto.hook.data.Hook
+import com.hanto.hook.data.model.Hook
 import com.hanto.hook.ui.adapter.SelectedTagHookListAdapter
 import com.hanto.hook.databinding.ActivitySelectedTagBinding
 

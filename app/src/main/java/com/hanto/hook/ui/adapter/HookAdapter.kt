@@ -4,8 +4,8 @@ package com.hanto.hook.ui.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.hanto.hook.data.Hook
-import com.hanto.hook.data.Tag
+import com.hanto.hook.data.model.Hook
+import com.hanto.hook.data.model.Tag
 import com.hanto.hook.databinding.ItemHookBinding
 
 class HookAdapter(

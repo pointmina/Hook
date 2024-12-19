@@ -1,27 +1,30 @@
 package com.hanto.hook
 
 import android.app.Application
-import androidx.room.Room
-import com.hanto.hook.database.AppDatabase
+import com.hanto.hook.database.DatabaseModule
 
 class MainApplication : Application() {
-    companion object {
-        private var instance: MainApplication? = null
-        private var database: AppDatabase? = null
 
-        fun getDatabase(): AppDatabase {
-            return database ?: throw IllegalStateException("Database is not initialized.")
-        }
-    }
+    private val TAG = "MainApplication"
 
     override fun onCreate() {
         super.onCreate()
         instance = this
-        database = Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java,
-            "hook_database"
-        ).fallbackToDestructiveMigration()
-            .build()
+
+        DatabaseModule.initialize(this)
     }
+
+
+    companion object {
+        private var instance: MainApplication? = null
+
+        fun getInstance(): MainApplication {
+            if (instance == null) {
+                throw IllegalStateException("MainApplication is not initialized!")
+            }
+            return instance!!
+        }
+
+    }
+
 }
