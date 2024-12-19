@@ -51,6 +51,10 @@ This modular architecture ensures a clean and maintainable codebase, adhering to
 [UI] ↔ [ViewModel] ↔ [Repository] ↔ [DAO] ↔ [Database]
 ```
 
+참고 자료
+https://ppeper.github.io/android/repository-pattern/
+
+
 ---
 
 ## Components
