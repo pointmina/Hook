@@ -1,6 +1,7 @@
 package com.hanto.hook.ui.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
@@ -33,7 +34,11 @@ class HookAdapter(
         fun bind(hook: Hook) {
             binding.tvTitle.text = hook.title
             binding.tvUrlLink.text = hook.url
-            binding.tvTagDescription.text = hook.description
+            if (!hook.description.isNullOrBlank()) {
+                binding.tvTagDescription.text = hook.description
+            } else {
+                binding.tvTagDescription.visibility = View.GONE
+            }
 
             // 아이템 클릭 시 Hook 객체를 전달
             binding.root.setOnClickListener {
