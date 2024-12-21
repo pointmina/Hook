@@ -1,15 +1,11 @@
-//DB <-> ViewModel
+import androidx.lifecycle.LiveData
 import com.hanto.hook.data.model.Hook
 import com.hanto.hook.data.model.HookTagMapping
 import com.hanto.hook.data.model.Tag
 import com.hanto.hook.database.AppDatabase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
-class HookRepository (private val appDatabase: AppDatabase) {
+class HookRepository(private val appDatabase: AppDatabase) {
 
-    // 싱글톤 인스턴스 관리
     companion object {
         @Volatile
         private var instance: HookRepository? = null
@@ -21,66 +17,50 @@ class HookRepository (private val appDatabase: AppDatabase) {
         }
     }
 
-    suspend fun insertHook(hook: Hook) {
-        appDatabase.hookDao().insertHook(hook)
+    // 데이터 삽입 메서드
+    fun insertHook(hook: Hook) {
+        appDatabase.hookDao().insertHook(hook) // CoroutineScope 제거
     }
 
-    suspend fun insertTag(tag: Tag) {
-        appDatabase.hookDao().insertTag(tag)
+    fun insertTag(tag: Tag) {
+        appDatabase.hookDao().insertTag(tag) // CoroutineScope 제거
     }
-
 
     fun insertMapping(hookTag: HookTagMapping) {
-        CoroutineScope(Dispatchers.IO).launch {
-            appDatabase.hookDao().insertMapping(hookTag)
-        }
+        appDatabase.hookDao().insertMapping(hookTag) // CoroutineScope 제거
     }
 
+    // 데이터 삭제 메서드
     fun deleteHook(hookId: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            appDatabase.hookDao().deleteHookById(hookId)
-        }
+        appDatabase.hookDao().deleteHookById(hookId) // CoroutineScope 제거
     }
 
     fun deleteTagByHookId(hookId: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            appDatabase.hookDao().deleteTagByHookId(hookId)
-        }
+        appDatabase.hookDao().deleteTagByHookId(hookId) // CoroutineScope 제거
     }
 
     fun deleteMappingsByHookId(hookId: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            appDatabase.hookDao().deleteMappingsByHookId(hookId)
-        }
+        appDatabase.hookDao().deleteMappingsByHookId(hookId) // CoroutineScope 제거
     }
 
     fun deleteHookAndTags(hookId: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            appDatabase.hookDao().deleteHookAndTags(hookId)
-        }
+        appDatabase.hookDao().deleteHookAndTags(hookId) // CoroutineScope 제거
     }
 
-    fun getAllHooks() {
-        CoroutineScope(Dispatchers.IO).launch {
-            appDatabase.hookDao().getAllHooks()
-        }
+    // 데이터 조회 메서드 (LiveData 반환)
+    fun getAllHooks(): LiveData<List<Hook>> {
+        return appDatabase.hookDao().getAllHooks()
     }
 
-    fun getTagsForHook(hookId: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            appDatabase.hookDao().getTagsForHook(hookId)
-        }
+    fun getTagsForHook(hookId: String): LiveData<List<Tag>>? {
+        return appDatabase.hookDao().getTagsForHook(hookId)
     }
 
-    fun getAllTagNames() {
-        CoroutineScope(Dispatchers.IO).launch {
-            appDatabase.hookDao().getAllTagNames()
-        }
+    fun getAllTagNames(): LiveData<List<String>> {
+        return appDatabase.hookDao().getAllTagNames()
     }
 
-    fun getHookByTag(hookId: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            appDatabase.hookDao().getHookByTag(hookId)
-        }
+    fun getHookByTag(tagName: String): LiveData<List<Hook>?> {
+        return appDatabase.hookDao().getHookByTag(tagName)
     }
 }

@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hanto.hook.R
 import com.hanto.hook.databinding.FragmentHomeBinding
@@ -36,16 +36,20 @@ class HomeFragment : Fragment() {
 
 
         // 어댑터 초기화
-        adapter = HookAdapter(arrayListOf(), emptyList())
+        adapter = HookAdapter(arrayListOf(), hookViewModel, viewLifecycleOwner)
         binding.rvHome.adapter = adapter
         binding.rvHome.layoutManager = LinearLayoutManager(requireContext())
 
-        // 뷰모델 관찰
-        hookViewModel.hooks.observe(viewLifecycleOwner, Observer { hooks ->
-
-        })
+        val dividerItemDecoration = DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
+        binding.rvHome.addItemDecoration(dividerItemDecoration)
 
 
+        hookViewModel.liveDataHook.observe(viewLifecycleOwner) { hooks ->
+            adapter.updateHooks(hooks)
+        }
+
+
+        // 설정 버튼 클릭 리스너
         val btSetting = view.findViewById<ImageButton>(R.id.bt_setting)
         btSetting.setOnClickListener {
             findNavController().navigate(R.id.action_navigation_home_to_settingActivity)

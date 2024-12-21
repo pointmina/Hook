@@ -8,15 +8,18 @@ import com.hanto.hook.data.model.HookTagMapping
 import com.hanto.hook.data.model.Tag
 import com.hanto.hook.database.DatabaseModule
 
+//viewModel <-> UI
 class HookViewModel : ViewModel() {
 
-    private var liveDataHook: LiveData<List<Hook>>? = null
-    private var liveDataTag: LiveData<List<Tag>>? = null
-    private var liveDataTagName: LiveData<List<String>>? = null
-    private var liveDataHookByTagName: LiveData<List<Hook>>? = null
-    private var appDatabase = DatabaseModule.getDatabase()
-    private var hookRepository =  HookRepository.getInstance(appDatabase)
+    private val appDatabase = DatabaseModule.getDatabase()
+    private val hookRepository = HookRepository.getInstance(appDatabase)
 
+    // LiveData 필드
+    val liveDataHook: LiveData<List<Hook>> = hookRepository.getAllHooks()
+    val liveDataTagName: LiveData<List<String>>? = null
+    val liveDataHookByTagName: LiveData<List<Hook>>? = null
+
+    // 데이터 삽입 메서드
     fun insertHook(hook: Hook) {
         hookRepository.insertHook(hook)
     }
@@ -29,40 +32,37 @@ class HookViewModel : ViewModel() {
         hookRepository.insertMapping(hookTag)
     }
 
+    // 데이터 삭제 메서드
     fun deleteHook(hookId: String) {
         hookRepository.deleteHook(hookId)
     }
 
-    fun deleteTagByHookId(hookId: Long) {
+    fun deleteTagByHookId(hookId: String) {
         hookRepository.deleteTagByHookId(hookId)
     }
 
-    fun deleteMappingsByHookId(hookId: Long) {
+    fun deleteMappingsByHookId(hookId: String) {
         hookRepository.deleteMappingsByHookId(hookId)
     }
 
-    fun deleteHookAndTags(hookId: Long) {
+    fun deleteHookAndTags(hookId: String) {
         hookRepository.deleteHookAndTags(hookId)
     }
 
-    fun getAllHooks(): LiveData<List<Hook>>? {
-        hookRepository.getAllHooks()
+    // 데이터 조회 메서드
+    fun getAllHooks(): LiveData<List<Hook>> {
         return liveDataHook
     }
 
-    fun getTagsForHook(hookId: Long): LiveData<List<Tag>>? {
-        hookRepository.getTagsForHook(hookId)
-        return liveDataTag
+    fun getTagsForHook(hookId: String): LiveData<List<Tag>>? {
+        return hookRepository.getTagsForHook(hookId)
     }
 
-    fun getAllTagNames(): LiveData<List<String>>? {
-        hookRepository.getAllTagNames()
-        return liveDataTagName
+    fun getAllTagNames(): LiveData<List<String>> {
+        return hookRepository.getAllTagNames() // Repository에서 직접 반환
     }
 
-    fun getHookByTag(hookId: Long): LiveData<List<Hook>>? {
-        hookRepository.getHookByTag(hookId)
-        return liveDataHookByTagName
+    fun getHookByTag(tagName: String): LiveData<List<Hook>?> {
+        return hookRepository.getHookByTag(tagName) // Repository에서 직접 반환
     }
-
 }

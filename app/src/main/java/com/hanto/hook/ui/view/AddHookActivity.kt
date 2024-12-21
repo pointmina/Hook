@@ -221,8 +221,11 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
                 }
 
                 Log.d(TAG, "모든 데이터가 성공적으로 삽입되었습니다.")
+
             } catch (e: Exception) {
                 Log.d(TAG, "데이터 삽입 중 오류 발생: ${e.message}")
+            } finally {
+                finish()
             }
         }
     }

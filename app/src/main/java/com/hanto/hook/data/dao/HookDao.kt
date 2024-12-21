@@ -22,7 +22,7 @@ interface HookDao {
      * @return 삽입된 훅의 ID
      */
     @Insert
-    suspend fun insertHook(hook: Hook): Long
+    fun insertHook(hook: Hook): Long
 
 
     /**
@@ -30,7 +30,7 @@ interface HookDao {
      * @param tag 삽입할 태그 객체
      */
     @Insert
-    suspend fun insertTag(tag: Tag): Long
+    fun insertTag(tag: Tag): Long
 
 
     /**
@@ -38,7 +38,7 @@ interface HookDao {
      * @param hookTag 훅-태그 관계 객체
      */
     @Insert
-    suspend fun insertMapping(hookTag: HookTagMapping)
+    fun insertMapping(hookTag: HookTagMapping)
 
 
     // ---------------------- 삭제 ---------------------- //
@@ -48,25 +48,25 @@ interface HookDao {
      * @param hookId 삭제할 훅의 ID
      */
     @Query("DELETE FROM Hook WHERE hookId = :hookId")
-    suspend fun deleteHookById(hookId: String)
+    fun deleteHookById(hookId: String)
 
     /**
      * ID로 훅을 삭제합니다.
      * @param hookId 삭제할 훅의 ID
      */
     @Query("DELETE FROM Tag WHERE hookId = :hookId")
-    suspend fun deleteTagByHookId(hookId: String)
+    fun deleteTagByHookId(hookId: String)
 
     /**
      * 특정 훅 ID의 태그 매핑을 삭제합니다.
      * @param hookId 훅 ID
      */
     @Query("DELETE FROM HookTagMapping WHERE hookId = :hookId")
-    suspend fun deleteMappingsByHookId(hookId: String)
+    fun deleteMappingsByHookId(hookId: String)
 
     @Transaction
     @Query("DELETE FROM Hook WHERE hookId = :hookId")
-    suspend fun deleteHookAndTags(hookId: String) {
+    fun deleteHookAndTags(hookId: String) {
         deleteHookById(hookId)
         deleteTagByHookId(hookId)
         deleteMappingsByHookId(hookId)
@@ -80,14 +80,14 @@ interface HookDao {
      * @param hook 업데이트할 훅 객체
      */
     @Update
-    suspend fun updateHook(hook: Hook)
+    fun updateHook(hook: Hook)
 
     /**
      * 태그 업데이트합니다.
      * @param tag 업데이트할 태그객체
      */
     @Update
-    suspend fun updateTag(tag: Tag)
+    fun updateTag(tag: Tag)
 
 
     // ---------------------- 조회 ---------------------- //
@@ -97,7 +97,7 @@ interface HookDao {
      * @return 훅 리스트
      */
     @Query("SELECT * FROM Hook")
-    suspend fun getAllHooks(): LiveData<List<Hook>>
+    fun getAllHooks(): LiveData<List<Hook>>
 
 
     /**
@@ -105,8 +105,9 @@ interface HookDao {
      * @param hookId 조회할 훅의 ID
      * @return 해당 훅에 관련된 태그 리스트
      */
-    @Query("SELECT name FROM Tag WHERE hookId = :hookId")
-    suspend fun getTagsForHook(hookId: String): LiveData<List<String>>
+    @Query("SELECT * FROM Tag WHERE hookId = :hookId")
+    fun getTagsForHook(hookId: String): LiveData<List<Tag>>?
+
 
 
     /**
@@ -114,13 +115,13 @@ interface HookDao {
      * @return 태그 이름 리스트
      */
     @Query("SELECT name FROM Tag")
-    suspend fun getAllTagNames(): LiveData<List<String>>
+    fun getAllTagNames(): LiveData<List<String>>
 
     /**
      * 해당 태그를 가진 훅을 조회
      */
     @Query("SELECT * FROM Hook WHERE hookId = :hookId")
-    suspend fun getHookByTag(hookId: String): LiveData<List<Hook>?>
+    fun getHookByTag(hookId: String): LiveData<List<Hook>?>
 
 
 

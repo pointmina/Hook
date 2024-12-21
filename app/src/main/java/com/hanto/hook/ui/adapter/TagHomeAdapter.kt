@@ -5,18 +5,19 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.hanto.hook.data.model.Hook
+import com.hanto.hook.data.model.Tag
 import com.hanto.hook.databinding.ItemHomeTagBinding
 import com.hanto.hook.ui.view.HookDetailActivity
 
-class TagHomeAdapter(private val tags: List<String?>, private val selectedHook: Hook) :
+class TagHomeAdapter(private var tags: List<Tag>) :
     RecyclerView.Adapter<TagHomeAdapter.TagViewHolder>() {
 
     inner class TagViewHolder(val binding: ItemHomeTagBinding) :
         RecyclerView.ViewHolder(binding.root) {
         private val textView = binding.tvTagName
 
-        fun bind(tag: String) {
-            textView.text = tag
+        fun bind(tag: Tag) {
+            textView.text = tag.name
         }
     }
 
@@ -27,24 +28,15 @@ class TagHomeAdapter(private val tags: List<String?>, private val selectedHook: 
 
     override fun onBindViewHolder(holder: TagViewHolder, position: Int) {
         val tag = tags[position]
-        tag?.let { holder.bind(it) } // Nullable 체크 후 사용
-
-        // 태그 클릭 이벤트 설정
-        holder.itemView.setOnClickListener {
-            val context = holder.itemView.context
-
-            // 클릭한 태그에 관련된 작업 수행
-            Intent(context, HookDetailActivity::class.java).apply {
-                putExtra("item_title", selectedHook.title)
-                putExtra("item_url", selectedHook.url)
-                putExtra("item_description", selectedHook.description)
-
-                context.startActivity(this)
-            }
-        }
+        holder.bind(tag) // Tag 객체를 bind
     }
 
     override fun getItemCount(): Int {
-        return tags.filterNotNull().size // Nullable 항목 필터링 후 크기 반환
+        return tags.size
+    }
+
+    fun updateTags(newTags: List<Tag>) {
+        tags = newTags
+        notifyDataSetChanged()
     }
 }

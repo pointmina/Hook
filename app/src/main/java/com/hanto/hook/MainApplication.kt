@@ -12,6 +12,7 @@ class MainApplication : Application() {
         instance = this
 
         DatabaseModule.initialize(this)
+
     }
 
 
