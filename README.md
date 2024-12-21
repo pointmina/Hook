@@ -2,7 +2,7 @@
 + 페이징
 + 코루틴 채널(버퍼)
 + 리사이클러 뷰 최적화 참고자료 : https://gift123.tistory.com/67
-+ 
++ 브랜치 전략 -> 소스트리 사용
 
 <p align="center">
   <img src="app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" width="150" height="150">
