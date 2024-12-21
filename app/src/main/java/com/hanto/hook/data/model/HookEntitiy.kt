@@ -1,16 +1,22 @@
+
+
 package com.hanto.hook.data.model
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.android.parcel.Parcelize
 
+
+@Parcelize
 @Entity(tableName = "Hook")
 data class Hook(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val hookId : String,
-    val title: String,
-    val url: String?,
-    val description: String?
-)
+    var title: String,
+    var url: String?,
+    var description: String?
+) : Parcelable
 
 
 @Entity(tableName = "Tag")

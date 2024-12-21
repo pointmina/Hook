@@ -2,6 +2,7 @@ package com.hanto.hook.ui.view
 
 import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +22,10 @@ import com.hanto.hook.databinding.FragmentTagBinding
 import com.hanto.hook.ui.adapter.TagAdapter
 
 class TagFragment : Fragment() {
+
+
+    val TAG = "TagFragment"
+
     private var _binding: FragmentTagBinding? = null
     private val binding get() = _binding!!
     private lateinit var tagAdapter: TagAdapter
@@ -84,10 +89,12 @@ class TagFragment : Fragment() {
     }
 
     override fun onResume() {
+        Log.d(TAG, "onResume")
         super.onResume()
     }
 
     override fun onDestroyView() {
+        Log.d(TAG, "onDestroyView")
         super.onDestroyView()
         _binding = null
     }

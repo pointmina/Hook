@@ -34,7 +34,8 @@ class TagListFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         arguments?.let {
-            multiChoiceList = it.getSerializable("multiChoiceList") as LinkedHashMap<String, Boolean>
+            multiChoiceList =
+                it.getSerializable("multiChoiceList") as LinkedHashMap<String, Boolean>
         }
 
         adapter = TagListAdapter(requireContext(), multiChoiceList)
@@ -45,17 +46,12 @@ class TagListFragment : DialogFragment() {
         binding.btnAddTag.setOnClickListener {
             val newTag = binding.tvAddNewTag.text.toString().trim()
             if (newTag.isEmpty()) {
-                // 입력값이 공백인 경우 알림 메시지 표시
                 Toast.makeText(requireContext(), "태그를 입력하세요.", Toast.LENGTH_SHORT).show()
             } else if (multiChoiceList.containsKey(newTag)) {
-                // 이미 존재하는 태그인 경우 아무 작업도 하지 않음
                 Toast.makeText(requireContext(), "이미 존재하는 태그입니다.", Toast.LENGTH_SHORT).show()
             } else {
-                // 새로운 태그를 multiChoiceList에 추가
                 multiChoiceList[newTag] = true
-                // 어댑터에게 데이터셋이 변경되었음을 알림
                 binding.lvTags.adapter?.notifyDataSetChanged()
-                // 입력 필드 초기화
                 binding.tvAddNewTag.text = null
             }
         }

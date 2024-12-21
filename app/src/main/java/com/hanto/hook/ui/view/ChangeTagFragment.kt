@@ -2,6 +2,7 @@ package com.hanto.hook.ui.view
 
 import android.os.Bundle
 import android.text.Editable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,8 @@ import com.hanto.hook.viewmodel.HookViewModel
 
 
 class ChangeTagFragment(private val onTagUpdated: (String) -> Unit) : DialogFragment() {
+
+    val TAG = "ChangeTagFragment"
 
     private var _binding: FragmentChangeTagBinding? = null
     private val binding get() = _binding!!
@@ -34,6 +37,7 @@ class ChangeTagFragment(private val onTagUpdated: (String) -> Unit) : DialogFrag
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Log.d(TAG,"onViewCreated")
         super.onViewCreated(view, savedInstanceState)
 
 
@@ -59,8 +63,10 @@ class ChangeTagFragment(private val onTagUpdated: (String) -> Unit) : DialogFrag
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+
+    override fun onDestroyView() {
+        Log.d(TAG,"onDestroyView")
+        super.onDestroyView()
         _binding = null
     }
 

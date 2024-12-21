@@ -53,6 +53,11 @@
     <!--        android:label="activity_login_test"-->
     <!--        tools:layout="@layout/activity_login_test" />-->
 
+    <activity
+        android:id="@+id/webViewActivity"
+        android:name="com.hanto.hook.ui.view.WebViewActivity"
+        android:label="activity_webview"
+        tools:layout="@layout/activity_webview" />
 
     <activity
         android:id="@+id/addHookActivity"
@@ -66,13 +71,6 @@
         tools:layout="@layout/activity_setting" />
 
     <activity
-        android:id="@+id/webViewActivity"
-        android:name="com.hanto.hook.ui.view.WebviewActivity"
-        android:label="activity_webview"
-        tools:layout="@layout/activity_webview" />
-
-
-    <activity
         android:id="@+id/selectedTagAvtivity"
         android:name="com.hanto.hook.ui.view.SelectedTagActivity"
         android:label="activity_selected_tag"
@@ -83,7 +81,6 @@
         android:name="com.hanto.hook.ui.view.ChangeTagFragment"
         android:label="ChangeTagFragment"
         tools:layout="@layout/fragment_change_tag" />
-
 
 
 </navigation>

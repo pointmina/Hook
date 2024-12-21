@@ -47,8 +47,8 @@ class SelectedTagActivity : BaseActivity() {
             object : SelectedTagHookListAdapter.OnItemClickListener {
                 override fun onClick(position: Int) {
                     val selectedHook = selectedTagHookListAdapter.getItem(position)
-                    Intent(this@SelectedTagActivity, WebviewActivity::class.java).also { intent ->
-                        intent.putExtra(WebviewActivity.EXTRA_URL, selectedHook.url)
+                    Intent(this@SelectedTagActivity, WebViewActivity::class.java).also { intent ->
+                        intent.putExtra(WebViewActivity.EXTRA_URL, selectedHook.url)
                         startActivity(intent)
                     }
                 }

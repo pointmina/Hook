@@ -24,7 +24,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/bt_onWeb"
+        android:id="@+id/btn_modify_hook"
         android:layout_width="300dp"
         android:layout_height="60dp"
         android:layout_marginTop="20dp"
@@ -37,13 +37,13 @@
         app:icon="@drawable/ic_draw"
         app:iconPadding="-20dp"
         app:iconSize="20dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bt_delete_hook"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/horizontal_bar" />
 
-
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/bt_HookDelete"
+        android:id="@+id/bt_delete_hook"
         android:layout_width="300dp"
         android:layout_height="60dp"
         android:layout_marginTop="10dp"
@@ -58,9 +58,9 @@
         app:iconPadding="-20dp"
         app:iconSize="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bt_onWeb" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_modify_hook" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!--

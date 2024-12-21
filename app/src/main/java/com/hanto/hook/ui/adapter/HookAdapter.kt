@@ -1,6 +1,5 @@
 package com.hanto.hook.ui.adapter
 
-
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
@@ -15,27 +14,45 @@ import com.hanto.hook.viewmodel.HookViewModel
 class HookAdapter(
     private var hooks: List<Hook>,
     private val hookViewModel: HookViewModel,
-    private val lifecycleOwner: LifecycleOwner
+    private val lifecycleOwner: LifecycleOwner,
+    private val onItemClickListener: OnItemClickListener,
+    private val onItemClick: (Hook) -> Unit,
 ) : RecyclerView.Adapter<HookAdapter.ViewHolder>() {
+
+    interface OnItemClickListener {
+        fun onClick(hook: Hook)  // Hook 객체를 직접 넘김
+        fun onOptionButtonClick(position: Int)  // position 유지
+    }
 
     inner class ViewHolder(private val binding: ItemHookBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         private val tagRecyclerView: RecyclerView =
-            binding.rvTagContainer // rv_tag_container 리사이클러뷰
+            binding.rvTagContainer
 
         fun bind(hook: Hook) {
             binding.tvTitle.text = hook.title
             binding.tvUrlLink.text = hook.url
             binding.tvTagDescription.text = hook.description
 
+            // 아이템 클릭 시 Hook 객체를 전달
+            binding.root.setOnClickListener {
+                onItemClick(hook)
+            }
+
+            // 옵션 버튼 클릭 시 position 전달
+            binding.icOption.setOnClickListener {
+                onItemClickListener.onOptionButtonClick(adapterPosition)
+            }
 
             hookViewModel.getTagsForHook(hook.hookId)?.observe(lifecycleOwner, Observer { tags ->
-                val tagAdapter = TagHomeAdapter(tags)
-                tagRecyclerView.layoutManager = LinearLayoutManager(binding.root.context, LinearLayoutManager.HORIZONTAL, false) 
+                val sortedTags = tags.sortedBy { it.name }
+
+                val tagAdapter = TagHomeAdapter(sortedTags)
+                tagRecyclerView.layoutManager =
+                    LinearLayoutManager(binding.root.context, LinearLayoutManager.HORIZONTAL, false)
                 tagRecyclerView.adapter = tagAdapter
             })
-
         }
     }
 

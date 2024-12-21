@@ -1,13 +1,10 @@
 package com.hanto.hook.ui.adapter
 
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.hanto.hook.data.model.Hook
 import com.hanto.hook.data.model.Tag
 import com.hanto.hook.databinding.ItemHomeTagBinding
-import com.hanto.hook.ui.view.HookDetailActivity
 
 class TagHomeAdapter(private var tags: List<Tag>) :
     RecyclerView.Adapter<TagHomeAdapter.TagViewHolder>() {
@@ -28,7 +25,7 @@ class TagHomeAdapter(private var tags: List<Tag>) :
 
     override fun onBindViewHolder(holder: TagViewHolder, position: Int) {
         val tag = tags[position]
-        holder.bind(tag) // Tag 객체를 bind
+        holder.bind(tag)
     }
 
     override fun getItemCount(): Int {

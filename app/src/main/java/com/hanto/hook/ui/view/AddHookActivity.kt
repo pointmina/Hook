@@ -44,6 +44,8 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
     private val multiChoiceList = linkedMapOf<String, Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(TAG,"onCreate()")
+
         super.onCreate(savedInstanceState)
         binding = ActivityAddHookBinding.inflate(layoutInflater)
         val view = binding.root
@@ -188,6 +190,17 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
             insertHookIntoDB()
         }
     }
+
+    override fun onResume() {
+        Log.d(TAG,"onResume()")
+        super.onResume()
+    }
+
+    override fun onDestroy() {
+        Log.d(TAG,"onDestroy()")
+        super.onDestroy()
+    }
+
 
     private fun insertHookIntoDB() {
         val url = binding.tvUrlLink.text.toString()

@@ -44,8 +44,33 @@ class HookRepository(private val appDatabase: AppDatabase) {
     }
 
     fun deleteHookAndTags(hookId: String) {
-        appDatabase.hookDao().deleteHookAndTags(hookId) // CoroutineScope 제거
+        appDatabase.hookDao().deleteHookAndTags(hookId)
     }
+
+    //데이터 업데이트 메서드
+    fun updateHook(hook: Hook) {
+        appDatabase.hookDao().updateHook(hook)
+    }
+
+    fun updateTagsForHook(hookId: String, selectedTags: List<String>) {
+        appDatabase.hookDao().deleteTagByHookId(hookId)
+
+        selectedTags.forEach { tagName ->
+            val tag = Tag(hookId = hookId, name = tagName)
+            appDatabase.hookDao().insertTag(tag)
+        }
+    }
+
+    suspend fun updateHookAndTags(hook: Hook, selectedTags: List<String>) {
+        appDatabase.hookDao().updateHook(hook)
+        appDatabase.hookDao().deleteTagByHookId(hook.hookId)
+
+        selectedTags.forEach { tagName ->
+            val tag = Tag(hookId = hook.hookId, name = tagName)
+            appDatabase.hookDao().insertTag(tag)
+        }
+    }
+
 
     // 데이터 조회 메서드 (LiveData 반환)
     fun getAllHooks(): LiveData<List<Hook>> {

@@ -1,12 +1,16 @@
 package com.hanto.hook.viewmodel
 
 import HookRepository
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.hanto.hook.data.model.Hook
 import com.hanto.hook.data.model.HookTagMapping
 import com.hanto.hook.data.model.Tag
 import com.hanto.hook.database.DatabaseModule
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 //viewModel <-> UI
 class HookViewModel : ViewModel() {
@@ -45,9 +49,34 @@ class HookViewModel : ViewModel() {
         hookRepository.deleteMappingsByHookId(hookId)
     }
 
+//
+//    fun deleteHookAndTags(hookId: String) {
+//        hookRepository.deleteHookAndTags(hookId)
+//    }
+
     fun deleteHookAndTags(hookId: String) {
-        hookRepository.deleteHookAndTags(hookId)
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                hookRepository.deleteHookAndTags(hookId)
+            } catch (e: Exception) {
+                // 예외 처리
+                Log.e("HookViewModel", "Error deleting hook and tags", e)
+            }
+        }
     }
+
+    //데이터 업데이트 메서드
+    fun updateHookAndTags(hook: Hook, selectedTags: List<String>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                hookRepository.updateHookAndTags(hook, selectedTags)
+            } catch (e: Exception) {
+                // 예외 처리
+                Log.e("HookViewModel", "Error updating hook and tags", e)
+            }
+        }
+    }
+
 
     // 데이터 조회 메서드
     fun getAllHooks(): LiveData<List<Hook>> {

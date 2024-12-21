@@ -69,7 +69,6 @@ interface HookDao {
     fun deleteHookAndTags(hookId: String) {
         deleteHookById(hookId)
         deleteTagByHookId(hookId)
-        deleteMappingsByHookId(hookId)
     }
 
 
@@ -98,6 +97,10 @@ interface HookDao {
      */
     @Query("SELECT * FROM Hook")
     fun getAllHooks(): LiveData<List<Hook>>
+
+
+    @Query("SELECT * FROM Hook WHERE hookId = :hookId")
+    fun getHooksByID(hookId: String): Hook
 
 
     /**

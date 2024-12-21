@@ -11,6 +11,8 @@ import com.hanto.hook.databinding.FragmentDeleteTagBinding
 
 class DeleteTagFragment(private val onTagDeleted: () -> Unit) : DialogFragment() {
 
+    val TAG = "DeleteTagFragment"
+
     private var _binding: FragmentDeleteTagBinding? = null
     private val binding get() = _binding!!
 
@@ -48,6 +50,7 @@ class DeleteTagFragment(private val onTagDeleted: () -> Unit) : DialogFragment()
     }
 
     override fun onDestroyView() {
+        Log.d(TAG, "onDestroyView")
         super.onDestroyView()
         _binding = null
     }
