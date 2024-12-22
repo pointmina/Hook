@@ -59,6 +59,22 @@ class SelectedTagActivity : BaseActivity(), TagUpdateListener {
             changeTagFragment.show(supportFragmentManager, "ChangeTagFragment")
         }
 
+        // 태그 삭제 버큰 클릭
+        binding.ivTagDelete.setOnClickListener {
+            val deleteTagFragment = DeleteTagFragment()
+            deleteTagFragment.setOnTagDeletedListener(object :
+                DeleteTagFragment.OnTagDeletedListener {
+                override fun onTagDeleted() {
+                    finish()
+                }
+            })
+            val bundle = Bundle().apply {
+                putString("selectedTag", selectedTagName)
+            }
+            deleteTagFragment.arguments = bundle
+            deleteTagFragment.show(supportFragmentManager, "DeleteTagFragment")
+        }
+
 
     }
 
@@ -121,7 +137,6 @@ class SelectedTagActivity : BaseActivity(), TagUpdateListener {
             }
         }
     }
-
 
 
     override fun onTagUpdated(newTagName: String) {

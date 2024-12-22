@@ -62,8 +62,14 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
 
         // liveDataHook을 관찰하여 데이터가 변경되면 어댑터에 업데이트
         hookViewModel.liveDataHook.observe(viewLifecycleOwner) { hooks: List<Hook> ->
-            adapter.updateHooks(hooks)
+            val sortedHooks = hooks.sortedByDescending { it.id }
+            adapter.updateHooks(sortedHooks)
+
+            if (hooks.isNotEmpty()) {
+                binding.rvHome.scrollToPosition(0)
+            }
         }
+
 
         // 설정 버튼 클릭 리스너
 //        val btSetting = view.findViewById<ImageButton>(R.id.bt_setting)

@@ -48,6 +48,14 @@ interface HookDao {
     @Query("DELETE FROM Tag WHERE hookId = :hookId")
     fun deleteTagByHookId(hookId: String)
 
+
+    /**
+     * 이름으로 태그를 삭제합니다.
+     * @param tagName 삭제할 태그의 이름
+     */
+    @Query("DELETE FROM Tag WHERE name = :tagName")
+    fun deleteTagByTagName(tagName: String)
+
     @Transaction
     @Query("DELETE FROM Hook WHERE hookId = :hookId")
     fun deleteHookAndTags(hookId: String) {

@@ -1,5 +1,6 @@
 package com.hanto.hook.ui.view
 
+import HookRepository
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -7,16 +8,34 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
+import com.hanto.hook.database.AppDatabase
+import com.hanto.hook.database.DatabaseModule
 import com.hanto.hook.databinding.FragmentDeleteTagBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class DeleteTagFragment(private val onTagDeleted: () -> Unit) : DialogFragment() {
+class DeleteTagFragment : DialogFragment() {
 
     val TAG = "DeleteTagFragment"
+
+    interface OnTagDeletedListener {
+        fun onTagDeleted()
+    }
+
+    private var listener: OnTagDeletedListener? = null
+
+    fun setOnTagDeletedListener(listener: OnTagDeletedListener) {
+        this.listener = listener
+    }
 
     private var _binding: FragmentDeleteTagBinding? = null
     private val binding get() = _binding!!
 
-    private var selectedTagId: Int = -1
+    private lateinit var hookRepository: HookRepository
+    private lateinit var appDatabase: AppDatabase
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,25 +46,21 @@ class DeleteTagFragment(private val onTagDeleted: () -> Unit) : DialogFragment()
         return binding.root
     }
 
-    private fun deleteTag(tagId: Int) {
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        appDatabase = DatabaseModule.getDatabase()
+        hookRepository = HookRepository(appDatabase)
 
-        // 선택된 태그 ID 가져오기
-        selectedTagId = arguments?.getInt("selectedTagId", -1) ?: -1
+        val selectedTagName = arguments?.getString("selectedTag")
 
         // 태그 삭제
         binding.btnDeleteTag.setOnClickListener {
-            if (selectedTagId != -1) {
-                deleteTag(selectedTagId)
-            } else {
-                Toast.makeText(requireContext(), "태그 ID가 유효하지 않습니다.", Toast.LENGTH_SHORT).show()
+            if (selectedTagName != null) {
+                deleteTag(selectedTagName)
             }
         }
-
 
     }
 
@@ -55,4 +70,22 @@ class DeleteTagFragment(private val onTagDeleted: () -> Unit) : DialogFragment()
         _binding = null
     }
 
+
+    private fun deleteTag(tagName: String) {
+        Log.d(TAG, "deleteTag: $tagName")
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                hookRepository.deleteTagByTagName(tagName)
+                withContext(Dispatchers.Main) {
+                    listener?.onTagDeleted()
+                    dismiss()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "태그 삭제에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
 }

@@ -17,20 +17,23 @@ class HookRepository(private val appDatabase: AppDatabase) {
 
     // 데이터 삽입 메서드
     fun insertHook(hook: Hook) {
-        appDatabase.hookDao().insertHook(hook) // CoroutineScope 제거
+        appDatabase.hookDao().insertHook(hook)
     }
 
     fun insertTag(tag: Tag) {
-        appDatabase.hookDao().insertTag(tag) // CoroutineScope 제거
+        appDatabase.hookDao().insertTag(tag)
     }
 
     // 데이터 삭제 메서드
     fun deleteHook(hookId: String) {
-        appDatabase.hookDao().deleteHookById(hookId) // CoroutineScope 제거
+        appDatabase.hookDao().deleteHookById(hookId)
     }
 
     fun deleteTagByHookId(hookId: String) {
-        appDatabase.hookDao().deleteTagByHookId(hookId) // CoroutineScope 제거
+        appDatabase.hookDao().deleteTagByHookId(hookId)
+    }
+    fun deleteTagByTagName(tagName: String) {
+        appDatabase.hookDao().deleteTagByTagName(tagName)
     }
 
 

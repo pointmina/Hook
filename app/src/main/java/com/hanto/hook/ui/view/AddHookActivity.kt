@@ -44,7 +44,7 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
     private val multiChoiceList = linkedMapOf<String, Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d(TAG,"onCreate()")
+        Log.d(TAG, "onCreate()")
 
         super.onCreate(savedInstanceState)
         binding = ActivityAddHookBinding.inflate(layoutInflater)
@@ -192,12 +192,12 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
     }
 
     override fun onResume() {
-        Log.d(TAG,"onResume()")
+        Log.d(TAG, "onResume()")
         super.onResume()
     }
 
     override fun onDestroy() {
-        Log.d(TAG,"onDestroy()")
+        Log.d(TAG, "onDestroy()")
         super.onDestroy()
     }
 
