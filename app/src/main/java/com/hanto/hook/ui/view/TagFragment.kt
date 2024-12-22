@@ -1,6 +1,7 @@
 package com.hanto.hook.ui.view
 
 import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -14,12 +15,14 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.hanto.hook.R
 import com.hanto.hook.databinding.FragmentTagBinding
 import com.hanto.hook.ui.adapter.TagAdapter
+import com.hanto.hook.viewmodel.HookViewModel
 
 class TagFragment : Fragment() {
 
@@ -29,6 +32,9 @@ class TagFragment : Fragment() {
     private var _binding: FragmentTagBinding? = null
     private val binding get() = _binding!!
     private lateinit var tagAdapter: TagAdapter
+
+    private val hookViewModel: HookViewModel by viewModels()
+
 
     private val dialog by lazy {
         Dialog(requireContext()).apply {
@@ -76,9 +82,26 @@ class TagFragment : Fragment() {
         }
 
 
-        val flexboxLayoutManager = FlexboxLayoutManager(context).apply {
+        val flexboxLayoutManager = FlexboxLayoutManager(requireContext()).apply {
             justifyContent = JustifyContent.SPACE_EVENLY
             flexDirection = FlexDirection.ROW
+        }
+        binding.rvTagViewTagContainer.layoutManager = flexboxLayoutManager
+
+        tagAdapter = TagAdapter(object : TagAdapter.OnItemClickListener {
+            override fun onClick(tagName: String) {
+                val intent = Intent(requireContext(), SelectedTagActivity::class.java).apply {
+                    putExtra("selectedTagName", tagName)
+                }
+                startActivity(intent)
+            }
+
+        })
+
+        binding.rvTagViewTagContainer.adapter = tagAdapter
+
+        hookViewModel.distinctTagNames.observe(viewLifecycleOwner) { tagNames ->
+            tagAdapter.submitList(tagNames) // 어댑터에 태그 데이터 전달
         }
 
     }

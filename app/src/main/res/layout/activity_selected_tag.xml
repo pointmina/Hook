@@ -74,11 +74,24 @@
         android:layout_marginStart="10dp"
         android:layout_marginTop="12dp"
         android:fontFamily="@font/notosans_m"
-        android:text="@string/label_tag_count"
         android:textColor="@color/gray_300"
         android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@id/tv_selected_tag"
+        app:layout_constraintTop_toTopOf="@id/tv_selected_tag"
+        tools:text="10" />
+
+    <TextView
+        android:id="@+id/txt_tag_count"
+        android:layout_width="wrap_content"
+        android:layout_height="28dp"
+        android:layout_marginTop="12dp"
+        android:fontFamily="@font/notosans_m"
+        android:text="@string/label_tag_count"
+        android:textColor="@color/gray_300"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@id/tv_tag_count"
         app:layout_constraintTop_toTopOf="@id/tv_selected_tag" />
 
 

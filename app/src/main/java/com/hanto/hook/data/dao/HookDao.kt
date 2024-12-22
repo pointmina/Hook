@@ -7,7 +7,6 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import com.hanto.hook.data.model.Hook
-import com.hanto.hook.data.model.HookTagMapping
 import com.hanto.hook.data.model.Tag
 
 @Dao
@@ -33,14 +32,6 @@ interface HookDao {
     fun insertTag(tag: Tag): Long
 
 
-    /**
-     * 훅과 태그 간의 관계를 데이터베이스에 삽입합니다.
-     * @param hookTag 훅-태그 관계 객체
-     */
-    @Insert
-    fun insertMapping(hookTag: HookTagMapping)
-
-
     // ---------------------- 삭제 ---------------------- //
 
     /**
@@ -56,13 +47,6 @@ interface HookDao {
      */
     @Query("DELETE FROM Tag WHERE hookId = :hookId")
     fun deleteTagByHookId(hookId: String)
-
-    /**
-     * 특정 훅 ID의 태그 매핑을 삭제합니다.
-     * @param hookId 훅 ID
-     */
-    @Query("DELETE FROM HookTagMapping WHERE hookId = :hookId")
-    fun deleteMappingsByHookId(hookId: String)
 
     @Transaction
     @Query("DELETE FROM Hook WHERE hookId = :hookId")
@@ -126,7 +110,12 @@ interface HookDao {
     @Query("SELECT * FROM Hook WHERE hookId = :hookId")
     fun getHookByTag(hookId: String): LiveData<List<Hook>?>
 
-
-
+    @Query("""
+    SELECT * FROM Hook 
+    WHERE hookId IN (
+        SELECT hookId FROM Tag WHERE name = :tagName
+    )
+""")
+    fun getHooksByTagName(tagName: String): LiveData<List<Hook>?>
 
 }

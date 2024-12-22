@@ -4,9 +4,9 @@ import HookRepository
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.hanto.hook.data.model.Hook
-import com.hanto.hook.data.model.HookTagMapping
 import com.hanto.hook.data.model.Tag
 import com.hanto.hook.database.DatabaseModule
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +20,12 @@ class HookViewModel : ViewModel() {
 
     // LiveData 필드
     val liveDataHook: LiveData<List<Hook>> = hookRepository.getAllHooks()
-    val liveDataTagName: LiveData<List<String>>? = null
+    private var liveDataTagName: LiveData<List<String>> = hookRepository.getAllTagNames()
+
+    var distinctTagNames: LiveData<List<String>> = liveDataTagName.map { tagNames ->
+        tagNames.distinct()
+    }
+
     val liveDataHookByTagName: LiveData<List<Hook>>? = null
 
     // 데이터 삽입 메서드
@@ -32,9 +37,6 @@ class HookViewModel : ViewModel() {
         hookRepository.insertTag(tag)
     }
 
-    fun insertMapping(hookTag: HookTagMapping) {
-        hookRepository.insertMapping(hookTag)
-    }
 
     // 데이터 삭제 메서드
     fun deleteHook(hookId: String) {
@@ -43,10 +45,6 @@ class HookViewModel : ViewModel() {
 
     fun deleteTagByHookId(hookId: String) {
         hookRepository.deleteTagByHookId(hookId)
-    }
-
-    fun deleteMappingsByHookId(hookId: String) {
-        hookRepository.deleteMappingsByHookId(hookId)
     }
 
 //
@@ -87,10 +85,10 @@ class HookViewModel : ViewModel() {
     }
 
     fun getAllTagNames(): LiveData<List<String>> {
-        return hookRepository.getAllTagNames() // Repository에서 직접 반환
+        return hookRepository.getAllTagNames()
     }
 
-    fun getHookByTag(tagName: String): LiveData<List<Hook>?> {
-        return hookRepository.getHookByTag(tagName) // Repository에서 직접 반환
+    fun getHooksByTagName(tagName: String): LiveData<List<Hook>?> {
+        return hookRepository.getHookByTagName(tagName)
     }
 }

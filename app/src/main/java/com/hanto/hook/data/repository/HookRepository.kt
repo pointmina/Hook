@@ -1,6 +1,5 @@
 import androidx.lifecycle.LiveData
 import com.hanto.hook.data.model.Hook
-import com.hanto.hook.data.model.HookTagMapping
 import com.hanto.hook.data.model.Tag
 import com.hanto.hook.database.AppDatabase
 
@@ -26,10 +25,6 @@ class HookRepository(private val appDatabase: AppDatabase) {
         appDatabase.hookDao().insertTag(tag) // CoroutineScope 제거
     }
 
-    fun insertMapping(hookTag: HookTagMapping) {
-        appDatabase.hookDao().insertMapping(hookTag) // CoroutineScope 제거
-    }
-
     // 데이터 삭제 메서드
     fun deleteHook(hookId: String) {
         appDatabase.hookDao().deleteHookById(hookId) // CoroutineScope 제거
@@ -39,9 +34,6 @@ class HookRepository(private val appDatabase: AppDatabase) {
         appDatabase.hookDao().deleteTagByHookId(hookId) // CoroutineScope 제거
     }
 
-    fun deleteMappingsByHookId(hookId: String) {
-        appDatabase.hookDao().deleteMappingsByHookId(hookId) // CoroutineScope 제거
-    }
 
     fun deleteHookAndTags(hookId: String) {
         appDatabase.hookDao().deleteHookAndTags(hookId)
@@ -85,7 +77,7 @@ class HookRepository(private val appDatabase: AppDatabase) {
         return appDatabase.hookDao().getAllTagNames()
     }
 
-    fun getHookByTag(tagName: String): LiveData<List<Hook>?> {
-        return appDatabase.hookDao().getHookByTag(tagName)
+    fun getHookByTagName(tagName: String): LiveData<List<Hook>?> {
+        return appDatabase.hookDao().getHooksByTagName(tagName)
     }
 }

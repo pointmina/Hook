@@ -3,24 +3,30 @@ package com.hanto.hook.ui.view
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.hanto.hook.BaseActivity
 import com.hanto.hook.R
 import com.hanto.hook.data.model.Hook
-import com.hanto.hook.ui.adapter.SelectedTagHookListAdapter
 import com.hanto.hook.databinding.ActivitySelectedTagBinding
+import com.hanto.hook.ui.adapter.SelectedTagHookListAdapter
+import com.hanto.hook.viewmodel.HookViewModel
 
 class SelectedTagActivity : BaseActivity() {
+
+    val TAG = "SelectedTagActivity"
 
     private lateinit var binding: ActivitySelectedTagBinding
     private lateinit var selectedTagHookListAdapter: SelectedTagHookListAdapter
 
-    private var selectedTagId: Int = -1
+    private lateinit var hookViewModel: HookViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(TAG,"onCreate()")
         super.onCreate(savedInstanceState)
 
         binding = ActivitySelectedTagBinding.inflate(layoutInflater)
@@ -30,48 +36,59 @@ class SelectedTagActivity : BaseActivity() {
             finish()
         }
 
-        // Intent 로부터 데이터 받기
         val selectedTagName = intent.getStringExtra("selectedTagName")
-        selectedTagId = intent.getIntExtra("selectedTagId", -1) // 아이디 (기본값 -1으로 설정)
         binding.tvSelectedTag.text = selectedTagName
 
-        val ivTagChange = binding.ivTagChange
+        hookViewModel = ViewModelProvider(this)[HookViewModel::class.java]
 
-
-        val ivTagDelete = binding.ivTagDelete
-        ivTagDelete.setOnClickListener {
+        selectedTagName?.let { tagName ->
+            hookViewModel.getHooksByTagName(tagName).observe(this) { hooks ->
+                if (hooks != null) {
+                    selectedTagHookListAdapter.submitList(hooks)
+                    binding.tvTagCount.text = hooks.size.toString()
+                }
+            }
         }
 
+        binding.ivTagChange.setOnClickListener {
+        }
+
+        binding.ivTagDelete.setOnClickListener {
+        }
+
+        // 어댑터 설정
         selectedTagHookListAdapter = SelectedTagHookListAdapter(
             hooks = ArrayList(),
             object : SelectedTagHookListAdapter.OnItemClickListener {
                 override fun onClick(position: Int) {
                     val selectedHook = selectedTagHookListAdapter.getItem(position)
                     Intent(this@SelectedTagActivity, WebViewActivity::class.java).also { intent ->
-                        intent.putExtra(WebViewActivity.EXTRA_URL, selectedHook.url)
+                        if (selectedHook != null) {
+                            intent.putExtra(WebViewActivity.EXTRA_URL, selectedHook.url)
+                        }
                         startActivity(intent)
                     }
                 }
 
                 override fun onOptionButtonClick(position: Int) {
                     val selectedHook = selectedTagHookListAdapter.getItem(position)
-                    showBottomSheetDialog(selectedHook)
+                    if (selectedHook != null) {
+                        showBottomSheetDialog(selectedHook)
+                    }
                 }
             })
 
         binding.rvUrlHookList.adapter = selectedTagHookListAdapter
         binding.rvUrlHookList.layoutManager = LinearLayoutManager(this)
 
-        // DividerItemDecoration에 대한 설정
+        // DividerItemDecoration 설정
         val dividerItemDecoration = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
         ResourcesCompat.getDrawable(resources, R.drawable.divider, null)?.let {
             dividerItemDecoration.setDrawable(it)
         }
-
         binding.rvUrlHookList.addItemDecoration(dividerItemDecoration)
 
     }
-
 
 
     @SuppressLint("InflateParams")
@@ -84,12 +101,13 @@ class SelectedTagActivity : BaseActivity() {
 
     }
 
-
     override fun onResume() {
+        Log.d(TAG,"onResume()")
         super.onResume()
     }
 
     override fun onDestroy() {
+        Log.d(TAG,"onDestroy()")
         super.onDestroy()
     }
 

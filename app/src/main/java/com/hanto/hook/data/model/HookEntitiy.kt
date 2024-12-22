@@ -25,13 +25,3 @@ data class Tag(
     val hookId: String,
     val name: String
 )
-
-
-@Entity(
-    tableName = "HookTagMapping",
-    primaryKeys = ["hookId", "tagId"]
-)
-data class HookTagMapping(
-    val hookId: String,
-    val tagId: Long
-)

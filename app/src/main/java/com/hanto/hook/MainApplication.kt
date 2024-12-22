@@ -12,7 +12,7 @@ class MainApplication : Application() {
         instance = this
 
         DatabaseModule.initialize(this)
-
+//        applicationContext.deleteDatabase("hook_database")
     }
 
 
