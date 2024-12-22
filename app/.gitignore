@@ -3,3 +3,6 @@
 
 # Build directory
 /build
+
+# Ignore gradle.properties
+gradle.properties

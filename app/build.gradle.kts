@@ -21,10 +21,10 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file("C:/Users/user/StudioProjects/hook/app/release.keystore")
-            storePassword = "rlaalsdk12!"
-            keyAlias = "release_key"
-            keyPassword = "rlaalsdk12!"
+            storeFile = file(properties["RELEASE_STORE_FILE"] ?: "")
+            storePassword = (properties["RELEASE_STORE_PASSWORD"] ?: "").toString()
+            keyAlias = (properties["RELEASE_KEY_ALIAS"] ?: "").toString()
+            keyPassword = (properties["RELEASE_KEY_PASSWORD"] ?: "").toString()
         }
     }
 
