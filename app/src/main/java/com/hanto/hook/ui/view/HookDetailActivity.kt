@@ -3,6 +3,7 @@ package com.hanto.hook.ui.view
 import HookRepository
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
@@ -57,15 +58,48 @@ class HookDetailActivity : BaseActivity(), TagSelectionListener {
         }
 
         binding.btnHookEdit.setOnClickListener {
-            if (tagNames.isNotEmpty()) {
-                hook?.let {
-                    lifecycleScope.launch {
-                        hookViewModel.updateHookAndTags(it, tagNames.toList())
-                        finish()
+            val updatedTitle = binding.tvHandedTitle.text.toString().trim()
+            val updatedDescription = binding.tvHandedDesc.text.toString().trim()
+            val updatedUrl = binding.tvHandedUrl.text.toString().trim()
+
+            when {
+                updatedTitle.isBlank() -> {
+                    Toast.makeText(this, "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
+                }
+
+                updatedUrl.isBlank() -> {
+                    Toast.makeText(this, "URL을 입력해주세요.", Toast.LENGTH_SHORT).show()
+                }
+
+                else -> {
+                    hook?.let { currentHook ->
+                        val updatedHook = currentHook.copy(
+                            title = updatedTitle,
+                            url = updatedUrl,
+                            description = updatedDescription,
+                        )
+
+                        lifecycleScope.launch {
+                            runCatching {
+                                hookViewModel.updateHookAndTags(updatedHook, tagNames.toList())
+                            }.onSuccess {
+                                finish()
+                            }.onFailure { e ->
+                                Log.e("HookDetailActivity", "Error updating hook", e)
+                                Toast.makeText(
+                                    this@HookDetailActivity,
+                                    "업데이트 실패. 다시 시도해주세요.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
                     }
                 }
+
             }
+
         }
+
 
         binding.tvTag.setOnClickListener {
             showTagListFragment()

@@ -71,7 +71,6 @@ class HookViewModel : ViewModel() {
             try {
                 hookRepository.updateHookAndTags(hook, selectedTags)
             } catch (e: Exception) {
-                // 예외 처리
                 Log.e("HookViewModel", "Error updating hook and tags", e)
             }
         }
