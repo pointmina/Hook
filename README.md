@@ -1,8 +1,4 @@
-작업중....
-+ 페이징
-+ 코루틴 채널(버퍼)
-+ 리사이클러 뷰 최적화 참고자료 : https://gift123.tistory.com/67
-+ 브랜치 전략 -> 소스트리 사용
+
 
 <p align="center">
   <img src="app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" width="150" height="150">
@@ -21,9 +17,12 @@
 ---
 
 ## Features
-- 🌟 Save Links (Hook)
+- 🔗 Save Links (Hook)
 - 📂 Organize and Manage Hooks by Topics
 - 📝 Provide Annotation Feature for Each Hook
+- 📲 Shared links from other apps to Hook
+
+  
 ---
 
 ## Tech Stacks
@@ -35,10 +34,10 @@
 | UI              | XML, Material 3          |
 | Concurrency     | Coroutines               |
 | Database        | Room DAO                 |
-| Paging          | Paging3                  |
 | Navigation      | Jetpack Navigation       |
 | App Design      | Modularization           |
 
+🔧Paging
 
 ---
 
@@ -56,6 +55,13 @@ https://ppeper.github.io/android/repository-pattern/
 
 
 ---
+
+## Branch Strategy
+The branch strategy for this project follows a simplified Git Flow model, managed using **Sourcetree**.
+
+### Main Branches
+- **main**: Contains the production-ready code.
+- **work**: Used for integrating features and staging before merging into `main`.
 
 ## Components
 
@@ -124,16 +130,6 @@ graph TD
     Repository -->|"Provide Data"| ViewModel
     ViewModel -->|"Update UI"| UI
 ```
-
 ---
 
-## Example Use Case
-1. A user clicks a button on the UI.
-2. The `ViewModel` captures the event and requests data from the `Repository`.
-3. The `Repository` fetches data from the local database using the `DAO`.
-4. The database returns the requested data to the `DAO`.
-5. The `Repository` processes the data and sends it back to the `ViewModel`.
-6. The `ViewModel` updates the UI with the retrieved data.
-
----
 
