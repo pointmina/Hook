@@ -204,9 +204,16 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
 
     private fun insertHookIntoDB() {
         val url = binding.tvUrlLink.text.toString()
-        val title = binding.tvUrlTitle.text.toString()
+        val title = binding.tvUrlTitle.text.toString().trim()
         val description = binding.tvUrlDescription.text.toString()
         val hookId = getCurrentTimeAsString()
+
+        if (title.isEmpty()) {
+            runOnUiThread {
+                Toast.makeText(this, "제목을 입력하세요.", Toast.LENGTH_SHORT).show()
+            }
+            return
+        }
 
         val hook = Hook(
             hookId = hookId,

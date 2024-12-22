@@ -5,7 +5,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.hanto.hook.R
 import com.hanto.hook.data.TagSelectionListener
 import com.hanto.hook.data.model.Hook
 import com.hanto.hook.data.model.Tag
@@ -92,10 +94,17 @@ class UrlHandlingActivity : AppCompatActivity(), TagSelectionListener {
     }
 
     private fun insertHookIntoDB() {
-        val title = binding.editTextTitle.text.toString()
+        val title = binding.editTextTitle.text.toString().trim()
         val url = binding.editTextUrl.text.toString()
         val description = binding.editTextDescription.text.toString()
         val hookId = getCurrentTimeAsString()
+
+        if (title.isEmpty()) {
+            runOnUiThread {
+                Toast.makeText(this, getString(R.string.input_title), Toast.LENGTH_SHORT).show()
+            }
+            return
+        }
 
         val hook = Hook(
             hookId = hookId,

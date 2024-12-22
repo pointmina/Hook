@@ -6,8 +6,10 @@ import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.android.flexbox.JustifyContent
 import com.hanto.hook.data.model.Hook
 import com.hanto.hook.databinding.ItemHookBinding
 import com.hanto.hook.viewmodel.HookViewModel
@@ -57,8 +59,10 @@ class HookAdapter(
                     .sortedBy { it.name }
 
                 val tagAdapter = TagHomeAdapter(distinctSortedTags)
-                tagRecyclerView.layoutManager =
-                    LinearLayoutManager(binding.root.context, LinearLayoutManager.HORIZONTAL, false)
+                tagRecyclerView.layoutManager = FlexboxLayoutManager(binding.root.context).apply {
+                    flexDirection = FlexDirection.ROW
+                    justifyContent = JustifyContent.FLEX_START
+                }
                 tagRecyclerView.adapter = tagAdapter
             })
 

@@ -17,10 +17,10 @@
         android:id="@+id/tv_tag_select"
         android:layout_width="375dp"
         android:layout_height="wrap_content"
-        android:padding="10dp"
+        android:padding="8dp"
         android:text="  태그 선택"
         android:textColor="@color/black"
-        android:textSize="20dp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@id/lv_Tags"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/view_blank" />
@@ -31,19 +31,19 @@
         android:layout_height="300dp"
         android:choiceMode="multipleChoice"
         android:listSelector="@android:color/transparent"
+        android:paddingStart="3dp"
+        android:paddingEnd="3dp"
         app:layout_constraintBottom_toTopOf="@id/tv_add_newTag"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_tag_select"
         tools:listitem="@layout/item_tag" />
 
-    <com.google.android.material.textfield.TextInputEditText
+    <EditText
         android:id="@+id/tv_add_newTag"
-        android:layout_width="280dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:hint="태그 입력"
-        android:inputType="text"
-        android:padding="10dp"
+        style="@style/CustomTextInputEditText"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="@color/purple"
         app:layout_constraintEnd_toStartOf="@id/btn_add_tag"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
@@ -57,30 +57,23 @@
         android:background="@drawable/rounded_background_little"
         android:backgroundTint="@color/purple"
         android:gravity="center"
-        android:text="태그 추가"
+        android:text="@string/add_tag"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/tv_add_newTag"
         app:layout_constraintTop_toTopOf="@id/tv_add_newTag" />
 
-    <View
-        android:id="@+id/view_btn_container"
-        android:layout_width="375dp"
-        android:layout_height="70dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_add_tag" />
 
     <TextView
         android:id="@+id/btn_cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="85dp"
         android:padding="15dp"
-        android:text="CANCEL"
+        android:text="@string/cancel"
         android:textColor="@color/purple"
-        app:layout_constraintBottom_toBottomOf="@id/view_btn_container"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/view_btn_container" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btn_ok"
+        app:layout_constraintTop_toBottomOf="@id/tv_add_newTag" />
 
     <TextView
         android:id="@+id/btn_ok"
@@ -89,12 +82,11 @@
         android:padding="15dp"
         android:paddingStart="30dp"
         android:paddingEnd="30dp"
-        android:text="OK"
+        android:text="@string/ok"
         android:textColor="@color/purple"
-        app:layout_constraintBottom_toBottomOf="@id/view_btn_container"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/btn_cancel"
-        app:layout_constraintTop_toTopOf="@id/view_btn_container" />
+        app:layout_constraintTop_toBottomOf="@id/tv_add_newTag" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

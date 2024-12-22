@@ -7,10 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hanto.hook.data.TagSelectionListener
 import com.hanto.hook.databinding.FragmentTagListBinding
 import com.hanto.hook.ui.adapter.TagListAdapter
+import com.hanto.hook.viewmodel.HookViewModel
 
 class TagListFragment : DialogFragment() {
 
@@ -19,6 +23,8 @@ class TagListFragment : DialogFragment() {
     private val binding get() = _binding!!
     private lateinit var multiChoiceList: LinkedHashMap<String, Boolean>
     private lateinit var adapter: TagListAdapter
+
+    private val hookViewModel: HookViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,6 +47,23 @@ class TagListFragment : DialogFragment() {
         adapter = TagListAdapter(requireContext(), multiChoiceList)
         binding.lvTags.adapter = adapter
         binding.lvTags.layoutManager = LinearLayoutManager(requireContext())
+
+        val dividerItemDecoration = DividerItemDecoration(
+            requireContext(),
+            LinearLayoutManager.VERTICAL
+        )
+        binding.lvTags.addItemDecoration(dividerItemDecoration)
+
+        // ViewModel에서 태그 가져오기
+        hookViewModel.distinctTagNames.observe(viewLifecycleOwner, Observer { tagNames ->
+
+            tagNames.forEach { tagName ->
+                if (!multiChoiceList.containsKey(tagName)) {
+                    multiChoiceList[tagName] = false
+                }
+            }
+            adapter.notifyDataSetChanged()
+        })
 
         // btn_add_tag 클릭 리스너 설정
         binding.btnAddTag.setOnClickListener {

@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <string name="app_name">Hook</string>
 
     <string name="label_hook_kr">훅</string>
@@ -43,7 +43,7 @@
     <string name="delete">삭제하기</string>
     <string name="option">option</string>
     <string name="add_hook">훅 추가</string>
-    <!-- TODO: Remove or change this placeholder text -->
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="not_valid_url">유효한 URL 주소가 아닙니다. 다시 확인해주세요.</string>
     <string name="title">제목</string>
@@ -54,8 +54,13 @@
     <string name="tag">태그</string>
     <string name="sharp">#</string>
     <string name="add">추가하기</string>
-    <string name="input_title">제목을 입력해주세요</string>
+    <string name="input_title">제목을 입력해주세요.</string>
     <string name="not_allow_blank_in_first">제목의 첫 글자는 공백 문자가 허용되지 않습니다.</string>
-    <string name="input_sescription">설명을 입력해주세요</string>
+    <string name="input_sescription">설명을 입력해주세요.</string>
+    <string name="cancel">CANCEL</string>
+    <string name="ok">OK</string>
+    <string name="add_tag">태그 추가</string>
+    <string name="input_tag">태그를 입력해주세요.</string>
+    <string name="adding_tag">태그 추가하기</string>
 
 </resources>
