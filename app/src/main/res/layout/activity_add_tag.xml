@@ -8,7 +8,7 @@
 
 
     <View
-        android:id="@+id/view_change_tag"
+        android:id="@+id/view_add_tag"
         android:layout_width="375dp"
         android:layout_height="221dp"
         android:layout_gravity="center"
@@ -27,8 +27,8 @@
         android:text=" 태그 추가"
         android:textSize="16dp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@id/view_change_tag"
-        app:layout_constraintTop_toTopOf="@id/view_change_tag" />
+        app:layout_constraintStart_toStartOf="@id/view_add_tag"
+        app:layout_constraintTop_toTopOf="@id/view_add_tag" />
 
     <View
         android:id="@+id/container_tag_name"
@@ -38,14 +38,14 @@
         android:background="@drawable/textview_detail_border"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        app:layout_constraintBottom_toTopOf="@id/btn_change_tag_name"
-        app:layout_constraintEnd_toEndOf="@id/view_change_tag"
-        app:layout_constraintStart_toStartOf="@id/view_change_tag"
+        app:layout_constraintBottom_toTopOf="@id/btn_add_tag_name"
+        app:layout_constraintEnd_toEndOf="@id/view_add_tag"
+        app:layout_constraintStart_toStartOf="@id/view_add_tag"
         app:layout_constraintTop_toBottomOf="@id/tv_link_info" />
 
 
     <EditText
-        android:id="@+id/tv_change_tag_name"
+        android:id="@+id/tv_add_tag_name"
         android:layout_width="280dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -60,7 +60,7 @@
         app:layout_constraintTop_toTopOf="@id/container_tag_name" />
 
     <Button
-        android:id="@+id/btn_change_tag_name"
+        android:id="@+id/btn_add_tag_name"
         android:layout_width="327dp"
         android:layout_height="52dp"
         android:layout_marginTop="16dp"

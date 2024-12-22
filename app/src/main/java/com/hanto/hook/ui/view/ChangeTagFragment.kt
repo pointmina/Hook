@@ -1,31 +1,33 @@
 package com.hanto.hook.ui.view
 
+import HookRepository
 import android.os.Bundle
 import android.text.Editable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
+import com.hanto.hook.data.TagUpdateListener
+import com.hanto.hook.database.AppDatabase
+import com.hanto.hook.database.DatabaseModule
 import com.hanto.hook.databinding.FragmentChangeTagBinding
-import com.hanto.hook.viewmodel.HookViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
-class ChangeTagFragment(private val onTagUpdated: (String) -> Unit) : DialogFragment() {
+class ChangeTagFragment : DialogFragment() {
 
-    val TAG = "ChangeTagFragment"
+    private val TAG = "ChangeTagFragment"
 
     private var _binding: FragmentChangeTagBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: HookViewModel
-
-    private var selectedTagId: Int = -1
-
+    private var tagUpdateListener: TagUpdateListener? = null
+    private lateinit var hookRepository: HookRepository
+    private lateinit var appDatabase: AppDatabase
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,47 +39,49 @@ class ChangeTagFragment(private val onTagUpdated: (String) -> Unit) : DialogFrag
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Log.d(TAG,"onViewCreated")
         super.onViewCreated(view, savedInstanceState)
 
+        appDatabase = DatabaseModule.getDatabase()
+        hookRepository = HookRepository(appDatabase)
 
-        val selectedTag = arguments?.getString("selectedTag")
-        selectedTagId = arguments?.getInt("selectedTagId", -1) ?: -1
+        val selectedTagName = arguments?.getString("selectedTag")
 
         binding.tvChangeTagName.text =
-            selectedTag?.let { Editable.Factory.getInstance().newEditable(it) }
-
+            selectedTagName?.let { Editable.Factory.getInstance().newEditable(it) }
 
         binding.btnChangeTagName.setOnClickListener {
             val newTagName = binding.tvChangeTagName.text.toString()
-            if (newTagName.isNotEmpty() && selectedTagId != -1) {
-                updateTagName(selectedTagId, newTagName)
+            if (newTagName.isNotEmpty() && selectedTagName != null) {
+                updateTagName(selectedTagName, newTagName)
             } else {
                 Toast.makeText(requireContext(), "태그 이름을 입력하세요.", Toast.LENGTH_SHORT).show()
             }
         }
+    }
 
-        val changeTagName = binding.tvChangeTagName
-        changeTagName.setOnClickListener {
-            showKeyboardAndFocus(changeTagName)
+    private fun updateTagName(oldTagName: String, newTagName: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                hookRepository.updateTagName(oldTagName, newTagName)
+                withContext(Dispatchers.Main) {
+                    tagUpdateListener?.onTagUpdated(newTagName)
+                    dismiss()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "태그 이름 수정에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
+    fun setTagUpdateListener(listener: TagUpdateListener) {
+        tagUpdateListener = listener
+    }
 
     override fun onDestroyView() {
-        Log.d(TAG,"onDestroyView")
         super.onDestroyView()
         _binding = null
     }
-
-    private fun showKeyboardAndFocus(editText: EditText) {
-        editText.requestFocus()
-        val imm =
-            activity?.getSystemService(AppCompatActivity.INPUT_METHOD_SERVICE) as InputMethodManager?
-        imm?.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
-    }
-
-    private fun updateTagName(tagId: Int, newTagName: String) {
-
-    }
 }
+

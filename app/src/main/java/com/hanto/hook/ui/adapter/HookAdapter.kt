@@ -51,13 +51,17 @@ class HookAdapter(
             }
 
             hookViewModel.getTagsForHook(hook.hookId)?.observe(lifecycleOwner, Observer { tags ->
-                val sortedTags = tags.sortedBy { it.name }
+                // 중복 제거 및 정렬
+                val distinctSortedTags = tags
+                    .distinctBy { it.name }
+                    .sortedBy { it.name }
 
-                val tagAdapter = TagHomeAdapter(sortedTags)
+                val tagAdapter = TagHomeAdapter(distinctSortedTags)
                 tagRecyclerView.layoutManager =
                     LinearLayoutManager(binding.root.context, LinearLayoutManager.HORIZONTAL, false)
                 tagRecyclerView.adapter = tagAdapter
             })
+
         }
     }
 

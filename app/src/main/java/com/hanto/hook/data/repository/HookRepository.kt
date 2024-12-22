@@ -4,7 +4,6 @@ import com.hanto.hook.data.model.Tag
 import com.hanto.hook.database.AppDatabase
 
 class HookRepository(private val appDatabase: AppDatabase) {
-
     companion object {
         @Volatile
         private var instance: HookRepository? = null
@@ -63,8 +62,10 @@ class HookRepository(private val appDatabase: AppDatabase) {
         }
     }
 
+    fun updateTagName(oldTagName: String, newTagName: String) {
+        appDatabase.hookDao().updateTagName(oldTagName, newTagName)
+    }
 
-    // 데이터 조회 메서드 (LiveData 반환)
     fun getAllHooks(): LiveData<List<Hook>> {
         return appDatabase.hookDao().getAllHooks()
     }
@@ -77,7 +78,8 @@ class HookRepository(private val appDatabase: AppDatabase) {
         return appDatabase.hookDao().getAllTagNames()
     }
 
-    fun getHookByTagName(tagName: String): LiveData<List<Hook>?> {
+    fun getHooksByTagName(tagName: String): LiveData<List<Hook>?> {
         return appDatabase.hookDao().getHooksByTagName(tagName)
     }
+
 }

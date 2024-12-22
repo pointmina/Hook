@@ -3,6 +3,7 @@ package com.hanto.hook.viewmodel
 import HookRepository
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
@@ -20,13 +21,16 @@ class HookViewModel : ViewModel() {
 
     // LiveData 필드
     val liveDataHook: LiveData<List<Hook>> = hookRepository.getAllHooks()
+
     private var liveDataTagName: LiveData<List<String>> = hookRepository.getAllTagNames()
 
     var distinctTagNames: LiveData<List<String>> = liveDataTagName.map { tagNames ->
         tagNames.distinct()
     }
 
-    val liveDataHookByTagName: LiveData<List<Hook>>? = null
+    private val _selectedTagName = MutableLiveData<String>()
+    val selectedTagName: LiveData<String> get() = _selectedTagName
+
 
     // 데이터 삽입 메서드
     fun insertHook(hook: Hook) {
@@ -47,10 +51,6 @@ class HookViewModel : ViewModel() {
         hookRepository.deleteTagByHookId(hookId)
     }
 
-//
-//    fun deleteHookAndTags(hookId: String) {
-//        hookRepository.deleteHookAndTags(hookId)
-//    }
 
     fun deleteHookAndTags(hookId: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -74,6 +74,28 @@ class HookViewModel : ViewModel() {
         }
     }
 
+    fun updateTagName(oldTagName: String, newTagName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                hookRepository.updateTagName(oldTagName, newTagName)
+
+            } catch (e: Exception) {
+                Log.e("HookViewModel", "Error updating tag name", e)
+            }
+        }
+    }
+
+    private val hooksLiveDataCache = MutableLiveData<String>()
+
+    fun getHooksByTagName(tagName: String): LiveData<List<Hook>?> {
+        if (hooksLiveDataCache.value == tagName) {
+            return hookRepository.getHooksByTagName(tagName)
+        }
+
+        hooksLiveDataCache.value = tagName
+        return hookRepository.getHooksByTagName(tagName)
+    }
+
 
     // 데이터 조회 메서드
     fun getAllHooks(): LiveData<List<Hook>> {
@@ -88,7 +110,4 @@ class HookViewModel : ViewModel() {
         return hookRepository.getAllTagNames()
     }
 
-    fun getHooksByTagName(tagName: String): LiveData<List<Hook>?> {
-        return hookRepository.getHookByTagName(tagName)
-    }
 }

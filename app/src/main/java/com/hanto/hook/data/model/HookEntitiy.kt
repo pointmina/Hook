@@ -12,7 +12,7 @@ import kotlinx.android.parcel.Parcelize
 @Entity(tableName = "Hook")
 data class Hook(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val hookId : String,
+    val hookId: String,
     var title: String,
     var url: String?,
     var description: String?

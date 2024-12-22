@@ -85,7 +85,7 @@ class HookDetailActivity : BaseActivity(), TagSelectionListener {
                             }.onSuccess {
                                 finish()
                             }.onFailure { e ->
-                                Log.e("HookDetailActivity", "Error updating hook", e)
+                                Log.e(TAG, "Error updating hook", e)
                                 Toast.makeText(
                                     this@HookDetailActivity,
                                     "업데이트 실패. 다시 시도해주세요.",
@@ -122,7 +122,6 @@ class HookDetailActivity : BaseActivity(), TagSelectionListener {
                 tagsForHook = fetchedTags
                 binding.tvTag.text = fetchedTags.toTagString()
 
-                // Set으로 중복 없이 tagNames 관리
                 tagNames = fetchedTags.map { it.name }.toSet()
 
                 fetchedTags.forEach { tag ->
@@ -133,8 +132,10 @@ class HookDetailActivity : BaseActivity(), TagSelectionListener {
     }
 
     private fun List<Tag>.toTagString(): String {
-        return joinToString(separator = " ") { tag -> "#${tag.name}" }
+        return distinctBy { it.name }
+            .joinToString(separator = " ") { tag -> "#${tag.name}" }
     }
+
 
     private fun updateButtonState() {
         val isValid = isUrlValid && isTitleValid
@@ -157,7 +158,7 @@ class HookDetailActivity : BaseActivity(), TagSelectionListener {
 
     private fun updateTagsInView() {
         val selectedTags = multiChoiceList.filterValues { it }.keys
-        tagNames = selectedTags.toSet()  // Set으로 tagNames 업데이트
+        tagNames = selectedTags.toSet()
         binding.tvTag.text = selectedTags.toSortedSet().joinToString("  ") { "#$it" }
     }
 

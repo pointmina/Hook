@@ -1,9 +1,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.view.ChangeTagFragment">
+    android:layout_height="match_parent">
 
 
     <View
@@ -44,7 +42,7 @@
 
 
     <TextView
-        android:id="@+id/tv_change_tag_name"
+        android:id="@+id/tv_delete_tag_name"
         android:layout_width="280dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"

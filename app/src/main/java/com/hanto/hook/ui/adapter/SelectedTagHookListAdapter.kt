@@ -1,5 +1,6 @@
 package com.hanto.hook.ui.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +20,7 @@ class SelectedTagHookListAdapter(
     }
 
     fun submitList(newHooks: List<Hook>) {
+        Log.d("SelectedTagHookListAdapter", "submitList called with size: ${newHooks.size}")
         val diffCallback = HookDiffCallback(hooks, newHooks)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         hooks = newHooks

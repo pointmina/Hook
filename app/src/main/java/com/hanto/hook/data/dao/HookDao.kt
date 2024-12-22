@@ -73,6 +73,16 @@ interface HookDao {
     fun updateTag(tag: Tag)
 
 
+    @Query(
+        """
+        UPDATE Tag 
+        SET name = :newTagName 
+        WHERE name = :oldTagName
+    """
+    )
+    fun updateTagName(oldTagName: String, newTagName: String)
+
+
     // ---------------------- 조회 ---------------------- //
 
     /**
@@ -96,7 +106,6 @@ interface HookDao {
     fun getTagsForHook(hookId: String): LiveData<List<Tag>>?
 
 
-
     /**
      * 데이터베이스의 모든 태그 이름을 조회합니다.
      * @return 태그 이름 리스트
@@ -110,12 +119,15 @@ interface HookDao {
     @Query("SELECT * FROM Hook WHERE hookId = :hookId")
     fun getHookByTag(hookId: String): LiveData<List<Hook>?>
 
-    @Query("""
-    SELECT * FROM Hook 
-    WHERE hookId IN (
-        SELECT hookId FROM Tag WHERE name = :tagName
+    @Query(
+        """
+        SELECT Hook.* 
+        FROM Hook 
+        INNER JOIN Tag ON Hook.hookId = Tag.hookId 
+        WHERE Tag.name = :tagName
+    """
     )
-""")
     fun getHooksByTagName(tagName: String): LiveData<List<Hook>?>
+
 
 }

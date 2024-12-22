@@ -35,19 +35,18 @@ class TagFragment : Fragment() {
 
     private val hookViewModel: HookViewModel by viewModels()
 
-
     private val dialog by lazy {
         Dialog(requireContext()).apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             setContentView(R.layout.activity_add_tag)
 
-            val tvChangeTagName = findViewById<EditText>(R.id.tv_change_tag_name)
-            val btnChangeTagName = findViewById<Button>(R.id.btn_change_tag_name)
+            val tvAddTagName = findViewById<EditText>(R.id.tv_add_tag_name)
+            val btnAddTagName = findViewById<Button>(R.id.btn_add_tag_name)
 
-            btnChangeTagName.setOnClickListener {
-                val name = tvChangeTagName.text.toString()
+            btnAddTagName.setOnClickListener {
+                val name = tvAddTagName.text.toString()
                 if (name.isNotEmpty()) {
-                    clearEditText(tvChangeTagName)
+                    clearEditText(tvAddTagName)
                     this.dismiss()
                 } else {
                     Toast.makeText(requireContext(), "태그 이름을 입력하세요.", Toast.LENGTH_SHORT).show()
@@ -101,15 +100,12 @@ class TagFragment : Fragment() {
         binding.rvTagViewTagContainer.adapter = tagAdapter
 
         hookViewModel.distinctTagNames.observe(viewLifecycleOwner) { tagNames ->
-            tagAdapter.submitList(tagNames) // 어댑터에 태그 데이터 전달
+            Log.d("SelectedTagActivity","distinctTagNames $tagNames")
+            tagAdapter.submitList(tagNames)
         }
 
     }
 
-
-    private fun clearEditText(editText: EditText) {
-        editText.text.clear()
-    }
 
     override fun onResume() {
         Log.d(TAG, "onResume")
@@ -122,5 +118,8 @@ class TagFragment : Fragment() {
         _binding = null
     }
 
+    private fun clearEditText(editText: EditText) {
+        editText.text.clear()
+    }
 
 }
