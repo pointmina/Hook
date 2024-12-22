@@ -1,1 +1,5 @@
+# Keystore file
+/app/release.keystore
+
+# Build directory
 /build

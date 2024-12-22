@@ -1,5 +1,3 @@
-@file:Suppress("UNUSED_EXPRESSION")
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -21,12 +19,43 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildTypes {
+    signingConfigs {
+        create("release") {
+            storeFile = file("C:/Users/user/StudioProjects/hook/app/release.keystore")
+            storePassword = "rlaalsdk12!"
+            keyAlias = "release_key"
+            keyPassword = "rlaalsdk12!"
+        }
     }
+
+    buildTypes {
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("release")
+
+            isMinifyEnabled = true
+            isShrinkResources = true
+
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+
+            buildConfigField("Boolean", "DEBUG_MODE", "false")
+        }
+
+        getByName("debug") {
+            isMinifyEnabled = false
+            isShrinkResources = false
+
+            buildConfigField("Boolean", "DEBUG_MODE", "true")
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
@@ -34,10 +63,7 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
-        dataBinding = true
     }
-
-
 }
 
 dependencies {
@@ -77,7 +103,7 @@ dependencies {
 
     // 저장소 관련 (토큰)
     // DataStore
-    implementation ("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("androidx.datastore:datastore-preferences-core-jvm:1.1.1")
     implementation("androidx.datastore:datastore-core-android:1.1.1")
 
@@ -96,9 +122,9 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
     // jsoup
-    implementation ("org.jsoup:jsoup:1.13.1")
+    implementation("org.jsoup:jsoup:1.13.1")
     // glide (이미지 로드)
-    implementation ("com.github.bumptech.glide:glide:4.12.0")
+    implementation("com.github.bumptech.glide:glide:4.12.0")
 
 
     // 생명주기, MVVM 관련
