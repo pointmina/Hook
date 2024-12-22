@@ -10,7 +10,7 @@
 
 
     <TextView
-        android:id="@+id/tv_bookmark"
+        android:id="@+id/txt_save_hook"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
@@ -23,19 +23,19 @@
 
 
     <EditText
-        android:inputType="text"
         android:id="@+id/editTextTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:background="@drawable/textview_detail_border"
         android:hint="Title 입력"
+        android:inputType="text"
         android:padding="15dp"
         android:textSize="16dp"
         android:theme="@style/MyCheckBox"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_bookmark" />
+        app:layout_constraintTop_toBottomOf="@id/txt_save_hook" />
 
     <TextView
         android:id="@+id/editTextUrl"
@@ -66,29 +66,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/editTextUrl" />
 
-    <CheckBox
-        android:id="@+id/checkboxExpand"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:background="@color/white"
-        android:padding="8dp"
-        android:text="직접 태그 선택하기"
-        android:theme="@style/MyCheckBox"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/checkBoxAutoTag" />
-
-    <CheckBox
-        android:id="@+id/checkBoxAutoTag"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="@color/white"
-        android:padding="8dp"
-        android:text="자동 태그 생성"
-        android:theme="@style/MyCheckBox"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextDescription" />
 
     <TextView
         android:id="@+id/tv_tag"
@@ -98,11 +75,9 @@
         android:background="@drawable/textview_detail_border"
         android:hint="#"
         android:padding="15dp"
-        android:theme="@style/MyCheckBox"
-        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/checkboxExpand" />
+        app:layout_constraintTop_toBottomOf="@id/editTextDescription" />
 
 
     <TextView

@@ -12,42 +12,48 @@ import com.hanto.hook.databinding.ActivityWebviewBinding
 
 class WebViewActivity : BaseActivity() {
 
-    val TAG = "WebViewActivity"
+    companion object {
+        const val TAG = "WebViewActivity"
+        const val EXTRA_URL = "HOOK_URL"
+    }
+
+    private lateinit var binding: ActivityWebviewBinding
     private lateinit var webView: WebView
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d(TAG,"onCreate")
         super.onCreate(savedInstanceState)
+        Log.d(TAG, "onCreate")
 
-        val binding = ActivityWebviewBinding.inflate(layoutInflater)
+        binding = ActivityWebviewBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         webView = binding.mainWebView
 
-        val url = intent.getStringExtra(EXTRA_URL) ?: run {
+        val url = intent.getStringExtra(EXTRA_URL)
+        if (url.isNullOrBlank()) {
             Toast.makeText(this, "URL을 전달하지 않았습니다.", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
 
-        // WebView 설정
         setupWebView(url)
     }
 
     override fun onPause() {
-        Log.d(TAG,"onPause")
         super.onPause()
+        Log.d(TAG, "onPause")
         webView.onPause()
     }
 
     override fun onResume() {
-        Log.d(TAG,"onResume")
         super.onResume()
+        Log.d(TAG, "onResume")
         webView.onResume()
     }
 
     override fun onDestroy() {
-        Log.d(TAG,"onDestroy")
+        Log.d(TAG, "onDestroy")
+        webView.destroy()
         super.onDestroy()
     }
 
@@ -63,12 +69,16 @@ class WebViewActivity : BaseActivity() {
                     description: String?,
                     failingUrl: String?
                 ) {
-                    super.onReceivedError(view, errorCode, description, failingUrl)
                     Toast.makeText(
-                        applicationContext,
+                        this@WebViewActivity,
                         "웹 페이지 로딩 실패: $description",
                         Toast.LENGTH_SHORT
                     ).show()
+                }
+
+                override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+                    Log.d(TAG, "Navigating to URL: $url")
+                    return false
                 }
             }
 
@@ -77,18 +87,19 @@ class WebViewActivity : BaseActivity() {
                 setSupportZoom(true)
                 builtInZoomControls = true
                 displayZoomControls = false
+                domStorageEnabled = true
+                useWideViewPort = true
+                loadWithOverviewMode = true
+                mixedContentMode = android.webkit.WebSettings.MIXED_CONTENT_NEVER_ALLOW
             }
 
-            webView.addJavascriptInterface(object : Any() {
+            addJavascriptInterface(object : Any() {
                 @JavascriptInterface
                 fun someFunctionFromJavaScript(data: String) {
+                    Log.d(TAG, "Received data from JavaScript: $data")
                 }
             }, "Android")
         }
-    }
-
-    companion object {
-        const val EXTRA_URL = "HOOK_URL"
     }
 
     override fun onBackPressed() {
