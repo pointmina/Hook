@@ -1,4 +1,6 @@
-
+에러
++ 설명 추가 반영 안됨
++ 태그 스트롤 앙댐.
 
 <p align="center">
   <img src="app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" width="150" height="150">
