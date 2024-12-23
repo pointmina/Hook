@@ -1,5 +1,5 @@
 에러
-+ 설명 추가 반영 안됨
++ 설명 추가 반영 안됨(HookAdapter.kt GONE처리 된거 수정)
 + 태그 스트롤 앙댐.
 
 <p align="center">
