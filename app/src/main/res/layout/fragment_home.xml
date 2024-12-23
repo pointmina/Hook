@@ -14,27 +14,55 @@
         <include
             android:id="@+id/appbar_home"
             layout="@layout/appbar_home"
-            app:layout_constraintBottom_toTopOf="@id/tv_recent_hooks"
+            app:layout_constraintBottom_toTopOf="@id/layout_search"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Recent Hooks 텍스트뷰 -->
-        <TextView
-            android:id="@+id/tv_recent_hooks"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_search"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginStart="24dp"
-            android:fontFamily="@font/notosans_m"
-            android:paddingTop="10dp"
-            android:paddingBottom="5dp"
-            android:text="@string/label_recent_tag"
-            android:textColor="@color/gray_300"
-            android:textSize="14sp"
+            android:layout_height="60dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="10dp"
             app:layout_constraintBottom_toTopOf="@id/rv_home"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/appbar_home" />
+            app:layout_constraintTop_toBottomOf="@id/appbar_home">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <!-- Recent Hooks 텍스트뷰 -->
+                <TextView
+                    android:id="@+id/tv_recent_hooks"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/notosans_m"
+                    android:gravity="center|start"
+                    android:text="@string/label_recent_tag"
+                    android:textColor="@color/gray_300"
+                    android:textSize="14sp" />
+
+                <SearchView
+                    android:id="@+id/sv_search"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="5dp"
+                    android:theme="@style/CustomSearchViewStyle"
+                    android:iconifiedByDefault="true" />
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <!-- RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
@@ -45,7 +73,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_recent_hooks"
+            app:layout_constraintTop_toBottomOf="@id/layout_search"
             tools:listitem="@layout/item_hook" />
 
         <!-- ShimmerFrameLayout -->

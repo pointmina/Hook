@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebView
+import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -53,6 +53,32 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
         binding.rvHome.adapter = adapter
         binding.rvHome.layoutManager = LinearLayoutManager(requireContext())
 
+        val tvRecentHooks = binding.tvRecentHooks
+        val svSearch = binding.svSearch
+
+        // SearchView의 버튼 클릭 리스너 설정
+        svSearch.setOnSearchClickListener {
+            // TextView를 GONE 처리
+            tvRecentHooks.visibility = View.GONE
+
+            // SearchView를 부모 폭만큼 확장
+            val params = svSearch.layoutParams
+            params.width = LinearLayout.LayoutParams.MATCH_PARENT
+            svSearch.layoutParams = params
+        }
+
+        // SearchView 닫기 버튼 리스너 설정
+        svSearch.setOnCloseListener {
+            // TextView 다시 보이기
+            tvRecentHooks.visibility = View.VISIBLE
+
+            // SearchView 크기 축소
+            val params = svSearch.layoutParams
+            params.width = 50.dpToPx()
+            svSearch.layoutParams = params
+            false
+        }
+
         // 리사이클러뷰에 구분선 추가
         val dividerItemDecoration =
             DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
@@ -76,7 +102,7 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
                 if (isNewDataAdded) {
                     binding.rvHome.scrollToPosition(0)
                 } else {
-                    layoutManager.scrollToPositionWithOffset(currentPosition,offset)
+                    layoutManager.scrollToPositionWithOffset(currentPosition, offset)
                 }
             }
         }
@@ -104,5 +130,10 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
     override fun onOptionButtonClick(position: Int) {
         val selectedHook = adapter.getItem(position)
         BottomDialogHelper.showHookOptionsDialog(requireContext(), selectedHook, hookViewModel)
+    }
+
+    private fun Int.dpToPx(): Int {
+        val density = resources.displayMetrics.density
+        return (this * density).toInt()
     }
 }
