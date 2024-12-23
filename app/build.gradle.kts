@@ -1,7 +1,6 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("androidx.navigation.safeargs.kotlin")
     id("kotlin-parcelize")
     id("com.google.devtools.ksp")
 }
@@ -19,37 +18,26 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    signingConfigs {
-        create("release") {
-            storeFile = file(properties["RELEASE_STORE_FILE"] ?: "")
-            storePassword = (properties["RELEASE_STORE_PASSWORD"] ?: "").toString()
-            keyAlias = (properties["RELEASE_KEY_ALIAS"] ?: "").toString()
-            keyPassword = (properties["RELEASE_KEY_PASSWORD"] ?: "").toString()
-        }
-    }
 
     buildTypes {
-        getByName("release") {
-            signingConfig = signingConfigs.getByName("release")
-
-            isMinifyEnabled = true
-            isShrinkResources = true
-
+        release {
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-
-            buildConfigField("Boolean", "DEBUG_MODE", "false")
+                "proguard-rules.pro")
+            buildConfigField("String", "storeFile", "\"C:/Users/user/StudioProjects/hook/app/release.keystore\"")
+            buildConfigField("String", "storePassword", "\"rlaalsdk12!\"")
+            buildConfigField("String", "keyAlias", "\"release_key\"")
+            buildConfigField("String", "keyPassword", "\"rlaalsdk12\"")
         }
-
-        getByName("debug") {
-            isMinifyEnabled = false
-            isShrinkResources = false
-
-            buildConfigField("Boolean", "DEBUG_MODE", "true")
+        debug {
+            buildConfigField("String", "storeFile", "\"C:/Users/user/StudioProjects/hook/app/release.keystore\"")
+            buildConfigField("String", "storePassword", "\"rlaalsdk12!\"")
+            buildConfigField("String", "keyAlias", "\"release_key\"")
+            buildConfigField("String", "keyPassword", "\"rlaalsdk12\"")
         }
     }
+
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
