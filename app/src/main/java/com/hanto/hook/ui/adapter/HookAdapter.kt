@@ -37,6 +37,7 @@ class HookAdapter(
             binding.tvTitle.text = hook.title
             binding.tvUrlLink.text = hook.url
             if (!hook.description.isNullOrBlank()) {
+                binding.tvTagDescription.visibility = View.VISIBLE
                 binding.tvTagDescription.text = hook.description
             } else {
                 binding.tvTagDescription.visibility = View.GONE
@@ -69,11 +70,12 @@ class HookAdapter(
         }
     }
 
-    fun updateHooks(newHooks: List<Hook>) {
+    fun updateHooks(newHooks: List<Hook>,onComplete: (() -> Unit)? = null) {
         val diffCallback = HookDiffCallback(hooks, newHooks)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         hooks = newHooks
         diffResult.dispatchUpdatesTo(this)
+        onComplete?.invoke()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

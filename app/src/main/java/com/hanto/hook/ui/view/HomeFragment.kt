@@ -24,8 +24,6 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
     private val hookViewModel: HookViewModel by viewModels()
     private lateinit var adapter: HookAdapter
 
-    private lateinit var webView: WebView
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -62,11 +60,24 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
 
         // liveDataHook을 관찰하여 데이터가 변경되면 어댑터에 업데이트
         hookViewModel.liveDataHook.observe(viewLifecycleOwner) { hooks: List<Hook> ->
-            val sortedHooks = hooks.sortedByDescending { it.id }
-            adapter.updateHooks(sortedHooks)
+            val layoutManager = binding.rvHome.layoutManager as LinearLayoutManager
+            val currentPosition = layoutManager.findFirstVisibleItemPosition()
+            val offset = layoutManager.findViewByPosition(currentPosition)?.top ?: 0
 
-            if (hooks.isNotEmpty()) {
-                binding.rvHome.scrollToPosition(0)
+
+            val isNewDataAdded = hooks.size > adapter.itemCount
+
+            val sortedHooks = hooks.sortedByDescending { it.id }
+            adapter.updateHooks(sortedHooks) {
+                val shimmerContainer = binding.sfLoading
+                shimmerContainer.stopShimmer()
+                shimmerContainer.visibility = View.GONE
+
+                if (isNewDataAdded) {
+                    binding.rvHome.scrollToPosition(0)
+                } else {
+                    layoutManager.scrollToPositionWithOffset(currentPosition,offset)
+                }
             }
         }
 
