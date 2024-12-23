@@ -1,8 +1,9 @@
 에러
 + 설명 추가 반영 안됨(HookAdapter.kt GONE처리 된거 수정)
 + 태그 스트롤 앙댐.
-수정하고 나면 첫번째포지션으로 이동함
-검색기능 추가
+
++수정하고 나면 첫번째포지션으로 이동함
++ 검색기능 추가
 
 <p align="center">
   <img src="app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" width="150" height="150">
