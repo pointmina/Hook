@@ -23,7 +23,7 @@
             android:id="@+id/layout_search"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:paddingStart="20dp"
+            android:paddingStart="10dp"
             android:paddingEnd="10dp"
             app:layout_constraintBottom_toTopOf="@id/rv_home"
             app:layout_constraintEnd_toEndOf="parent"
@@ -45,6 +45,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:layout_marginStart="10dp"
                     android:fontFamily="@font/notosans_m"
                     android:gravity="center|start"
                     android:text="@string/label_recent_tag"
@@ -53,8 +54,8 @@
 
                 <SearchView
                     android:id="@+id/sv_search"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:theme="@style/CustomSearchViewStyle"
                     android:iconifiedByDefault="true" />

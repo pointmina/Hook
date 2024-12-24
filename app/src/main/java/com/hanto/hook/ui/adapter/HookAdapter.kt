@@ -22,6 +22,9 @@ class HookAdapter(
     private val onItemClick: (Hook) -> Unit,
 ) : RecyclerView.Adapter<HookAdapter.ViewHolder>() {
 
+    private var filteredHooks: List<Hook> = hooks
+
+
     interface OnItemClickListener {
         fun onClick(hook: Hook)  // Hook 객체를 직접 넘김
         fun onOptionButtonClick(position: Int)  // position 유지
@@ -70,12 +73,26 @@ class HookAdapter(
         }
     }
 
-    fun updateHooks(newHooks: List<Hook>,onComplete: (() -> Unit)? = null) {
-        val diffCallback = HookDiffCallback(hooks, newHooks)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
+    fun updateHooks(newHooks: List<Hook>, onComplete: (() -> Unit)? = null) {
         hooks = newHooks
-        diffResult.dispatchUpdatesTo(this)
+        filter("") // 필터링 초기화
         onComplete?.invoke()
+    }
+
+    fun getItem(position: Int): Hook {
+        return filteredHooks[position]
+    }
+
+    fun filter(query: String) {
+        filteredHooks = if (query.isBlank()) {
+            hooks
+        } else {
+            hooks.filter { hook ->
+                hook.title.contains(query, ignoreCase = true) ||
+                        (hook.description?.contains(query, ignoreCase = true) ?: false)
+            }
+        }
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -83,16 +100,21 @@ class HookAdapter(
         return ViewHolder(binding)
     }
 
+//    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+//        val hook = hooks[position]
+//        holder.bind(hook)
+//    }
+
+    override fun getItemCount(): Int {
+        return filteredHooks.size
+    }
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val hook = hooks[position]
+        val hook = filteredHooks[position]
         holder.bind(hook)
     }
 
-    override fun getItemCount(): Int {
-        return hooks.size
-    }
-
-    fun getItem(position: Int): Hook {
-        return hooks[position]
-    }
+//    fun getItem(position: Int): Hook {
+//        return hooks[position]
+//    }
 }

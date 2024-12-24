@@ -3,10 +3,12 @@ package com.hanto.hook.ui.view
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -18,11 +20,15 @@ import com.hanto.hook.util.BottomDialogHelper
 import com.hanto.hook.viewmodel.HookViewModel
 
 class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
+
+    private val TAG = "HomeFragment"
+
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
     private val hookViewModel: HookViewModel by viewModels()
     private lateinit var adapter: HookAdapter
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,6 +41,7 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Log.d(TAG, "onViewCreated()")
         super.onViewCreated(view, savedInstanceState)
 
         adapter = HookAdapter(
@@ -54,30 +61,48 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
         binding.rvHome.layoutManager = LinearLayoutManager(requireContext())
 
         val tvRecentHooks = binding.tvRecentHooks
-        val svSearch = binding.svSearch
 
         // SearchView의 버튼 클릭 리스너 설정
-        svSearch.setOnSearchClickListener {
+        binding.svSearch.setOnSearchClickListener {
             // TextView를 GONE 처리
             tvRecentHooks.visibility = View.GONE
 
             // SearchView를 부모 폭만큼 확장
-            val params = svSearch.layoutParams
+            val params = binding.svSearch.layoutParams
             params.width = LinearLayout.LayoutParams.MATCH_PARENT
-            svSearch.layoutParams = params
+            binding.svSearch.layoutParams = params
+
         }
 
-        // SearchView 닫기 버튼 리스너 설정
-        svSearch.setOnCloseListener {
+
+        binding.svSearch.setOnCloseListener {
             // TextView 다시 보이기
             tvRecentHooks.visibility = View.VISIBLE
 
-            // SearchView 크기 축소
-            val params = svSearch.layoutParams
+            val params = binding.svSearch.layoutParams
             params.width = 50.dpToPx()
-            svSearch.layoutParams = params
+            binding.svSearch.layoutParams = params
+
             false
         }
+
+
+        binding.svSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let {
+                    adapter.filter(it)
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                newText?.let {
+                    adapter.filter(it)
+                }
+                return true
+            }
+        })
+
 
         // 리사이클러뷰에 구분선 추가
         val dividerItemDecoration =
@@ -116,13 +141,40 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
     }
 
     override fun onResume() {
+        Log.d(TAG, "onResume()")
+
+        if (!binding.svSearch.isIconified) {
+            binding.svSearch.setQuery("", false)
+            binding.svSearch.isIconified = true
+            binding.svSearch.clearFocus()
+
+            val params = binding.svSearch.layoutParams
+            params.width = 50.dpToPx()
+            binding.svSearch.layoutParams = params
+        }
+
         super.onResume()
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
+        Log.d(TAG, "onDestroyView()")
+
         _binding = null
+
+        super.onDestroyView()
+
     }
+
+    override fun onDestroy() {
+        Log.d(TAG, "onDestroy()")
+        super.onDestroy()
+    }
+
+    private fun Int.dpToPx(): Int {
+        val density = resources.displayMetrics.density
+        return (this * density).toInt()
+    }
+
 
     override fun onClick(hook: Hook) {
     }
@@ -132,8 +184,4 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
         BottomDialogHelper.showHookOptionsDialog(requireContext(), selectedHook, hookViewModel)
     }
 
-    private fun Int.dpToPx(): Int {
-        val density = resources.displayMetrics.density
-        return (this * density).toInt()
-    }
 }
