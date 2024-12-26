@@ -15,19 +15,19 @@ import com.hanto.hook.databinding.ItemHookBinding
 import com.hanto.hook.viewmodel.HookViewModel
 
 class HookAdapter(
-    private var hooks: List<Hook>,
+    private var hooks: MutableList<Hook>,
     private val hookViewModel: HookViewModel,
     private val lifecycleOwner: LifecycleOwner,
     private val onItemClickListener: OnItemClickListener,
     private val onItemClick: (Hook) -> Unit,
 ) : RecyclerView.Adapter<HookAdapter.ViewHolder>() {
 
-    private var filteredHooks: List<Hook> = hooks
+    private var filteredHooks: MutableList<Hook> = hooks.toMutableList()
 
 
     interface OnItemClickListener {
-        fun onClick(hook: Hook)  // Hook 객체를 직접 넘김
-        fun onOptionButtonClick(position: Int)  // position 유지
+        fun onClick(hook: Hook)
+        fun onOptionButtonClick(position: Int)
     }
 
     inner class ViewHolder(private val binding: ItemHookBinding) :
@@ -73,37 +73,44 @@ class HookAdapter(
         }
     }
 
+    fun moveItem(fromPosition: Int, toPosition: Int) {
+        val movedItem = filteredHooks.removeAt(fromPosition)
+        filteredHooks.add(toPosition, movedItem)
+        notifyItemMoved(fromPosition, toPosition)
+    }
+
     fun updateHooks(newHooks: List<Hook>, onComplete: (() -> Unit)? = null) {
-        hooks = newHooks
-        filter("") // 필터링 초기화
+        val diffCallback = HookDiffCallback(hooks, newHooks)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+
+        hooks = newHooks.toMutableList()
+        filter("")
+        diffResult.dispatchUpdatesTo(this)
         onComplete?.invoke()
     }
+
 
     fun getItem(position: Int): Hook {
         return filteredHooks[position]
     }
 
-    fun filter(query: String) {
+    private fun filter(query: String) {
         filteredHooks = if (query.isBlank()) {
-            hooks
+            hooks.toMutableList()
         } else {
             hooks.filter { hook ->
                 hook.title.contains(query, ignoreCase = true) ||
                         (hook.description?.contains(query, ignoreCase = true) ?: false)
-            }
+            }.toMutableList()
         }
         notifyDataSetChanged()
     }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemHookBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
-
-//    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-//        val hook = hooks[position]
-//        holder.bind(hook)
-//    }
 
     override fun getItemCount(): Int {
         return filteredHooks.size
@@ -114,7 +121,4 @@ class HookAdapter(
         holder.bind(hook)
     }
 
-//    fun getItem(position: Int): Hook {
-//        return hooks[position]
-//    }
 }

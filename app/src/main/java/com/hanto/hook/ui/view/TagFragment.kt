@@ -16,11 +16,13 @@ import android.widget.ImageButton
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.hanto.hook.R
 import com.hanto.hook.databinding.FragmentTagBinding
+import com.hanto.hook.ui.adapter.DragManageAdapterCallback
 import com.hanto.hook.ui.adapter.TagAdapter
 import com.hanto.hook.viewmodel.HookViewModel
 
@@ -87,6 +89,8 @@ class TagFragment : Fragment() {
         }
         binding.rvTagViewTagContainer.layoutManager = flexboxLayoutManager
 
+
+
         tagAdapter = TagAdapter(object : TagAdapter.OnItemClickListener {
             override fun onClick(tagName: String) {
                 val intent = Intent(requireContext(), SelectedTagActivity::class.java).apply {
@@ -94,10 +98,18 @@ class TagFragment : Fragment() {
                 }
                 startActivity(intent)
             }
+        }).apply {
+            recyclerView = binding.rvTagViewTagContainer // RecyclerView 전달
+        }
 
-        })
+
 
         binding.rvTagViewTagContainer.adapter = tagAdapter
+
+
+        val itemTouchHelper = ItemTouchHelper(DragManageAdapterCallback(tagAdapter))
+        itemTouchHelper.attachToRecyclerView(binding.rvTagViewTagContainer)
+
 
         hookViewModel.distinctTagNames.observe(viewLifecycleOwner) { tagNames ->
             Log.d("SelectedTagActivity","distinctTagNames $tagNames")

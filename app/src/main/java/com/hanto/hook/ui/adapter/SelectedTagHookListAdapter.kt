@@ -79,24 +79,13 @@ class SelectedTagHookListAdapter(
                 icOption.setOnClickListener {
                     listener.onOptionButtonClick(adapterPosition)
                 }
+
+                btOption.setOnClickListener {
+                    listener.onOptionButtonClick(adapterPosition)
+                }
+
             }
         }
     }
 
-    // DiffUtil 콜백 클래스
-    class HookDiffCallback(
-        private val oldList: List<Hook>,
-        private val newList: List<Hook>
-    ) : DiffUtil.Callback() {
-        override fun getOldListSize() = oldList.size
-        override fun getNewListSize() = newList.size
-
-        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldList[oldItemPosition].id == newList[newItemPosition].id
-        }
-
-        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldList[oldItemPosition] == newList[newItemPosition]
-        }
-    }
 }

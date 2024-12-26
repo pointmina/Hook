@@ -12,7 +12,9 @@ import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.hanto.hook.data.model.Hook
 import com.hanto.hook.databinding.FragmentHomeBinding
 import com.hanto.hook.ui.adapter.HookAdapter
@@ -61,14 +63,31 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
         binding.rvHome.adapter = adapter
         binding.rvHome.layoutManager = LinearLayoutManager(requireContext())
 
+        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
+            ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0
+        ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                val fromPosition = viewHolder.bindingAdapterPosition
+                val toPosition = target.bindingAdapterPosition
+                adapter.moveItem(fromPosition, toPosition)
+                return true
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            }
+        })
+
+        itemTouchHelper.attachToRecyclerView(binding.rvHome)
+
         val tvRecentHooks = binding.tvRecentHooks
 
-        // SearchView의 버튼 클릭 리스너 설정
         binding.svSearch.setOnSearchClickListener {
-            // TextView를 GONE 처리
             tvRecentHooks.visibility = View.GONE
 
-            // SearchView를 부모 폭만큼 확장
             val params = binding.svSearch.layoutParams
             params.width = LinearLayout.LayoutParams.MATCH_PARENT
             binding.svSearch.layoutParams = params
@@ -87,23 +106,6 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
             false
         }
 
-
-//        binding.svSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//            override fun onQueryTextSubmit(query: String?): Boolean {
-//                query?.let {
-//                    adapter.filter(it)
-//                }
-//                return true
-//            }
-//
-//            override fun onQueryTextChange(newText: String?): Boolean {
-//                newText?.let {
-//                    adapter.filter(it)
-//                }
-//                return true
-//            }
-//        })
-
         binding.svSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let { filterHooks(it) }
@@ -117,8 +119,6 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
             }
         })
 
-
-        // 리사이클러뷰에 구분선 추가
         val dividerItemDecoration =
             DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
         binding.rvHome.addItemDecoration(dividerItemDecoration)
