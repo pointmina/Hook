@@ -70,6 +70,12 @@ class HookAdapter(
                 tagRecyclerView.adapter = tagAdapter
             })
 
+            // pinned 상태를 클릭하면 토글
+            binding.ivPinnedIcon.setOnClickListener {
+                val newPinnedState = !hook.isPinned
+                hookViewModel.setPinned(hook.hookId, newPinnedState)
+            }
+
         }
     }
 

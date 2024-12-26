@@ -12,6 +12,17 @@
     android:paddingEnd="15dp"
     android:paddingBottom="10dp">
 
+
+    <TextView
+        android:id="@+id/icon_is_pinned"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        app:layout_constraintBottom_toTopOf="@id/tv_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/ic_hook_black" />
+
+
     <!-- 점 세 개 버튼 -->
     <View
         android:id="@+id/bt_option"
@@ -20,7 +31,7 @@
         app:layout_constraintBottom_toBottomOf="@id/tv_tag_description"
         app:layout_constraintEnd_toEndOf="@id/ic_option"
         app:layout_constraintStart_toStartOf="@id/ic_option"
-        app:layout_constraintTop_toTopOf="@id/tv_title" />
+        app:layout_constraintTop_toBottomOf="@id/icon_is_pinned" />
 
     <ImageView
         android:id="@+id/ic_option"
@@ -31,16 +42,9 @@
         android:padding="7dp"
         android:src="@drawable/ic_dots_horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/icon_is_pinned"
+        />
 
-    <TextView
-        android:id="@+id/hookID"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bt_option"
-        tools:text="1223" />
 
     <TextView
         android:id="@+id/tv_title"
@@ -49,7 +53,7 @@
         android:ellipsize="end"
         android:maxLines="2"
         android:textColor="@color/black"
-        android:textSize="16dp"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/ic_option"
         app:layout_constraintStart_toStartOf="parent"

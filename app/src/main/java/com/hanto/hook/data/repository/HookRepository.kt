@@ -85,4 +85,8 @@ class HookRepository(private val appDatabase: AppDatabase) {
         return appDatabase.hookDao().getHooksByTagName(tagName)
     }
 
+    fun setPinned(hookId: String, isPinned: Boolean) {
+        appDatabase.hookDao().updatePinStatus(hookId, isPinned)
+    }
+
 }

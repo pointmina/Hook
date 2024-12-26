@@ -15,7 +15,8 @@ data class Hook(
     val hookId: String,
     var title: String,
     var url: String?,
-    var description: String?
+    var description: String?,
+    var isPinned: Boolean = false
 ) : Parcelable
 
 

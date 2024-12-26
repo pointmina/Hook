@@ -110,4 +110,10 @@ class HookViewModel : ViewModel() {
         return hookRepository.getAllTagNames()
     }
 
+    fun setPinned(hookId: String, isPinned: Boolean) {
+        viewModelScope.launch {
+            hookRepository.setPinned(hookId, isPinned)
+        }
+    }
+
 }

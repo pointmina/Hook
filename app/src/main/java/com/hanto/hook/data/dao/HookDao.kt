@@ -90,6 +90,9 @@ interface HookDao {
     )
     fun updateTagName(oldTagName: String, newTagName: String)
 
+    @Query("UPDATE Hook SET isPinned = :isPinned WHERE id = :hookId")
+    fun updatePinStatus(hookId: String, isPinned: Boolean)
+
 
     // ---------------------- 조회 ---------------------- //
 
@@ -97,7 +100,7 @@ interface HookDao {
      * 데이터베이스의 모든 훅을 조회합니다.
      * @return 훅 리스트
      */
-    @Query("SELECT * FROM Hook")
+    @Query("SELECT * FROM Hook ORDER BY isPinned DESC, id DESC")
     fun getAllHooks(): LiveData<List<Hook>>
 
 

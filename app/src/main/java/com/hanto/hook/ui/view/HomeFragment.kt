@@ -12,9 +12,7 @@ import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.hanto.hook.data.model.Hook
 import com.hanto.hook.databinding.FragmentHomeBinding
 import com.hanto.hook.ui.adapter.HookAdapter
