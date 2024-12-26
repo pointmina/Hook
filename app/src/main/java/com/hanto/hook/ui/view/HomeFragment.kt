@@ -63,25 +63,25 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
         binding.rvHome.adapter = adapter
         binding.rvHome.layoutManager = LinearLayoutManager(requireContext())
 
-        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
-            ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0
-        ) {
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean {
-                val fromPosition = viewHolder.bindingAdapterPosition
-                val toPosition = target.bindingAdapterPosition
-                adapter.moveItem(fromPosition, toPosition)
-                return true
-            }
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-            }
-        })
-
-        itemTouchHelper.attachToRecyclerView(binding.rvHome)
+//        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
+//            ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0
+//        ) {
+//            override fun onMove(
+//                recyclerView: RecyclerView,
+//                viewHolder: RecyclerView.ViewHolder,
+//                target: RecyclerView.ViewHolder
+//            ): Boolean {
+//                val fromPosition = viewHolder.bindingAdapterPosition
+//                val toPosition = target.bindingAdapterPosition
+//                adapter.moveItem(fromPosition, toPosition)
+//                return true
+//            }
+//
+//            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+//            }
+//        })
+//
+//        itemTouchHelper.attachToRecyclerView(binding.rvHome)
 
         val tvRecentHooks = binding.tvRecentHooks
 
@@ -96,7 +96,6 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
 
 
         binding.svSearch.setOnCloseListener {
-            // TextView 다시 보이기
             tvRecentHooks.visibility = View.VISIBLE
 
             val params = binding.svSearch.layoutParams
