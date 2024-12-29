@@ -17,10 +17,12 @@
         android:id="@+id/icon_is_pinned"
         android:layout_width="10dp"
         android:layout_height="10dp"
+        android:background="@drawable/ic_hook_black"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/tv_title"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/ic_hook_black" />
+        app:layout_constraintEnd_toEndOf="@id/ic_option"
+        app:layout_constraintStart_toStartOf="@id/ic_option"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <!-- 점 세 개 버튼 -->
@@ -42,8 +44,7 @@
         android:padding="7dp"
         android:src="@drawable/ic_dots_horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/icon_is_pinned"
-        />
+        app:layout_constraintTop_toBottomOf="@id/icon_is_pinned" />
 
 
     <TextView

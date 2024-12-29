@@ -62,5 +62,8 @@
     <string name="add_tag">태그 추가</string>
     <string name="input_tag">태그를 입력해주세요.</string>
     <string name="adding_tag">태그 추가하기</string>
+    <string name="set_pin">고정하기</string>
+    <string name="modify">수정하기</string>
+    <string name="remove_pin">고정 해제하기</string>
 
 </resources>

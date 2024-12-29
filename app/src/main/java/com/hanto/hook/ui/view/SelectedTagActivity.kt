@@ -95,7 +95,7 @@ class SelectedTagActivity : BaseActivity(), TagUpdateListener {
                     val selectedHook = selectedTagHookListAdapter.getItem(position)
                     selectedHook?.let { hook ->
                         BottomDialogHelper.showHookOptionsDialog(
-                            this@SelectedTagActivity, hook, hookViewModel
+                            this@SelectedTagActivity, hook, hookViewModel,
                         )
                     }
                 }
@@ -129,7 +129,7 @@ class SelectedTagActivity : BaseActivity(), TagUpdateListener {
                 binding.tvTagCount.text = distinctHooks.size.toString()
 
                 // 0보다 큰 값이 확인되면 관찰 중단
-                liveData.removeObservers(this)
+//                liveData.removeObservers(this)
 
             } else {
                 Log.d(TAG, "Hooks fetched: 0")

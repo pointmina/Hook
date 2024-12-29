@@ -14,6 +14,7 @@ object DatabaseModule {
                     AppDatabase::class.java,
                     "hook_database"
                 ).build()
+//                    .fallbackToDestructiveMigration()
             }
         }
     }

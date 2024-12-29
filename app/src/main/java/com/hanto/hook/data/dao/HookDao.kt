@@ -90,7 +90,7 @@ interface HookDao {
     )
     fun updateTagName(oldTagName: String, newTagName: String)
 
-    @Query("UPDATE Hook SET isPinned = :isPinned WHERE id = :hookId")
+    @Query("UPDATE Hook SET isPinned = :isPinned WHERE hookId = :hookId")
     fun updatePinStatus(hookId: String, isPinned: Boolean)
 
 

@@ -5,6 +5,7 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
+
 android {
     namespace = "com.hanto.hook"
     compileSdk = 34
@@ -16,26 +17,7 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
 
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro")
-            buildConfigField("String", "storeFile", "\"C:/Users/user/StudioProjects/hook/app/release.keystore\"")
-            buildConfigField("String", "storePassword", "\"rlaalsdk12!\"")
-            buildConfigField("String", "keyAlias", "\"release_key\"")
-            buildConfigField("String", "keyPassword", "\"rlaalsdk12\"")
-        }
-        debug {
-            buildConfigField("String", "storeFile", "\"C:/Users/user/StudioProjects/hook/app/release.keystore\"")
-            buildConfigField("String", "storePassword", "\"rlaalsdk12!\"")
-            buildConfigField("String", "keyAlias", "\"release_key\"")
-            buildConfigField("String", "keyPassword", "\"rlaalsdk12\"")
-        }
     }
 
 

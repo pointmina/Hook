@@ -10,6 +10,16 @@
     android:paddingEnd="10dp"
     android:paddingBottom="15dp">
 
+    <TextView
+        android:id="@+id/icon_is_pinned"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:padding="7dp"
+        android:background="@drawable/ic_hook_black"
+        app:layout_constraintStart_toStartOf="@id/ic_option"
+        app:layout_constraintEnd_toEndOf="@id/ic_option"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <!-- 점 세 개 버튼 -->
     <View
         android:id="@+id/bt_option"
@@ -29,7 +39,7 @@
         android:padding="7dp"
         android:src="@drawable/ic_dots_horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/icon_is_pinned" />
 
     <TextView
         android:id="@+id/hookID"
@@ -48,11 +58,11 @@
         android:ellipsize="end"
         android:maxLines="2"
         android:textColor="@color/black"
-        android:textSize="16dp"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/ic_option"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/ic_option"
+        app:layout_constraintTop_toBottomOf="@id/icon_is_pinned"
         tools:text="여기에 훅 제목" />
 
     <TextView

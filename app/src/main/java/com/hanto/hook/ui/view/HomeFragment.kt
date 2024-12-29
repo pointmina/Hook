@@ -61,26 +61,6 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
         binding.rvHome.adapter = adapter
         binding.rvHome.layoutManager = LinearLayoutManager(requireContext())
 
-//        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
-//            ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0
-//        ) {
-//            override fun onMove(
-//                recyclerView: RecyclerView,
-//                viewHolder: RecyclerView.ViewHolder,
-//                target: RecyclerView.ViewHolder
-//            ): Boolean {
-//                val fromPosition = viewHolder.bindingAdapterPosition
-//                val toPosition = target.bindingAdapterPosition
-//                adapter.moveItem(fromPosition, toPosition)
-//                return true
-//            }
-//
-//            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-//            }
-//        })
-//
-//        itemTouchHelper.attachToRecyclerView(binding.rvHome)
-
         val tvRecentHooks = binding.tvRecentHooks
 
         binding.svSearch.setOnSearchClickListener {
@@ -129,16 +109,17 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
 
             val isNewDataAdded = hooks.size > adapter.itemCount
 
-            val sortedHooks = hooks.sortedByDescending { it.id }
-            adapter.updateHooks(sortedHooks) {
-                val shimmerContainer = binding.sfLoading
-                shimmerContainer.stopShimmer()
-                shimmerContainer.visibility = View.GONE
+            hookViewModel.getAllHooks().observe(viewLifecycleOwner) { hooks ->
+                adapter.updateHooks(hooks) {
+                    val shimmerContainer = binding.sfLoading
+                    shimmerContainer.stopShimmer()
+                    shimmerContainer.visibility = View.GONE
 
-                if (isNewDataAdded) {
-                    binding.rvHome.scrollToPosition(0)
-                } else {
-                    layoutManager.scrollToPositionWithOffset(currentPosition, offset)
+                    if (isNewDataAdded) {
+                        binding.rvHome.scrollToPosition(0)
+                    } else {
+                        layoutManager.scrollToPositionWithOffset(currentPosition, offset)
+                    }
                 }
             }
         }
@@ -208,6 +189,5 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
         }
         adapter.updateHooks(filteredHooks)
     }
-
 
 }

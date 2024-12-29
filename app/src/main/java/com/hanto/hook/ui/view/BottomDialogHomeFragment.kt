@@ -11,6 +11,7 @@ import com.hanto.hook.databinding.BottomDialogHomeBinding
 class BottomDialogHomeFragment : BottomSheetDialogFragment() {
 
     private var hook: Hook? = null
+    private var onPinClickListener: (() -> Unit)? = null
     private var onModifyClickListener: (() -> Unit)? = null
     private var onDeleteClickListener: (() -> Unit)? = null
 
@@ -22,6 +23,12 @@ class BottomDialogHomeFragment : BottomSheetDialogFragment() {
 
         hook?.let {
             // 추가적인 초기화 (예: 제목 등)
+        }
+
+        // 수정 버튼 클릭 시
+        binding.btnSetPin.setOnClickListener {
+            onPinClickListener?.invoke()
+            dismiss()
         }
 
         // 수정 버튼 클릭 시
@@ -41,6 +48,10 @@ class BottomDialogHomeFragment : BottomSheetDialogFragment() {
 
     fun setHook(hook: Hook) {
         this.hook = hook
+    }
+
+    fun setOnPinClickListener(listener: () -> Unit) {
+        this.onPinClickListener = listener
     }
 
     fun setOnModifyClickListener(listener: () -> Unit) {

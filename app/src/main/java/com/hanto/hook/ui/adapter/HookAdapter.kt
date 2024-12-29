@@ -46,6 +46,12 @@ class HookAdapter(
                 binding.tvTagDescription.visibility = View.GONE
             }
 
+            if (hook.isPinned) {
+                binding.iconIsPinned.visibility = View.VISIBLE
+            } else {
+                binding.iconIsPinned.visibility = View.GONE
+            }
+
             // 아이템 클릭 시 Hook 객체를 전달
             binding.root.setOnClickListener {
                 onItemClick(hook)
@@ -70,11 +76,6 @@ class HookAdapter(
                 tagRecyclerView.adapter = tagAdapter
             })
 
-            // pinned 상태를 클릭하면 토글
-            binding.ivPinnedIcon.setOnClickListener {
-                val newPinnedState = !hook.isPinned
-                hookViewModel.setPinned(hook.hookId, newPinnedState)
-            }
 
         }
     }

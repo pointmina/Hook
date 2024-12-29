@@ -1,5 +1,3 @@
-
-
 package com.hanto.hook.data.model
 
 import android.os.Parcelable

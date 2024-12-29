@@ -70,6 +70,12 @@ class SelectedTagHookListAdapter(
                     tvTagDescription.visibility = View.GONE
                 }
 
+                if (hook.isPinned) {
+                    binding.iconIsPinned.visibility = View.VISIBLE
+                } else {
+                    binding.iconIsPinned.visibility = View.GONE
+                }
+
                 // 아이템 클릭 리스너 설정
                 root.setOnClickListener {
                     listener.onClick(adapterPosition)

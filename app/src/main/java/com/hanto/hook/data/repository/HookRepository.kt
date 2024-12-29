@@ -1,7 +1,10 @@
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.hanto.hook.data.model.Hook
 import com.hanto.hook.data.model.Tag
 import com.hanto.hook.database.AppDatabase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class HookRepository(private val appDatabase: AppDatabase) {
     companion object {
@@ -85,8 +88,12 @@ class HookRepository(private val appDatabase: AppDatabase) {
         return appDatabase.hookDao().getHooksByTagName(tagName)
     }
 
-    fun setPinned(hookId: String, isPinned: Boolean) {
-        appDatabase.hookDao().updatePinStatus(hookId, isPinned)
+    suspend fun setPinned(hookId: String, isPinned: Boolean) {
+        withContext(Dispatchers.IO) {
+            Log.d("mina", "Updating pin status: hookId=$hookId, isPinned=$isPinned")
+            appDatabase.hookDao().updatePinStatus(hookId, isPinned)
+        }
     }
+
 
 }
