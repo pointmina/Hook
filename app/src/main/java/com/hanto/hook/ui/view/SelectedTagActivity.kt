@@ -117,35 +117,32 @@ class SelectedTagActivity : BaseActivity(), TagUpdateListener {
     private fun observeTagHooks(tagName: String) {
         Log.d(TAG, "Observing hooks for tag: $tagName")
 
-        val liveData = hookViewModel.getHooksByTagName(tagName)
-        liveData.observe(this) { hooks ->
-            if (hooks != null && hooks.isNotEmpty()) {
+        hookViewModel.fetchHooksByTagName(tagName)
 
-                // 중복 제거
-                val distinctHooks = hooks.distinctBy { it.id }
+        hookViewModel.hooksByTagName.observe(this) { event ->
+            event.getContentIfNotHandled()?.let { hooks ->
+                if (hooks.isNotEmpty()) {
+                    // 중복 제거
+                    val distinctHooks = hooks.distinctBy { it.id }
 
-                Log.d(TAG, "Distinct Hooks fetched: ${distinctHooks.size}")
-                selectedTagHookListAdapter.submitList(distinctHooks)
-                binding.tvTagCount.text = distinctHooks.size.toString()
+                    Log.d(TAG, "Distinct Hooks fetched: ${distinctHooks.size}")
+                    selectedTagHookListAdapter.submitList(distinctHooks)
+                    binding.tvTagCount.text = distinctHooks.size.toString()
 
-                // 0보다 큰 값이 확인되면 관찰 중단
-//                liveData.removeObservers(this)
-
-            } else {
-                Log.d(TAG, "Hooks fetched: 0")
-                selectedTagHookListAdapter.submitList(emptyList())
+                }
             }
         }
     }
 
 
-    override fun onTagUpdated(newTagName: String) {
-        Log.d(TAG, "onTagUpdated: $newTagName")
-        selectedTagName = newTagName
-        binding.tvSelectedTag.text = newTagName
+    override fun onTagUpdated(tag: String) {
+        Log.d(TAG, "onTagUpdated: $tag")
+        selectedTagName = tag
+        binding.tvSelectedTag.text = tag
 
-        observeTagHooks(newTagName)
+        observeTagHooks(tag)
     }
+
 
     override fun onDestroy() {
         super.onDestroy()

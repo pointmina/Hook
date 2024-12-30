@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.hanto.hook.data.model.Hook
 import com.hanto.hook.data.model.Tag
 import com.hanto.hook.database.DatabaseModule
+import com.hanto.hook.util.Event
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -21,8 +22,11 @@ class HookViewModel : ViewModel() {
 
     // LiveData 필드
     val liveDataHook: LiveData<List<Hook>> = hookRepository.getAllHooks()
-
     private var liveDataTagName: LiveData<List<String>> = hookRepository.getAllTagNames()
+
+    private val _hooksByTagName = MutableLiveData<Event<List<Hook>>>()
+    val hooksByTagName: LiveData<Event<List<Hook>>> = _hooksByTagName
+
 
     var distinctTagNames: LiveData<List<String>> = liveDataTagName.map { tagNames ->
         tagNames.distinct()
@@ -94,6 +98,38 @@ class HookViewModel : ViewModel() {
 
         hooksLiveDataCache.value = tagName
         return hookRepository.getHooksByTagName(tagName)
+    }
+
+//    fun fetchHooksByTagName(tagName: String) {
+//        viewModelScope.launch {
+//            val hooksLiveData = hookRepository.getHooksByTagName(tagName)
+//            hooksLiveData.observeForever { hooks ->
+//                hooks?.let {
+//                    val distinctHooks = it.distinctBy { hook -> hook.id }
+//                    if (distinctHooks != _hooksByTagName.value?.peekContent()) {
+//                        _hooksByTagName.value = Event(distinctHooks)
+//                    }
+//                }
+//            }
+//        }
+//    }
+
+
+    private var isFetching = false
+
+    fun fetchHooksByTagName(tagName: String) {
+        if (isFetching) return
+        isFetching = true
+
+        viewModelScope.launch {
+            val hooksLiveData = hookRepository.getHooksByTagName(tagName)
+            hooksLiveData.observeForever { hooks ->
+                hooks?.let {
+                    _hooksByTagName.value = Event(it.distinctBy { hook -> hook.id })
+                }
+                isFetching = false
+            }
+        }
     }
 
 
