@@ -3,8 +3,6 @@ package com.hanto.hook.ui.view
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 import com.hanto.hook.R
 
@@ -15,13 +13,17 @@ class SplashView : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        splashToMain()
+        val sharedPref = getSharedPreferences("hook_prefs", MODE_PRIVATE)
+        val isFirstLaunch = sharedPref.getBoolean("isFirstLaunch", true)
+
+        if (true) {
+            // 첫 실행일 경우 OnboardingActivity로 이동
+            startActivity(Intent(this, OnboardingActivity::class.java))
+        } else {
+            // 첫 실행이 아닐 경우 HomeActivity로 이동
+            startActivity(Intent(this, HomeActivity::class.java))
+        }
+        finish()
     }
-    private fun splashToMain() {
-        Handler(Looper.getMainLooper()).postDelayed({
-            val intent = Intent(this@SplashView, HomeActivity::class.java)
-            startActivity(intent)
-            finish()
-        }, 500)
-    }
+
 }

@@ -20,7 +20,7 @@
         android:paddingBottom="2dp"
         android:text="블로그"
         android:textColor="#57606A"
-        android:textSize="14dp" />
+        android:textSize="14sp" />
 
 
 </LinearLayout>

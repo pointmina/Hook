@@ -44,8 +44,8 @@
                     android:id="@+id/tv_recent_hooks"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
                     android:layout_marginStart="10dp"
+                    android:layout_weight="1"
                     android:fontFamily="@font/notosans_m"
                     android:gravity="center|start"
                     android:text="@string/label_recent_tag"
@@ -57,8 +57,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:theme="@style/CustomSearchViewStyle"
-                    android:iconifiedByDefault="true" />
+                    android:contentDescription="@string/search_hook"
+                    android:hint="@string/search_hook"
+                    android:iconifiedByDefault="true"
+                    android:theme="@style/CustomSearchViewStyle" />
 
             </LinearLayout>
 

@@ -44,12 +44,15 @@ dependencies {
 
     // Android, Default Layout 관련
     implementation("androidx.activity:activity-ktx:1.9.0")
-    implementation("androidx.activity:activity:1.8.0")
     implementation("androidx.annotation:annotation:1.7.1")
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.fragment:fragment-ktx:1.6.2")
+
+    //viewPager2
+    implementation ("androidx.viewpager2:viewpager2:1.1.0")
+    implementation ("com.tbuonomo:dotsindicator:4.3")
 
 
     // 디자인 관련
@@ -66,6 +69,7 @@ dependencies {
 
     //Database
     implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.activity:activity:1.9.3")
     annotationProcessor("androidx.room:room-compiler:2.6.1")
     ksp("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")

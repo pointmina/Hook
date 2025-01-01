@@ -22,8 +22,10 @@
 
     <ImageView
         android:id="@+id/iv_appbar_back_button"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:contentDescription="@string/go_back"
+        android:padding="10dp"
         android:src="@drawable/ic_arrow_back"
         app:layout_constraintBottom_toBottomOf="@id/toolbar_new_hook"
         app:layout_constraintStart_toStartOf="@id/toolbar_new_hook"
@@ -44,6 +46,7 @@
         android:id="@+id/tv_url_link"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:autofillHints="@string/hint_url_link"
         android:background="@drawable/textview_detail_border"
         android:hint="@string/hint_url_link"
         android:imeOptions="actionNext"
@@ -78,11 +81,11 @@
 
     <ImageView
         android:id="@+id/iv_url_link"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_marginStart="10dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_marginEnd="16dp"
         android:contentDescription="@string/description_link"
+        android:padding="15dp"
         android:src="@drawable/ic_link"
         android:textAppearance="@style/AppTextPrimary.S14"
         android:textColor="@color/purple"
@@ -158,14 +161,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvGuideTitle" />
 
-    <ImageView
-        android:id="@+id/iv_downArrow"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:contentDescription="@string/see_etc_info"
-        android:src="@drawable/ic_down_arrow"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tv_link_info_etc" />
+    <!--    <ImageView-->
+    <!--        android:id="@+id/iv_downArrow"-->
+    <!--        android:layout_width="25dp"-->
+    <!--        android:layout_height="25dp"-->
+    <!--        android:contentDescription="@string/see_etc_info"-->
+    <!--        android:src="@drawable/ic_down_arrow"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintTop_toTopOf="@id/tv_link_info_etc" />-->
 
 
     <EditText

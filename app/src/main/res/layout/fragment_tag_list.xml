@@ -30,6 +30,7 @@
         android:layout_width="375dp"
         android:layout_height="300dp"
         android:choiceMode="multipleChoice"
+        android:contentDescription="@string/tag_list"
         android:listSelector="@android:color/transparent"
         android:paddingStart="3dp"
         android:paddingEnd="3dp"
@@ -52,13 +53,16 @@
     <TextView
         android:id="@+id/btn_add_tag"
         android:layout_width="70dp"
-        android:layout_height="44dp"
+        android:layout_height="48dp"
         android:layout_marginStart="10dp"
+        android:layout_marginBottom="10dp"
         android:background="@drawable/rounded_background_little"
         android:backgroundTint="@color/purple"
+        android:contentDescription="@string/adding_tag"
         android:gravity="center"
         android:text="@string/add_tag"
         android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@id/btn_ok"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/tv_add_newTag"
         app:layout_constraintTop_toTopOf="@id/tv_add_newTag" />
@@ -68,6 +72,7 @@
         android:id="@+id/btn_cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:padding="15dp"
         android:text="@string/cancel"
         android:textColor="@color/purple"
@@ -76,9 +81,11 @@
         app:layout_constraintTop_toBottomOf="@id/tv_add_newTag" />
 
     <TextView
+
         android:id="@+id/btn_ok"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:padding="15dp"
         android:paddingStart="30dp"
         android:paddingEnd="30dp"

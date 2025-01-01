@@ -5,7 +5,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-
     <application
         android:name=".MainApplication"
         android:allowBackup="true"
@@ -18,7 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Hook"
         tools:targetApi="31">
-
+        <activity
+            android:name=".ui.view.OnboardingActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.view.WebViewActivity"
             android:exported="false" />
@@ -45,19 +46,21 @@
             android:theme="@style/Theme.Hook.Dialog">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
-
-
         <activity
             android:name=".ui.view.SplashView"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
+
 </manifest>

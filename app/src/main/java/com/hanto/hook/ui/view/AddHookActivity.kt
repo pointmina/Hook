@@ -181,9 +181,9 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
             val tvUrlDescription = binding.tvUrlDescription
             val tvTag = binding.tvTag
             val containerTag = binding.containerTag
-            val downArrow = binding.ivDownArrow
+//            val downArrow = binding.ivDownArrow
             val tvLimit2 = binding.tvLimit2
-            toggleExpandCollapse(tvUrlDescription, tvTag, containerTag, downArrow, tvLimit2)
+//            toggleExpandCollapse(tvUrlDescription, tvTag, containerTag, downArrow, tvLimit2)
         }
 
         binding.ivAddNewHook.setOnClickListener {
