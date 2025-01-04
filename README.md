@@ -24,9 +24,9 @@
 ---
 
 ## Preview
+![프리뷰 영어1](https://github.com/user-attachments/assets/6104adaa-b811-4320-87fe-e7e24b899841)
+![프리뷰 영어2](https://github.com/user-attachments/assets/b65c4380-18e3-4f1c-95ac-a724abb075a8)
 
-![프리뷰영어1](https://github.com/user-attachments/assets/8a7fc458-dfbf-422f-9fcc-611d717e9986)
-![프리뷰영어2](https://github.com/user-attachments/assets/42fa3587-ceb0-4ebe-bd05-fcf659a0d69b)
 
 
 ## Tech Stacks
