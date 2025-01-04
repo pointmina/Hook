@@ -38,21 +38,30 @@ class HookViewModel : ViewModel() {
 
     // 데이터 삽입 메서드
     fun insertHook(hook: Hook) {
-        hookRepository.insertHook(hook)
+        viewModelScope.launch(Dispatchers.IO) {
+            hookRepository.insertHook(hook)
+        }
     }
 
     fun insertTag(tag: Tag) {
-        hookRepository.insertTag(tag)
+        viewModelScope.launch(Dispatchers.IO) {
+            hookRepository.insertTag(tag)
+        }
     }
 
 
     // 데이터 삭제 메서드
     fun deleteHook(hookId: String) {
-        hookRepository.deleteHook(hookId)
+        viewModelScope.launch(Dispatchers.IO) {
+            hookRepository.deleteHook(hookId)
+        }
+
     }
 
     fun deleteTagByHookId(hookId: String) {
-        hookRepository.deleteTagByHookId(hookId)
+        viewModelScope.launch(Dispatchers.IO) {
+            hookRepository.deleteTagByHookId(hookId)
+        }
     }
 
 
@@ -64,6 +73,12 @@ class HookViewModel : ViewModel() {
                 // 예외 처리
                 Log.e("HookViewModel", "Error deleting hook and tags", e)
             }
+        }
+    }
+
+    fun deleteTagByTagName(tagName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            hookRepository.deleteTagByTagName(tagName)
         }
     }
 
@@ -82,7 +97,6 @@ class HookViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 hookRepository.updateTagName(oldTagName, newTagName)
-
             } catch (e: Exception) {
                 Log.e("HookViewModel", "Error updating tag name", e)
             }

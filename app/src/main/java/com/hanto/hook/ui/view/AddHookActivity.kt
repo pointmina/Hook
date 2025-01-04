@@ -1,6 +1,5 @@
 package com.hanto.hook.ui.view
 
-import HookRepository
 import android.content.ClipboardManager
 import android.os.Bundle
 import android.text.Editable
@@ -17,12 +16,8 @@ import com.hanto.hook.R
 import com.hanto.hook.data.TagSelectionListener
 import com.hanto.hook.data.model.Hook
 import com.hanto.hook.data.model.Tag
-import com.hanto.hook.database.AppDatabase
-import com.hanto.hook.database.DatabaseModule
 import com.hanto.hook.databinding.ActivityAddHookBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.hanto.hook.viewmodel.HookViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -37,8 +32,7 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
     private var isTitleValid = false
     private var isExpanded = false
 
-    private lateinit var hookRepository: HookRepository
-    private lateinit var appDatabase: AppDatabase
+    private lateinit var hookViewModel: HookViewModel
 
     private var selectedTags: List<String> = emptyList()
     private val multiChoiceList = linkedMapOf<String, Boolean>()
@@ -50,10 +44,7 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
         binding = ActivityAddHookBinding.inflate(layoutInflater)
         val view = binding.root
 
-        // 데이터베이스 초기화
-        appDatabase = DatabaseModule.getDatabase()
-        hookRepository = HookRepository(appDatabase)
-
+        hookViewModel = HookViewModel()
 
         val tags = intent.getStringArrayListExtra("item_tag_list")
         tags?.forEach { tag ->
@@ -209,9 +200,7 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
         val hookId = getCurrentTimeAsString()
 
         if (title.isEmpty()) {
-            runOnUiThread {
-                Toast.makeText(this, "제목을 입력하세요.", Toast.LENGTH_SHORT).show()
-            }
+            Toast.makeText(this, "제목을 입력하세요.", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -222,32 +211,21 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
             description = description
         )
 
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                // 1. Hook 삽입
-                hookRepository.insertHook(hook)
+        hookViewModel.insertHook(hook)
 
-                // 2. Tag 삽입 (Hook 삽입이 완료된 후 실행)
-                if (selectedTags.isEmpty()) {
-                    Log.d(TAG, "선택된 태그가 없습니다.")
-                } else {
-                    selectedTags.forEach { tagName ->
-                        val tag = Tag(
-                            hookId = hookId,
-                            name = tagName
-                        )
-                        hookRepository.insertTag(tag)
-                    }
-                }
-
-                Log.d(TAG, "모든 데이터가 성공적으로 삽입되었습니다.")
-
-            } catch (e: Exception) {
-                Log.d(TAG, "데이터 삽입 중 오류 발생: ${e.message}")
-            } finally {
-                finish()
+        //2. Tag 삽입 (Hook 삽입이 완료된 후 실행)
+        if (selectedTags.isEmpty()) {
+            Log.d(TAG, "선택된 태그가 없습니다.")
+        } else {
+            selectedTags.forEach { tagName ->
+                val tag = Tag(
+                    hookId = hookId,
+                    name = tagName
+                )
+                hookViewModel.insertTag(tag)
             }
         }
+        finish()
     }
 
 

@@ -1,21 +1,16 @@
 package com.hanto.hook.ui.view
 
-import HookRepository
 import android.os.Bundle
 import android.text.Editable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.hanto.hook.data.TagUpdateListener
-import com.hanto.hook.database.AppDatabase
-import com.hanto.hook.database.DatabaseModule
 import com.hanto.hook.databinding.FragmentChangeTagBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.hanto.hook.viewmodel.HookViewModel
 
 
 class ChangeTagFragment : DialogFragment() {
@@ -26,8 +21,8 @@ class ChangeTagFragment : DialogFragment() {
     private val binding get() = _binding!!
 
     private var tagUpdateListener: TagUpdateListener? = null
-    private lateinit var hookRepository: HookRepository
-    private lateinit var appDatabase: AppDatabase
+    private lateinit var hookViewModel: HookViewModel
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,10 +34,10 @@ class ChangeTagFragment : DialogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Log.d(TAG, "onViewCreated")
         super.onViewCreated(view, savedInstanceState)
 
-        appDatabase = DatabaseModule.getDatabase()
-        hookRepository = HookRepository(appDatabase)
+        hookViewModel = HookViewModel()
 
         val selectedTagName = arguments?.getString("selectedTag")
 
@@ -59,20 +54,14 @@ class ChangeTagFragment : DialogFragment() {
         }
     }
 
+
     private fun updateTagName(oldTagName: String, newTagName: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                hookRepository.updateTagName(oldTagName, newTagName)
-                withContext(Dispatchers.Main) {
-                    tagUpdateListener?.onTagUpdated(newTagName)
-                    dismiss()
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "태그 이름 수정에 실패했습니다.", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
+        Log.d(TAG, "updateTagName: $oldTagName -> $newTagName")
+
+        hookViewModel.updateTagName(oldTagName, newTagName)
+
+        tagUpdateListener?.onTagUpdated(newTagName)
+        dismiss()
     }
 
     fun setTagUpdateListener(listener: TagUpdateListener) {
@@ -83,7 +72,6 @@ class ChangeTagFragment : DialogFragment() {
         super.onDestroyView()
         _binding = null
     }
-
 
 
 }

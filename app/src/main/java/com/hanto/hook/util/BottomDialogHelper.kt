@@ -1,9 +1,7 @@
 package com.hanto.hook.util
 
-import HookRepository
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -11,8 +9,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.hanto.hook.R
 import com.hanto.hook.data.model.Hook
-import com.hanto.hook.database.AppDatabase
-import com.hanto.hook.database.DatabaseModule
 import com.hanto.hook.ui.view.HookDetailActivity
 import com.hanto.hook.viewmodel.HookViewModel
 import kotlinx.coroutines.Dispatchers
@@ -54,7 +50,6 @@ class BottomDialogHelper {
                     }
                 }
             }
-
 
 
             // 수정하기 버튼 클릭 시
