@@ -25,10 +25,7 @@
 
 ## Preview
 
-
-
-![ㅇㅇ](https://github.com/user-attachments/assets/ddead4d1-8d90-4f3c-ae98-3c8a76b02ebc)
-
+![프리뷰영어](https://github.com/user-attachments/assets/6a6d9f29-0009-45b0-a848-f9b88a3e4b03)
 
 
 ## Tech Stacks
