@@ -57,7 +57,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:contentDescription="@string/search_hook"
+                    android:queryHint="@string/search_hook"
                     android:hint="@string/search_hook"
                     android:iconifiedByDefault="true"
                     android:theme="@style/CustomSearchViewStyle" />

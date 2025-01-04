@@ -82,5 +82,7 @@
     <string name="des3">저장한 링크에 메모를 추가하여\n더 유용하게 활용하세요.</string>
     <string name="des4">공유하기를 통해 앱 외부에서\n링크를 저장할 수 있어요.</string>
     <string name="des5">‘시작하기’를 눌러 링크를\n깔끔하게 정리해보세요!</string>
+    <string name="save">저장하기</string>
+    <string name="save_hook">훅 저장하기</string>
 
 </resources>
