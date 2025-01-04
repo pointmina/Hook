@@ -55,7 +55,7 @@ This modular architecture ensures a clean and maintainable codebase, adhering to
 ```
 
 ref.   
-https://ppeper.github.io/android/repository-pattern/
+https://ppeper.github.io/android/repository-pattern/   
 https://medium.com/prnd/mvvm%EC%9D%98-viewmodel%EC%97%90%EC%84%9C-%EC%9D%B4%EB%B2%A4%ED%8A%B8%EB%A5%BC-%EC%B2%98%EB%A6%AC%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95-6%EA%B0%80%EC%A7%80-31bb183a88ce
 
 
@@ -112,13 +112,6 @@ The branch strategy for this project follows a simplified Git Flow model, manage
 
 6. **ViewModel → UI**
    - The `ViewModel` provides the processed data to the UI for rendering.
-
----
-
-## Benefits
-- **Separation of Concerns**: Clear distinction between UI, business logic, and data layers.
-- **Scalability**: Easy to extend or modify each layer independently.
-- **Testability**: Each component can be unit-tested in isolation.
 
 ---
 
