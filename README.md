@@ -27,12 +27,7 @@
 
 
 
-![hook2](https://github.com/user-attachments/assets/b7bc90d8-b7a3-4be4-8d69-93d337cc8a82) 
-
-
-
-https://github.com/user-attachments/assets/61d1702f-3cc8-4e6d-9a07-811b828d3ef3
-
+![ㅇㅇ](https://github.com/user-attachments/assets/ddead4d1-8d90-4f3c-ae98-3c8a76b02ebc)
 
 
 
