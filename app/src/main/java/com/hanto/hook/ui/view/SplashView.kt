@@ -16,7 +16,7 @@ class SplashView : AppCompatActivity() {
         val sharedPref = getSharedPreferences("hook_prefs", MODE_PRIVATE)
         val isFirstLaunch = sharedPref.getBoolean("isFirstLaunch", true)
 
-        if (true) {
+        if (isFirstLaunch) {
             // 첫 실행일 경우 OnboardingActivity로 이동
             startActivity(Intent(this, OnboardingActivity::class.java))
         } else {

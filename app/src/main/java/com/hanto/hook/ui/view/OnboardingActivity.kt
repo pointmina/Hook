@@ -22,27 +22,33 @@ class OnboardingActivity : AppCompatActivity() {
         // 온보딩 데이터 정의
         val onboardingItems = listOf(
             OnboardingItem(
-                "Hello Food!",
-                "The easiest way to order food from your favorite restaurant!",
-                R.drawable.ic_hook_black
+                getString(R.string.title1),
+                getString(R.string.des1),
+                R.drawable.icon_link
             ),
             OnboardingItem(
-                "Fast Delivery",
-                "Get your food delivered to your doorstep in no time!",
-                R.drawable.ic_hook_purple
+                getString(R.string.title2),
+                getString(R.string.des2),
+                R.drawable.icon_tag
             ),
             OnboardingItem(
-                "Enjoy Your Meal",
-                "Relax and enjoy your delicious meal!",
-                R.drawable.ic_hook_black
+                getString(R.string.title3),
+                getString(R.string.des3),
+                R.drawable.icon_annotation
             ),
             OnboardingItem(
-                "You're Ready!",
-                "Click 'Let's Start' to begin your journey!",
-                R.drawable.ic_hook_purple,
-                isLastPage = true // 마지막 페이지 표시
+                getString(R.string.title4),
+                getString(R.string.des4),
+                R.drawable.icon_share
+            ),
+            OnboardingItem(
+                getString(R.string.title5),
+                getString(R.string.des5),
+                R.drawable.ic_hook_black,
+                isLastPage = true
             )
         )
+
 
         // 어댑터 설정
         val onboardingAdapter = OnboardingAdapter(onboardingItems)

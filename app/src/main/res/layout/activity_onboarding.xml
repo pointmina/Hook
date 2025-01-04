@@ -21,7 +21,7 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="  parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tutorial_viewPager"
         app:layout_constraintVertical_weight="4">
 
@@ -41,6 +41,7 @@
             android:id="@+id/button_skip"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_marginStart="10dp"
             android:gravity="center"
             android:text="@string/skip"
             android:textSize="20sp"
@@ -52,10 +53,11 @@
             android:id="@+id/button_back"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_marginStart="10dp"
             android:gravity="center"
-            android:visibility="gone"
             android:text="@string/back"
             android:textSize="18sp"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -73,14 +75,21 @@
             app:layout_constraintTop_toTopOf="parent" />
 
 
-        <com.google.android.material.button.MaterialButton
+        <TextView
             android:id="@+id/buttonLetsStart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="8dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/button_border_20"
+            android:backgroundTint="@color/purple"
+            android:fontFamily="@font/notosans_m"
+            android:gravity="center"
+            android:padding="15dp"
             android:text="@string/get_started"
+            android:textColor="@color/white"
             android:textSize="20sp"
-            android:visibility="gone"
+            android:textStyle="bold"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
