@@ -10,6 +10,15 @@ android {
     namespace = "com.hanto.hook"
     compileSdk = 34
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("${rootProject.projectDir}/app/release.keystore")
+            storePassword = project.findProperty("KEYSTORE_PASSWORD") as String?
+            keyAlias = "release_key"
+            keyPassword = project.findProperty("KEY_PASSWORD") as String?
+        }
+    }
+
     defaultConfig {
         applicationId = "com.hanto.hook"
         minSdk = 24
@@ -32,8 +41,15 @@ android {
 
     buildFeatures {
         viewBinding = true
-        buildConfig = true
     }
+
+    buildTypes {
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("release")
+        }
+    }
+
+
 }
 
 dependencies {
@@ -51,8 +67,8 @@ dependencies {
     implementation("androidx.fragment:fragment-ktx:1.6.2")
 
     //viewPager2
-    implementation ("androidx.viewpager2:viewpager2:1.1.0")
-    implementation ("com.tbuonomo:dotsindicator:4.3")
+    implementation("androidx.viewpager2:viewpager2:1.1.0")
+    implementation("com.tbuonomo:dotsindicator:4.3")
 
 
     // 디자인 관련
@@ -60,7 +76,7 @@ dependencies {
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.compose.material3:material3:1.2.1")
 
-    implementation ("me.grantland:autofittextview:0.2.1")
+    implementation("me.grantland:autofittextview:0.2.1")
 
 
     //SwipeRefreshLayout

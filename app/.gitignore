@@ -6,3 +6,10 @@
 
 # Ignore gradle.properties
 /gradle.properties
+
+# KeyStore 파일 제외
+*.jks
+*.keystore
+
+# release.abb 파일 제외
+*.abb
