@@ -30,6 +30,9 @@
             android:name=".ui.view.SettingActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.view.TutorialActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.view.SelectedTagActivity"
             android:exported="false" />
         <activity

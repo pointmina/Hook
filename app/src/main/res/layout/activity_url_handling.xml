@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/edit_layout"
     android:layout_width="375dp"
     android:layout_height="wrap_content"
@@ -18,53 +19,57 @@
         android:textColor="@color/black"
         android:textSize="24sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/tv_edit_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 
     <EditText
-        android:id="@+id/editTextTitle"
+        android:id="@+id/tv_edit_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:background="@drawable/textview_detail_border"
-        android:hint="제목 입력"
+        android:hint="@string/hint_input_title"
         android:inputType="text"
         android:padding="15dp"
-        android:textSize="16dp"
+        android:textSize="16sp"
         android:theme="@style/MyCheckBox"
+        app:layout_constraintBottom_toTopOf="@id/tv_edit_url"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/txt_save_hook" />
 
     <TextView
-        android:id="@+id/editTextUrl"
+        android:id="@+id/tv_edit_url"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/textview_detail_border"
-        android:hint="URL 링크"
+        android:hint="@string/hint_url"
         android:padding="15dp"
-        android:text="www.github.com"
         android:textColor="@color/purple"
         android:theme="@style/MyCheckBox"
+        app:layout_constraintBottom_toTopOf="@id/tv_edit_description"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_edit_title"
+        tools:text="www.github.com" />
 
 
     <EditText
-        android:id="@+id/editTextDescription"
+        android:id="@+id/tv_edit_description"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:background="@drawable/textview_detail_border"
-        android:hint="설명 입력"
+        android:hint="@string/hint_input_des"
         android:padding="15dp"
         android:theme="@style/MyCheckBox"
+        app:layout_constraintBottom_toTopOf="@id/tv_tag"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editTextUrl" />
+        app:layout_constraintTop_toBottomOf="@id/tv_edit_url" />
 
 
     <TextView
@@ -73,11 +78,12 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:background="@drawable/textview_detail_border"
-        android:hint="#"
+        android:hint="@string/sharp"
         android:padding="15dp"
+        app:layout_constraintBottom_toTopOf="@id/btn_cancel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editTextDescription" />
+        app:layout_constraintTop_toBottomOf="@id/tv_edit_description" />
 
 
     <TextView
@@ -89,7 +95,9 @@
         android:background="@drawable/button_border"
         android:backgroundTint="@color/gray_100"
         android:gravity="center"
-        android:text="취소"
+        android:text="@string/cancel2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btn_create"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_tag" />
 
@@ -97,12 +105,13 @@
         android:id="@+id/btn_create"
         android:layout_width="200dp"
         android:layout_height="52dp"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="8dp"
         android:background="@drawable/button_border"
         android:backgroundTint="@color/purple"
         android:gravity="center"
         android:text="@string/save"
         android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/btn_cancel"
         app:layout_constraintTop_toTopOf="@id/btn_cancel" />

@@ -32,7 +32,7 @@
             android:layout_marginTop="40dp"
             app:dotsColor="@color/gray_100"
             app:layout_constraintEnd_toStartOf="@id/button_next"
-            app:layout_constraintStart_toEndOf="@id/button_skip"
+            app:layout_constraintStart_toEndOf="@id/button_back"
             app:layout_constraintTop_toTopOf="parent"
             app:selectedDotColor="@color/black" />
 
@@ -58,7 +58,6 @@
             android:gravity="center"
             android:text="@string/back"
             android:textSize="18sp"
-            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -71,7 +70,6 @@
             android:text="@string/next"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -81,13 +79,13 @@
             android:id="@+id/buttonLetsStart"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:background="@drawable/button_border"
             android:backgroundTint="@color/black"
             android:fontFamily="@font/notosans_m"
             android:gravity="center"
             android:padding="15dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginStart="20dp"
             android:text="@string/get_started"
             android:textColor="@color/white"
             android:textSize="20sp"

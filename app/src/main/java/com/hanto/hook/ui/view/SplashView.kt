@@ -4,7 +4,10 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.hanto.hook.R
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Suppress("splash_screen")
 @SuppressLint("CustomSplashScreen")
@@ -13,17 +16,25 @@ class SplashView : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        val sharedPref = getSharedPreferences("hook_prefs", MODE_PRIVATE)
-        val isFirstLaunch = sharedPref.getBoolean("isFirstLaunch", true)
-
-        if (isFirstLaunch) {
-            // 첫 실행일 경우 OnboardingActivity로 이동
-            startActivity(Intent(this, OnboardingActivity::class.java))
-        } else {
-            // 첫 실행이 아닐 경우 HomeActivity로 이동
-            startActivity(Intent(this, HomeActivity::class.java))
+        lifecycleScope.launch {
+            delay(1000)
+            navigateToNextScreen()
         }
-        finish()
     }
 
+    private fun navigateToNextScreen() {
+        val sharedPref = getSharedPreferences("hook_prefs", MODE_PRIVATE)
+        val isFirstLaunch = sharedPref.getBoolean("isFirstLaunch", true)
+//        val isFirstLaunch = true
+
+        val intent = if (isFirstLaunch) {
+            Intent(this, TutorialActivity::class.java)
+        } else {
+            Intent(this, HomeActivity::class.java)
+        }
+        startActivity(intent)
+        finish()
+    }
 }
+
+

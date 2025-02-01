@@ -76,7 +76,7 @@ class UrlHandlingActivity : AppCompatActivity(), TagSelectionListener {
         if (intent?.action == Intent.ACTION_SEND && intent.type == "text/plain") {
             val sharedText = intent.getStringExtra(Intent.EXTRA_TEXT)
             if (sharedText != null) {
-                binding.editTextUrl.setText(sharedText)
+                binding.tvEditUrl.text = sharedText
             }
         }
     }
@@ -87,9 +87,9 @@ class UrlHandlingActivity : AppCompatActivity(), TagSelectionListener {
     }
 
     private fun insertHookIntoDB() {
-        val title = binding.editTextTitle.text.toString().trim()
-        val url = binding.editTextUrl.text.toString()
-        val description = binding.editTextDescription.text.toString()
+        val title = binding.tvEditTitle.text.toString().trim()
+        val url = binding.tvEditUrl.text.toString()
+        val description = binding.tvEditDescription.text.toString()
         val hookId = getCurrentTimeAsString()
 
         if (title.isEmpty()) {

@@ -4,73 +4,77 @@
     android:layout_height="match_parent">
 
 
-    <View
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/view_delete_tag"
         android:layout_width="375dp"
         android:layout_height="221dp"
         android:layout_gravity="center"
         android:background="@drawable/rounded_background_little"
+        android:padding="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/tv_link_info"
-        android:layout_width="wrap_content"
-        android:layout_height="28dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="27dp"
-        android:text=" 정말 삭제하시겠습니까? "
-        android:textSize="16dp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@id/view_delete_tag"
-        app:layout_constraintTop_toTopOf="@id/view_delete_tag" />
+        <TextView
+            android:id="@+id/tv_link_info"
+            android:layout_width="wrap_content"
+            android:layout_height="28dp"
+            android:text="@string/question_really_delete_tag"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/container_tag_name"
+            app:layout_constraintStart_toStartOf="@id/view_delete_tag"
+            app:layout_constraintTop_toTopOf="@id/view_delete_tag" />
 
-    <View
-        android:id="@+id/container_tag_name"
-        android:layout_width="327dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/textview_detail_border"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        app:layout_constraintBottom_toTopOf="@id/btn_delete_tag"
-        app:layout_constraintEnd_toEndOf="@id/view_delete_tag"
-        app:layout_constraintStart_toStartOf="@id/view_delete_tag"
-        app:layout_constraintTop_toBottomOf="@id/tv_link_info" />
-
-
-    <TextView
-        android:id="@+id/tv_delete_tag_name"
-        android:layout_width="280dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:background="@color/transparent"
-        android:text="저장하신 태그가 삭제됩니다."
-        android:textColor="@color/black"
-        android:textSize="20dp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/container_tag_name"
-        app:layout_constraintStart_toStartOf="@id/container_tag_name"
-        app:layout_constraintTop_toTopOf="@id/container_tag_name" />
-
-    <TextView
-        android:id="@+id/btn_delete_tag"
-        android:layout_width="327dp"
-        android:layout_height="52dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="27dp"
-        android:background="@drawable/rounded_background_little"
-        android:backgroundTint="@color/purple"
-        android:gravity="center"
-        android:text="태그 삭제하기"
-        android:textColor="@color/white"
-        android:textSize="14dp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@id/container_tag_name"
-        app:layout_constraintStart_toStartOf="@id/container_tag_name"
-        app:layout_constraintTop_toBottomOf="@id/container_tag_name" />
+        <View
+            android:id="@+id/container_tag_name"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/textview_detail_border"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            app:layout_constraintBottom_toTopOf="@id/btn_delete_tag"
+            app:layout_constraintEnd_toEndOf="@id/view_delete_tag"
+            app:layout_constraintStart_toStartOf="@id/view_delete_tag"
+            app:layout_constraintTop_toBottomOf="@id/tv_link_info" />
 
 
+        <me.grantland.widget.AutofitTextView
+            android:id="@+id/tv_delete_tag_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@color/transparent"
+            android:fontFamily="@font/notosan_r"
+            android:maxLines="1"
+            android:text="@string/delete_tag_content"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/container_tag_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/container_tag_name"
+            app:layout_constraintTop_toTopOf="@id/container_tag_name" />
+
+        <TextView
+            android:id="@+id/btn_delete_tag"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/rounded_background_little"
+            android:backgroundTint="@color/purple"
+            android:gravity="center"
+            android:text="@string/delete_tag"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/container_tag_name"
+            app:layout_constraintStart_toStartOf="@id/container_tag_name"
+            app:layout_constraintTop_toBottomOf="@id/container_tag_name" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

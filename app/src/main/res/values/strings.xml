@@ -72,17 +72,36 @@
     <string name="next">NEXT</string>
     <string name="get_started">시 작 하 기</string>
     <string name="back">BACK</string>
-    <string name="title1">링크를 간편하게 저장하세요</string>
-    <string name="title2">주제별로 정리하고 관리하세요</string>
-    <string name="title3">메모를 추가하세요</string>
-    <string name="title4">링크를 바로 저장하세요</string>
-    <string name="title5">모든 준비가 완료되었습니다!</string>
-    <string name="des1">Hook을 사용하여 원하는\n링크를 손쉽게 저장해보세요!</string>
-    <string name="des2">저장한 링크를 주제별로 분류하여\n쉽게 찾아볼 수 있어요.</string>
-    <string name="des3">저장한 링크에 메모를 추가하여\n더 유용하게 활용하세요.</string>
-    <string name="des4">공유하기를 통해 앱 외부에서\n링크를 저장할 수 있어요.</string>
-    <string name="des5">‘시작하기’를 눌러 링크를\n깔끔하게 정리해보세요!</string>
+    <string name="title1"></string>
+    <string name="title2"></string>
+    <string name="title3">Hook이 보이지 않는다고요?</string>
+    <string name="title4">거의 다 끝났어요!</string>
+    <string name="title5">링크를 바로 저장할 수 있어요!</string>
+    <string name="des1">저장하고 싶은 페이지에서\n공유하기를 눌러보세요</string>
+    <string name="des2">하단에 뜨는 목록에서 \nHook을 선택해 주세요</string>
+    <string name="des3">목록을 옆으로 넘기면 더보기가 나와요</string>
+    <string name="des4">더보기 버튼을 누른 후,\n목록에서 Hook을 선택해 주세요</string>
+    <string name="des5">제목과 설명 그리고 태그를 달아\n효과적으로 링크를 관리할 수 있어요</string>
     <string name="save">저장하기</string>
-    <string name="save_hook">훅 저장하기</string>
+    <string name="save_hook">저장하기</string>
+    <string name="plz_input_tag">태그를 입력하세요</string>
+    <string name="select_tag">태그 선택</string>
+    <string name="tutorial">시작하기</string>
+    <string name="yes">응!</string>
+    <string name="no">아니!</string>
+    <string name="add_first_hook">연필 모양을 눌러 \n훅을 추가해 보세요! \n👇</string>
+    <string name="tutorial_again">튜토리얼 다시보기</string>
+    <string name="question_tut_again">튜토리얼을 다시 보시겠습니까?</string>
+
+    <!--delete tag-->
+    <string name="question_really_delete_tag">정말 삭제하시겠습니까?</string>
+    <string name="delete_tag">태그 삭제하기</string>
+    <string name="delete_tag_content">저장하신 태그가 삭제됩니다.</string>
+    <string name="modify_tag">태그 수정</string>
+    <string name="title_tut_again">튜토리얼 다시보기</string>
+    <string name="hint_input_title">제목 입력</string>
+    <string name="hint_url">URL 링크</string>
+    <string name="hint_input_des">설명 입력</string>
+    <string name="cancel2">취소</string>
 
 </resources>

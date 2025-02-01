@@ -22,29 +22,29 @@ class OnboardingActivity : AppCompatActivity() {
         // 온보딩 데이터 정의
         val onboardingItems = listOf(
             OnboardingItem(
-                getString(R.string.title1),
+                "",
                 getString(R.string.des1),
-                R.drawable.icon_link
+                R.drawable.img_share
             ),
             OnboardingItem(
-                getString(R.string.title2),
+                "",
                 getString(R.string.des2),
-                R.drawable.icon_tag
+                R.drawable.img_tut11
             ),
             OnboardingItem(
                 getString(R.string.title3),
                 getString(R.string.des3),
-                R.drawable.icon_annotation
+                R.drawable.img_tut22
             ),
             OnboardingItem(
                 getString(R.string.title4),
                 getString(R.string.des4),
-                R.drawable.icon_share
+                R.drawable.img_tut33
             ),
             OnboardingItem(
                 getString(R.string.title5),
                 getString(R.string.des5),
-                R.drawable.ic_hook_black,
+                R.drawable.img_tut44,
                 isLastPage = true
             )
         )
@@ -81,9 +81,10 @@ class OnboardingActivity : AppCompatActivity() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 val isLastPage = position == onboardingAdapter.itemCount - 1
-//                binding.buttonNext.visibility = if (isLastPage) View.GONE else View.VISIBLE
-//                binding.buttonSkip.visibility = if (isLastPage) View.GONE else View.VISIBLE
-//                binding.buttonBack.visibility = if (isLastPage) View.VISIBLE else View.GONE
+                val isFirstPage = position == 0
+                binding.buttonNext.visibility = if (isLastPage) View.GONE else View.VISIBLE
+                binding.buttonSkip.visibility = if (isLastPage) View.GONE else View.GONE
+                binding.buttonBack.visibility = if (isLastPage || isFirstPage) View.GONE else View.VISIBLE
                 binding.buttonLetsStart.visibility = if (isLastPage) View.VISIBLE else View.GONE
             }
         })

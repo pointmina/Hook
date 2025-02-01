@@ -16,6 +16,11 @@ class OnboardingAdapter(
 
         fun bind(item: OnboardingItem) {
             binding.tvTutorialTitle.text = item.title
+            if (item.title.isEmpty()) {
+                binding.tvTutorialTitle.visibility = View.GONE
+            } else {
+                binding.tvTutorialTitle.visibility = View.VISIBLE
+            }
             binding.tvTutorialDes.text = item.description
             binding.ivTutorial.setImageResource(item.imageResId)
         }

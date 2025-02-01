@@ -7,12 +7,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.hanto.hook.R
 import com.hanto.hook.data.model.Hook
 import com.hanto.hook.databinding.FragmentHomeBinding
 import com.hanto.hook.ui.adapter.HookAdapter
@@ -109,6 +111,12 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
 
             val isNewDataAdded = hooks.size > adapter.itemCount
 
+            if (hooks.isEmpty()) {
+                binding.txtAddHook.visibility = View.VISIBLE
+            } else {
+                binding.txtAddHook.visibility = View.GONE
+            }
+
             hookViewModel.getAllHooks().observe(viewLifecycleOwner) { hooks ->
                 adapter.updateHooks(hooks) {
                     val shimmerContainer = binding.sfLoading
@@ -125,11 +133,23 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
         }
 
 
-        // 설정 버튼 클릭 리스너
-//        val btSetting = view.findViewById<ImageButton>(R.id.bt_setting)
-//        btSetting.setOnClickListener {
-//            findNavController().navigate(R.id.action_navigation_home_to_settingActivity)
-//        }
+        // 튜토리얼 다시보기
+        val btSetting = view.findViewById<ImageView>(R.id.btn_tut_again)
+        btSetting.setOnClickListener {
+
+            val dialog = TwoButtonDialogFragment(
+                title = getString(R.string.title_tut_again),
+                content = getString(R.string.question_tut_again),
+                positiveButtonText = getString(R.string.yes),
+                negativeButtonText = getString(R.string.no),
+                onPositiveClick = {
+                    Intent(requireContext(), OnboardingActivity::class.java).also {
+                        startActivity(it)
+                    }
+                }
+            )
+            dialog.show(parentFragmentManager, "TwoButtonDialog")
+        }
     }
 
     override fun onResume() {
