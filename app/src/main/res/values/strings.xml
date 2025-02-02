@@ -89,6 +89,8 @@
     <string name="tutorial">시작하기</string>
     <string name="yes">응!</string>
     <string name="no">아니!</string>
+
+
     <string name="add_first_hook">연필 모양을 눌러 \n훅을 추가해 보세요! \n👇</string>
     <string name="tutorial_again">튜토리얼 다시보기</string>
     <string name="question_tut_again">튜토리얼을 다시 보시겠습니까?</string>
