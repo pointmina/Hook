@@ -39,9 +39,9 @@ class TutorialActivity : AppCompatActivity() {
 
     private fun loadChatMessages() {
         val initialMessages = listOf(
-            ChatMessage("안녕하세요!😊 ", isUser = false, isDialog = false),
-            ChatMessage("Hook에 오신 것을 환영합니다", isUser = false, isDialog = false),
-            ChatMessage("Hook을 사용해보신 적이 있으신가요?", isUser = false, isDialog = true)
+            ChatMessage(getString(R.string.tut_msg1), isUser = false, isDialog = false),
+            ChatMessage(getString(R.string.tut_msg2), isUser = false, isDialog = false),
+            ChatMessage(getString(R.string.tut_msg3), isUser = false, isDialog = true)
         )
 
         initialMessages.forEachIndexed { index, message ->
@@ -62,11 +62,11 @@ class TutorialActivity : AppCompatActivity() {
 
     private fun showNextMessages(isPositiveResponse: Boolean) {
         val nextMessages = if (isPositiveResponse) {
-            listOf(ChatMessage("좋아요! 그럼 튜토리얼을 건너뛸까요?", isUser = false, isDialog = true))
+            listOf(ChatMessage(getString(R.string.tut_msg4), isUser = false, isDialog = true))
         } else {
             listOf(
-                ChatMessage("그렇군요!", isUser = false, isDialog = false),
-                ChatMessage("Hook을 편리하게 사용할 수 있는 방법을 알려 드릴게요!", isUser = false, isDialog = true)
+                ChatMessage(getString(R.string.tut_msg5), isUser = false, isDialog = false),
+                ChatMessage(getString(R.string.tut_msg6), isUser = false, isDialog = true)
             )
         }
 
@@ -76,12 +76,12 @@ class TutorialActivity : AppCompatActivity() {
                 if (index == nextMessages.lastIndex && message.isDialog) {
                     Handler(Looper.getMainLooper()).postDelayed({
                         if (isPositiveResponse) {
-                            showMessageDialog("그래도 다시 설명해줘!", "응!", "네", "two", "skip")
+                            showMessageDialog(getString(R.string.tut_msg7), getString(R.string.yes), getString(R.string.yes), "two", "skip")
                         } else {
                             showMessageDialog(
                                 getString(R.string.no),
                                 getString(R.string.yes),
-                                "좋아!",
+                                getString(R.string.yes2),
                                 "one",
                                 "tutorial"
                             )

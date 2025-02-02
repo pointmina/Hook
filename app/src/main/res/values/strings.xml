@@ -106,4 +106,14 @@
     <string name="hint_input_des">설명 입력</string>
     <string name="cancel2">취소</string>
 
+
+    <string name="tut_msg1">"안녕하세요!😊 "</string>
+    <string name="tut_msg2">Hook에 오신 것을 환영합니다</string>
+    <string name="tut_msg3">Hook을 사용해보신 적이 있으신가요?</string>
+    <string name="tut_msg4">좋아요! 그럼 튜토리얼을 건너뛸까요?</string>
+    <string name="tut_msg5">그렇군요!</string>
+    <string name="tut_msg6">Hook을 편리하게 사용할 수 있는 방법을 알려 드릴게요!</string>
+    <string name="tut_msg7">그래도 다시 설명해줘!</string>
+    <string name="yes2">좋아!</string>
+
 </resources>

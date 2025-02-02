@@ -102,5 +102,14 @@
     <string name="hint_input_des">Enter description</string>
     <string name="cancel2">Cancel</string>
 
+    <string name="tut_msg1">"Hello! 😊 "</string>
+    <string name="tut_msg2">Welcome to Hook</string>
+    <string name="tut_msg3">Have you used Hook before?</string>
+    <string name="tut_msg4">Great! Shall we skip the tutorial?</string>
+    <string name="tut_msg5">I see!</string>
+    <string name="tut_msg6">Let me show you how to use Hook conveniently!</string>
+    <string name="tut_msg7">Explain it again!</string>
+    <string name="yes2">Alright!</string>
+
 
 </resources>
