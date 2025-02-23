@@ -12,10 +12,8 @@
 <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=GitHub&logoColor=white"> 
 <br>
 <br>
-Download Link
-<br>
-https://play.google.com/store/apps/details?id=com.hanto.hook
-</div>
+
+[![Google Play Store](https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg)](https://play.google.com/store/apps/details?id=com.hanto.hook)
 
 ---
 
