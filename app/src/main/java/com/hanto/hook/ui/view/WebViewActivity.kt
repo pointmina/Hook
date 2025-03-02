@@ -80,11 +80,7 @@ class WebViewActivity : BaseActivity() {
                     request: WebResourceRequest?,
                     error: WebResourceError
                 ) {
-                    Toast.makeText(
-                        this@WebViewActivity,
-                        "웹 페이지 로딩 실패: ${error.description}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Log.d(TAG, "Error loading web page: ${error.description}")
                 }
 
                 override fun shouldOverrideUrlLoading(
