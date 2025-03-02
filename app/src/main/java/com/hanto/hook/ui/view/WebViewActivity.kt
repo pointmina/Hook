@@ -1,9 +1,16 @@
 package com.hanto.hook.ui.view
 
+import android.annotation.SuppressLint
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
+import android.webkit.WebResourceError
+import android.webkit.WebResourceRequest
+import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
@@ -28,6 +35,10 @@ class WebViewActivity : BaseActivity() {
         setContentView(binding.root)
 
         webView = binding.mainWebView
+
+        binding.ivWebViewBackButton.setOnClickListener {
+            onBackPressed()
+        }
 
         val url = intent.getStringExtra(EXTRA_URL)
         if (url.isNullOrBlank()) {
@@ -57,6 +68,7 @@ class WebViewActivity : BaseActivity() {
         super.onDestroy()
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     private fun setupWebView(url: String) {
         webView.apply {
             loadUrl(url)
@@ -64,21 +76,39 @@ class WebViewActivity : BaseActivity() {
 
             webViewClient = object : WebViewClient() {
                 override fun onReceivedError(
-                    view: WebView?,
-                    errorCode: Int,
-                    description: String?,
-                    failingUrl: String?
+                    view: WebView,
+                    request: WebResourceRequest?,
+                    error: WebResourceError
                 ) {
                     Toast.makeText(
                         this@WebViewActivity,
-                        "웹 페이지 로딩 실패: $description",
+                        "웹 페이지 로딩 실패: ${error.description}",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
 
-                override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-                    Log.d(TAG, "Navigating to URL: $url")
-                    return false
+                override fun shouldOverrideUrlLoading(
+                    view: WebView,
+                    request: WebResourceRequest
+                ): Boolean {
+                    val urlToString = request.url.toString()
+                    Log.d(TAG, "Navigating to URL: $urlToString")
+
+                    if (urlToString.startsWith("http") || urlToString.startsWith("https")) {
+                        return false
+                    }
+                    try {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(urlToString))
+                        startActivity(intent)
+                    } catch (e: ActivityNotFoundException) {
+                        Log.e(TAG, "지원되지 않는 URL 스킴: $urlToString", e)
+                        Toast.makeText(
+                            this@WebViewActivity,
+                            "지원되지 않는 링크입니다.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    return true
                 }
             }
 
@@ -90,7 +120,7 @@ class WebViewActivity : BaseActivity() {
                 domStorageEnabled = true
                 useWideViewPort = true
                 loadWithOverviewMode = true
-                mixedContentMode = android.webkit.WebSettings.MIXED_CONTENT_NEVER_ALLOW
+                mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
             }
 
             addJavascriptInterface(object : Any() {

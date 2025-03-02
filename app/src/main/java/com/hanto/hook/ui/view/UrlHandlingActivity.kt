@@ -75,11 +75,16 @@ class UrlHandlingActivity : AppCompatActivity(), TagSelectionListener {
     private fun handleIncomingIntent(intent: Intent?) {
         if (intent?.action == Intent.ACTION_SEND && intent.type == "text/plain") {
             val sharedText = intent.getStringExtra(Intent.EXTRA_TEXT)
-            if (sharedText != null) {
-                binding.tvEditUrl.text = sharedText
+            sharedText?.let {
+                val urlPattern = Regex("""\bhttps?://\S+""")
+                val url = urlPattern.find(it)?.value
+                if (url != null) {
+                    binding.tvEditUrl.text = url
+                }
             }
         }
     }
+
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
