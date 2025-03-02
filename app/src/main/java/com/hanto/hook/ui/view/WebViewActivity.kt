@@ -98,11 +98,6 @@ class WebViewActivity : BaseActivity() {
                         startActivity(intent)
                     } catch (e: ActivityNotFoundException) {
                         Log.e(TAG, "지원되지 않는 URL 스킴: $urlToString", e)
-                        Toast.makeText(
-                            this@WebViewActivity,
-                            "지원되지 않는 링크입니다.",
-                            Toast.LENGTH_SHORT
-                        ).show()
                     }
                     return true
                 }
