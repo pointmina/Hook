@@ -46,9 +46,8 @@
 | Concurrency     | Coroutines               |
 | Database        | Room DAO                 |
 | Navigation      | Jetpack Navigation       |
+| Dependency Injection      | Hilt           |
 | App Design      | Modularization           |
-
-🔧Paging
 
 ---
 
