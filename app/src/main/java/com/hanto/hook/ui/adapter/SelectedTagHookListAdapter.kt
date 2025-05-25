@@ -62,7 +62,6 @@ class SelectedTagHookListAdapter(
                 tvUrlLink.text = hook.url
                 tvTagDescription.text = hook.description
 
-                // description이 있을 경우 visibility를 조정
                 if (!hook.description.isNullOrEmpty()) {
                     tvTagDescription.visibility = View.VISIBLE
                     tvTagDescription.text = hook.description
@@ -76,12 +75,10 @@ class SelectedTagHookListAdapter(
                     binding.iconIsPinned.visibility = View.GONE
                 }
 
-                // 아이템 클릭 리스너 설정
                 root.setOnClickListener {
                     listener.onClick(adapterPosition)
                 }
 
-                // 옵션 버튼 클릭 리스너 설정
                 icOption.setOnClickListener {
                     listener.onOptionButtonClick(adapterPosition)
                 }

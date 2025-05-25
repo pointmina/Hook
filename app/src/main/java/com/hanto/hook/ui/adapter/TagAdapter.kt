@@ -91,25 +91,22 @@ class TagAdapter(
         }
     }
 
-    // 흔드는 애니메이션을 시작하는 메서드
     private fun startShakingAnimation(view: View) {
         val animator = ObjectAnimator.ofFloat(view, "rotation", -5f, 5f).apply {
             duration = 100 // 흔드는 속도
-            repeatCount = ObjectAnimator.INFINITE // 무한 반복
-            repeatMode = ObjectAnimator.REVERSE // 앞뒤로 왕복
+            repeatCount = ObjectAnimator.INFINITE
+            repeatMode = ObjectAnimator.REVERSE
         }
         animator.start()
-        view.setTag(R.id.shake_animation, animator) // 애니메이터를 뷰에 저장
+        view.setTag(R.id.shake_animation, animator)
     }
 
-    // 흔드는 애니메이션을 멈추는 메서드
     private fun stopShakingAnimation(view: View) {
         val animator = view.getTag(R.id.shake_animation) as? ObjectAnimator
         animator?.cancel()
-        view.rotation = 0f // 초기 상태로 복원
+        view.rotation = 0f
     }
 
-    // 드래그 중인 아이템을 제외하고 흔드는 애니메이션 시작
     fun startShakingExcept(selectedViewHolder: RecyclerView.ViewHolder?) {
         for (i in 0 until itemCount) {
             if (i == selectedViewHolder?.bindingAdapterPosition) continue // 선택된 아이템 제외
@@ -118,7 +115,6 @@ class TagAdapter(
         }
     }
 
-    // 모든 아이템의 흔드는 애니메이션 멈춤
     fun stopShakingAll() {
         for (i in 0 until itemCount) {
             val viewHolder = recyclerView?.findViewHolderForAdapterPosition(i) as? ViewHolder

@@ -10,10 +10,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/**
- * Hook 관련 데이터 작업을 담당하는 Repository 클래스
- * Hilt를 통해 의존성이 주입됩니다.
- */
+
 @Singleton
 class HookRepository @Inject constructor(
     private val hookDao: HookDao
@@ -92,41 +89,44 @@ class HookRepository @Inject constructor(
         }
     }
 
-    suspend fun updateTagsForHook(hookId: String, selectedTags: List<String>) = withContext(Dispatchers.IO) {
-        try {
-            // 기존 태그들 삭제
-            hookDao.deleteTagByHookId(hookId)
+    suspend fun updateTagsForHook(hookId: String, selectedTags: List<String>) =
+        withContext(Dispatchers.IO) {
+            try {
+                // 기존 태그들 삭제
+                hookDao.deleteTagByHookId(hookId)
 
-            // 새로운 태그들 삽입
-            selectedTags.forEach { tagName ->
-                val tag = Tag(hookId = hookId, name = tagName)
-                hookDao.insertTag(tag)
+                // 새로운 태그들 삽입
+                selectedTags.forEach { tagName ->
+                    val tag = Tag(hookId = hookId, name = tagName)
+                    hookDao.insertTag(tag)
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error updating tags for hook: $hookId", e)
+                throw e
             }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error updating tags for hook: $hookId", e)
-            throw e
         }
-    }
 
-    suspend fun updateHookAndTags(hook: Hook, selectedTags: List<String>) = withContext(Dispatchers.IO) {
-        try {
-            // 트랜잭션으로 처리하여 데이터 일관성 보장
-            hookDao.updateHook(hook)
-            updateTagsForHook(hook.hookId, selectedTags)
-        } catch (e: Exception) {
-            Log.e(TAG, "Error updating hook and tags: ${hook.hookId}", e)
-            throw e
+    suspend fun updateHookAndTags(hook: Hook, selectedTags: List<String>) =
+        withContext(Dispatchers.IO) {
+            try {
+                // 트랜잭션으로 처리하여 데이터 일관성 보장
+                hookDao.updateHook(hook)
+                updateTagsForHook(hook.hookId, selectedTags)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error updating hook and tags: ${hook.hookId}", e)
+                throw e
+            }
         }
-    }
 
-    suspend fun updateTagName(oldTagName: String, newTagName: String) = withContext(Dispatchers.IO) {
-        try {
-            hookDao.updateTagName(oldTagName, newTagName)
-        } catch (e: Exception) {
-            Log.e(TAG, "Error updating tag name: $oldTagName -> $newTagName", e)
-            throw e
+    suspend fun updateTagName(oldTagName: String, newTagName: String) =
+        withContext(Dispatchers.IO) {
+            try {
+                hookDao.updateTagName(oldTagName, newTagName)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error updating tag name: $oldTagName -> $newTagName", e)
+                throw e
+            }
         }
-    }
 
     suspend fun setPinned(hookId: String, isPinned: Boolean) = withContext(Dispatchers.IO) {
         try {
@@ -147,7 +147,8 @@ class HookRepository @Inject constructor(
 
     fun getAllTagNames(): LiveData<List<String>> = hookDao.getAllTagNames()
 
-    fun getHooksByTagName(tagName: String): LiveData<List<Hook>> = hookDao.getHooksByTagName(tagName)
+    fun getHooksByTagName(tagName: String): LiveData<List<Hook>> =
+        hookDao.getHooksByTagName(tagName)
 
     suspend fun getHookById(hookId: String): Hook? = withContext(Dispatchers.IO) {
         try {

@@ -14,10 +14,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/**
- * Hook 관련 UI 상태와 비즈니스 로직을 관리하는 ViewModel
- * Hilt를 통해 의존성이 주입됩니다.
- */
+
 @HiltViewModel
 class HookViewModel @Inject constructor(
     private val hookRepository: HookRepository

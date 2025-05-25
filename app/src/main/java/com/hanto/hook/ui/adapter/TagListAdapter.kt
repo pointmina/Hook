@@ -10,7 +10,6 @@ class TagListAdapter(
 ) : RecyclerView.Adapter<TagListAdapter.TagViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TagViewHolder {
-        // parent.context 사용으로 Context 문제 해결
         val binding = ItemTagBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return TagViewHolder(binding)
     }
@@ -36,7 +35,6 @@ class TagListAdapter(
                 }
             }
 
-            // 사용자 편의를 위해 체크 선택 범위를 넓힘
             binding.tvTagName.setOnClickListener {
                 val currentCheckState = binding.checkbox.isChecked
                 binding.checkbox.isChecked = !currentCheckState

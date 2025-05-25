@@ -19,7 +19,6 @@ class ChatAdapter : ListAdapter<ChatMessage, RecyclerView.ViewHolder>(ChatDiffCa
 
     private class ChatDiffCallback : DiffUtil.ItemCallback<ChatMessage>() {
         override fun areItemsTheSame(oldItem: ChatMessage, newItem: ChatMessage): Boolean {
-            // 메시지 내용과 타입으로 아이템 구분 (ChatMessage에 고유 ID가 없는 경우)
             return oldItem.message == newItem.message && oldItem.isUser == newItem.isUser
         }
 

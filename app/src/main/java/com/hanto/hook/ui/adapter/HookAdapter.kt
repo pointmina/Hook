@@ -37,7 +37,6 @@ class HookAdapter(
         private var currentHookId: String? = null
 
         fun bind(hook: Hook) {
-            // 기본 정보 바인딩
             binding.tvTitle.text = hook.title
             binding.tvUrlLink.text = hook.url
 
@@ -50,18 +49,15 @@ class HookAdapter(
 
             binding.iconIsPinned.visibility = if (hook.isPinned) View.VISIBLE else View.GONE
 
-            // 클릭 리스너 설정
             binding.root.setOnClickListener { onItemClick(hook) }
             binding.icOption.setOnClickListener {
                 onItemClickListener.onOptionButtonClick(bindingAdapterPosition)
             }
 
-            // 태그 처리 - 메모리 누수 방지를 위한 개선
             bindTags(hook.hookId)
         }
 
         private fun bindTags(hookId: String) {
-            // 이미 같은 훅의 태그를 로드했다면 캐시 사용
             if (currentHookId == hookId && tagsCache.containsKey(hookId)) {
                 setupTagRecyclerView(tagsCache[hookId] ?: emptyList())
                 return
@@ -69,9 +65,8 @@ class HookAdapter(
 
             currentHookId = hookId
 
-            // Observer를 한 번만 등록하고 재사용
             hookViewModel.getTagsForHook(hookId).observe(lifecycleOwner) { tags ->
-                if (currentHookId == hookId) { // 현재 바인딩된 훅과 일치하는지 확인
+                if (currentHookId == hookId) {
                     val distinctSortedTags = tags.distinctBy { it.name }.sortedBy { it.name }
                     tagsCache[hookId] = distinctSortedTags
                     setupTagRecyclerView(distinctSortedTags)
@@ -103,7 +98,6 @@ class HookAdapter(
 
         hooks = newHooks.toMutableList()
 
-        // 캐시 정리 - 더 이상 존재하지 않는 훅의 태그 캐시 제거
         val newHookIds = newHooks.map { it.hookId }.toSet()
         tagsCache.keys.retainAll(newHookIds)
 
