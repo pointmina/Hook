@@ -15,6 +15,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
 import com.hanto.hook.BaseActivity
+import com.hanto.hook.R
 import com.hanto.hook.databinding.ActivityWebviewBinding
 
 class WebViewActivity : BaseActivity() {
@@ -42,7 +43,7 @@ class WebViewActivity : BaseActivity() {
 
         val url = intent.getStringExtra(EXTRA_URL)
         if (url.isNullOrBlank()) {
-            Toast.makeText(this, "URL을 전달하지 않았습니다.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.plz_input_url), Toast.LENGTH_SHORT).show()
             finish()
             return
         }

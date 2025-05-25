@@ -6,7 +6,9 @@ import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 abstract class BaseActivity() : AppCompatActivity() {
     override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
         event?.let {
@@ -26,5 +28,4 @@ abstract class BaseActivity() : AppCompatActivity() {
         }
         return super.dispatchTouchEvent(event)
     }
-
 }

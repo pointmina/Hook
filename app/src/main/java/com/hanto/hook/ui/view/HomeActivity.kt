@@ -8,12 +8,18 @@ import androidx.navigation.ui.setupWithNavController
 import com.hanto.hook.BaseActivity
 import com.hanto.hook.R
 import com.hanto.hook.databinding.ActivityHomeBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class HomeActivity : BaseActivity() {
-    private lateinit var binding: ActivityHomeBinding
 
+    companion object {
+        private const val TAG = "HomeActivity"
+        private const val BACK_PRESS_DELAY = 2000L
+    }
+
+    private lateinit var binding: ActivityHomeBinding
     private var backPressedTime: Long = 0
-    private val backPressedDelay: Long = 2000 // 2초
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,25 +27,30 @@ class HomeActivity : BaseActivity() {
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupFab()
+        setupBottomNavigation()
+    }
+
+    private fun setupFab() {
         binding.mainFAB.setOnClickListener {
             startActivity(Intent(this, AddHookActivity::class.java))
         }
-        setBottomNavigation()
     }
 
-    private fun setBottomNavigation() {
+    private fun setupBottomNavigation() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.container_home) as NavHostFragment
         val navController = navHostFragment.navController
         binding.bottomNavigationHome.setupWithNavController(navController)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
-        if (backPressedTime + backPressedDelay > System.currentTimeMillis()) {
+        if (backPressedTime + BACK_PRESS_DELAY > System.currentTimeMillis()) {
             super.onBackPressed()
             finishAffinity()
         } else {
-            Toast.makeText(this, "뒤로 가기를 한 번 더 누르면 앱이 종료됩니다.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.exist_app), Toast.LENGTH_SHORT).show()
         }
         backPressedTime = System.currentTimeMillis()
     }

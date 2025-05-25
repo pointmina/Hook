@@ -4,13 +4,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.hanto.hook.data.model.Hook
+import com.hanto.hook.data.model.Tag
 import com.hanto.hook.databinding.ItemHookBinding
 import com.hanto.hook.viewmodel.HookViewModel
 
@@ -23,7 +23,7 @@ class HookAdapter(
 ) : RecyclerView.Adapter<HookAdapter.ViewHolder>() {
 
     private var filteredHooks: MutableList<Hook> = hooks.toMutableList()
-
+    private val tagsCache = mutableMapOf<String, List<Tag>>()
 
     interface OnItemClickListener {
         fun onClick(hook: Hook)
@@ -33,12 +33,14 @@ class HookAdapter(
     inner class ViewHolder(private val binding: ItemHookBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        private val tagRecyclerView: RecyclerView =
-            binding.rvTagContainer
+        private val tagRecyclerView: RecyclerView = binding.rvTagContainer
+        private var currentHookId: String? = null
 
         fun bind(hook: Hook) {
+            // 기본 정보 바인딩
             binding.tvTitle.text = hook.title
             binding.tvUrlLink.text = hook.url
+
             if (!hook.description.isNullOrBlank()) {
                 binding.tvTagDescription.visibility = View.VISIBLE
                 binding.tvTagDescription.text = hook.description
@@ -46,44 +48,53 @@ class HookAdapter(
                 binding.tvTagDescription.visibility = View.GONE
             }
 
-            if (hook.isPinned) {
-                binding.iconIsPinned.visibility = View.VISIBLE
-            } else {
-                binding.iconIsPinned.visibility = View.GONE
-            }
+            binding.iconIsPinned.visibility = if (hook.isPinned) View.VISIBLE else View.GONE
 
-            // 아이템 클릭 시 Hook 객체를 전달
-            binding.root.setOnClickListener {
-                onItemClick(hook)
-            }
-
-            // 옵션 버튼 클릭 시 position 전달
+            // 클릭 리스너 설정
+            binding.root.setOnClickListener { onItemClick(hook) }
             binding.icOption.setOnClickListener {
-                onItemClickListener.onOptionButtonClick(adapterPosition)
+                onItemClickListener.onOptionButtonClick(bindingAdapterPosition)
             }
 
-            hookViewModel.getTagsForHook(hook.hookId)?.observe(lifecycleOwner, Observer { tags ->
-                // 중복 제거 및 정렬
-                val distinctSortedTags = tags
-                    .distinctBy { it.name }
-                    .sortedBy { it.name }
+            // 태그 처리 - 메모리 누수 방지를 위한 개선
+            bindTags(hook.hookId)
+        }
 
-                val tagAdapter = TagHomeAdapter(distinctSortedTags)
-                tagRecyclerView.layoutManager = FlexboxLayoutManager(binding.root.context).apply {
-                    flexDirection = FlexDirection.ROW
-                    justifyContent = JustifyContent.FLEX_START
+        private fun bindTags(hookId: String) {
+            // 이미 같은 훅의 태그를 로드했다면 캐시 사용
+            if (currentHookId == hookId && tagsCache.containsKey(hookId)) {
+                setupTagRecyclerView(tagsCache[hookId] ?: emptyList())
+                return
+            }
+
+            currentHookId = hookId
+
+            // Observer를 한 번만 등록하고 재사용
+            hookViewModel.getTagsForHook(hookId).observe(lifecycleOwner) { tags ->
+                if (currentHookId == hookId) { // 현재 바인딩된 훅과 일치하는지 확인
+                    val distinctSortedTags = tags.distinctBy { it.name }.sortedBy { it.name }
+                    tagsCache[hookId] = distinctSortedTags
+                    setupTagRecyclerView(distinctSortedTags)
                 }
-                tagRecyclerView.adapter = tagAdapter
-            })
+            }
+        }
 
-
+        private fun setupTagRecyclerView(tags: List<Tag>) {
+            val tagAdapter = TagHomeAdapter(tags)
+            tagRecyclerView.layoutManager = FlexboxLayoutManager(binding.root.context).apply {
+                flexDirection = FlexDirection.ROW
+                justifyContent = JustifyContent.FLEX_START
+            }
+            tagRecyclerView.adapter = tagAdapter
         }
     }
 
     fun moveItem(fromPosition: Int, toPosition: Int) {
-        val movedItem = filteredHooks.removeAt(fromPosition)
-        filteredHooks.add(toPosition, movedItem)
-        notifyItemMoved(fromPosition, toPosition)
+        if (fromPosition in filteredHooks.indices && toPosition in filteredHooks.indices) {
+            val movedItem = filteredHooks.removeAt(fromPosition)
+            filteredHooks.add(toPosition, movedItem)
+            notifyItemMoved(fromPosition, toPosition)
+        }
     }
 
     fun updateHooks(newHooks: List<Hook>, onComplete: (() -> Unit)? = null) {
@@ -91,11 +102,15 @@ class HookAdapter(
         val diffResult = DiffUtil.calculateDiff(diffCallback)
 
         hooks = newHooks.toMutableList()
+
+        // 캐시 정리 - 더 이상 존재하지 않는 훅의 태그 캐시 제거
+        val newHookIds = newHooks.map { it.hookId }.toSet()
+        tagsCache.keys.retainAll(newHookIds)
+
         filter("")
         diffResult.dispatchUpdatesTo(this)
         onComplete?.invoke()
     }
-
 
     fun getItem(position: Int): Hook {
         return filteredHooks[position]
@@ -113,6 +128,9 @@ class HookAdapter(
         notifyDataSetChanged()
     }
 
+    fun filterHooks(query: String) {
+        filter(query)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemHookBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -128,4 +146,8 @@ class HookAdapter(
         holder.bind(hook)
     }
 
+    override fun onViewRecycled(holder: ViewHolder) {
+        super.onViewRecycled(holder)
+        holder.itemView.setOnClickListener(null)
+    }
 }

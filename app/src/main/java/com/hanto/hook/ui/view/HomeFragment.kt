@@ -21,17 +21,21 @@ import com.hanto.hook.ui.adapter.HookAdapter
 import com.hanto.hook.util.BottomDialogHelper
 import com.hanto.hook.util.SoundSearcher
 import com.hanto.hook.viewmodel.HookViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
 
-    private val TAG = "HomeFragment"
+    companion object {
+        private const val TAG = "HomeFragment"
+    }
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
+    // Hilt를 통해 ViewModel 자동 주입
     private val hookViewModel: HookViewModel by viewModels()
     private lateinit var adapter: HookAdapter
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,6 +51,14 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
         Log.d(TAG, "onViewCreated()")
         super.onViewCreated(view, savedInstanceState)
 
+        setupAdapter()
+        setupRecyclerView()
+        setupSearchView()
+        setupObservers()
+        setupTutorialButton()
+    }
+
+    private fun setupAdapter() {
         adapter = HookAdapter(
             hooks = ArrayList(),
             hookViewModel = hookViewModel,
@@ -59,10 +71,18 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
                 startActivity(intent)
             }
         )
+    }
 
+    private fun setupRecyclerView() {
         binding.rvHome.adapter = adapter
         binding.rvHome.layoutManager = LinearLayoutManager(requireContext())
 
+        val dividerItemDecoration =
+            DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
+        binding.rvHome.addItemDecoration(dividerItemDecoration)
+    }
+
+    private fun setupSearchView() {
         val tvRecentHooks = binding.tvRecentHooks
 
         binding.svSearch.setOnSearchClickListener {
@@ -71,9 +91,7 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
             val params = binding.svSearch.layoutParams
             params.width = LinearLayout.LayoutParams.MATCH_PARENT
             binding.svSearch.layoutParams = params
-
         }
-
 
         binding.svSearch.setOnCloseListener {
             tvRecentHooks.visibility = View.VISIBLE
@@ -97,17 +115,13 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
                 return true
             }
         })
+    }
 
-        val dividerItemDecoration =
-            DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
-        binding.rvHome.addItemDecoration(dividerItemDecoration)
-
-        // liveDataHook을 관찰하여 데이터가 변경되면 어댑터에 업데이트
-        hookViewModel.liveDataHook.observe(viewLifecycleOwner) { hooks: List<Hook> ->
+    private fun setupObservers() {
+        hookViewModel.hooks.observe(viewLifecycleOwner) { hooks: List<Hook> ->
             val layoutManager = binding.rvHome.layoutManager as LinearLayoutManager
             val currentPosition = layoutManager.findFirstVisibleItemPosition()
             val offset = layoutManager.findViewByPosition(currentPosition)?.top ?: 0
-
 
             val isNewDataAdded = hooks.size > adapter.itemCount
 
@@ -117,26 +131,43 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
                 binding.txtAddHook.visibility = View.GONE
             }
 
-            hookViewModel.getAllHooks().observe(viewLifecycleOwner) { hooks ->
-                adapter.updateHooks(hooks) {
-                    val shimmerContainer = binding.sfLoading
-                    shimmerContainer.stopShimmer()
-                    shimmerContainer.visibility = View.GONE
+            adapter.updateHooks(hooks) {
+                val shimmerContainer = binding.sfLoading
+                shimmerContainer.stopShimmer()
+                shimmerContainer.visibility = View.GONE
 
-                    if (isNewDataAdded) {
-                        binding.rvHome.scrollToPosition(0)
-                    } else {
-                        layoutManager.scrollToPositionWithOffset(currentPosition, offset)
-                    }
+                if (isNewDataAdded) {
+                    binding.rvHome.scrollToPosition(0)
+                } else {
+                    layoutManager.scrollToPositionWithOffset(currentPosition, offset)
                 }
             }
         }
 
+        // 에러 메시지 관찰
+        hookViewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
+            errorMessage?.let {
+                Log.e(TAG, "Error: $it")
+                hookViewModel.clearErrorMessage()
+            }
+        }
 
+        // 로딩 상태 관찰
+        hookViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            if (isLoading) {
+                binding.sfLoading.startShimmer()
+                binding.sfLoading.visibility = View.VISIBLE
+            } else {
+                binding.sfLoading.stopShimmer()
+                binding.sfLoading.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun setupTutorialButton() {
         // 튜토리얼 다시보기
-        val btSetting = view.findViewById<ImageView>(R.id.btn_tut_again)
-        btSetting.setOnClickListener {
-
+        val btSetting = view?.findViewById<ImageView>(R.id.btn_tut_again)
+        btSetting?.setOnClickListener {
             val dialog = TwoButtonDialogFragment(
                 title = getString(R.string.title_tut_again),
                 content = getString(R.string.question_tut_again),
@@ -170,11 +201,8 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
 
     override fun onDestroyView() {
         Log.d(TAG, "onDestroyView()")
-
         _binding = null
-
         super.onDestroyView()
-
     }
 
     override fun onDestroy() {
@@ -187,8 +215,8 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
         return (this * density).toInt()
     }
 
-
     override fun onClick(hook: Hook) {
+        // 필요시 구현
     }
 
     override fun onOptionButtonClick(position: Int) {
@@ -196,9 +224,8 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
         BottomDialogHelper.showHookOptionsDialog(requireContext(), selectedHook, hookViewModel)
     }
 
-
     private fun filterHooks(query: String) {
-        val hooks = hookViewModel.liveDataHook.value ?: emptyList()
+        val hooks = hookViewModel.hooks.value ?: emptyList()
         val filteredHooks = if (query.isBlank()) {
             hooks
         } else {
@@ -209,5 +236,4 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
         }
         adapter.updateHooks(filteredHooks)
     }
-
 }

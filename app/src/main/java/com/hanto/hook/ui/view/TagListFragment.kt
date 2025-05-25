@@ -8,15 +8,27 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.hanto.hook.R
 import com.hanto.hook.data.TagSelectionListener
 import com.hanto.hook.databinding.FragmentTagListBinding
 import com.hanto.hook.ui.adapter.TagListAdapter
 import com.hanto.hook.viewmodel.HookViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class TagListFragment : DialogFragment() {
+
+    companion object {
+        fun newInstance(multiChoiceList: LinkedHashMap<String, Boolean>): TagListFragment {
+            val fragment = TagListFragment()
+            val args = Bundle()
+            args.putSerializable("multiChoiceList", multiChoiceList)
+            fragment.arguments = args
+            return fragment
+        }
+    }
 
     private var tagSelectionListener: TagSelectionListener? = null
     private var _binding: FragmentTagListBinding? = null
@@ -24,6 +36,7 @@ class TagListFragment : DialogFragment() {
     private lateinit var multiChoiceList: LinkedHashMap<String, Boolean>
     private lateinit var adapter: TagListAdapter
 
+    
     private val hookViewModel: HookViewModel by viewModels()
 
     override fun onCreateView(
@@ -39,12 +52,21 @@ class TagListFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        arguments?.let {
-            multiChoiceList =
-                it.getSerializable("multiChoiceList") as LinkedHashMap<String, Boolean>
-        }
+        setupArguments()
+        setupRecyclerView()
+        setupViews()
+        setupObservers()
+    }
 
-        adapter = TagListAdapter(requireContext(), multiChoiceList)
+    private fun setupArguments() {
+        arguments?.let {
+            @Suppress("UNCHECKED_CAST")
+            multiChoiceList = it.getSerializable("multiChoiceList") as LinkedHashMap<String, Boolean>
+        }
+    }
+
+    private fun setupRecyclerView() {
+        adapter = TagListAdapter(multiChoiceList)
         binding.lvTags.adapter = adapter
         binding.lvTags.layoutManager = LinearLayoutManager(requireContext())
 
@@ -53,29 +75,25 @@ class TagListFragment : DialogFragment() {
             LinearLayoutManager.VERTICAL
         )
         binding.lvTags.addItemDecoration(dividerItemDecoration)
+    }
 
-        // ViewModel에서 태그 가져오기
-        hookViewModel.distinctTagNames.observe(viewLifecycleOwner, Observer { tagNames ->
-
-            tagNames.forEach { tagName ->
-                if (!multiChoiceList.containsKey(tagName)) {
-                    multiChoiceList[tagName] = false
-                }
-            }
-            adapter.notifyDataSetChanged()
-        })
-
-        // btn_add_tag 클릭 리스너 설정
+    private fun setupViews() {
+        // 새 태그 추가 버튼
         binding.btnAddTag.setOnClickListener {
             val newTag = binding.tvAddNewTag.text.toString().trim()
-            if (newTag.isEmpty()) {
-                Toast.makeText(requireContext(), "태그를 입력하세요.", Toast.LENGTH_SHORT).show()
-            } else if (multiChoiceList.containsKey(newTag)) {
-                Toast.makeText(requireContext(), "이미 존재하는 태그입니다.", Toast.LENGTH_SHORT).show()
-            } else {
-                multiChoiceList[newTag] = true
-                binding.lvTags.adapter?.notifyDataSetChanged()
-                binding.tvAddNewTag.text = null
+            when {
+                newTag.isEmpty() -> {
+                    Toast.makeText(requireContext(), getString(R.string.plz_input_tag), Toast.LENGTH_SHORT).show()
+                }
+                multiChoiceList.containsKey(newTag) -> {
+                    Toast.makeText(requireContext(),
+                        getString(R.string.exist_tag), Toast.LENGTH_SHORT).show()
+                }
+                else -> {
+                    multiChoiceList[newTag] = true
+                    adapter.notifyDataSetChanged()
+                    binding.tvAddNewTag.text.clear()
+                }
             }
         }
 
@@ -83,8 +101,7 @@ class TagListFragment : DialogFragment() {
             dismiss()
         }
 
-
-        // OK 버튼에 클릭 리스너 설정
+        // OK 버튼 클릭 리스너
         binding.btnOk.setOnClickListener {
             val selectedTags = multiChoiceList.filterValues { it }.keys.toList()
             tagSelectionListener?.onTagsSelected(selectedTags)
@@ -92,22 +109,32 @@ class TagListFragment : DialogFragment() {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    private fun setupObservers() {
+        // ViewModel에서 태그 가져오기
+        hookViewModel.distinctTagNames.observe(viewLifecycleOwner) { tagNames ->
+            tagNames.forEach { tagName ->
+                if (!multiChoiceList.containsKey(tagName)) {
+                    multiChoiceList[tagName] = false
+                }
+            }
+            adapter.notifyDataSetChanged()
+        }
+
+        // 에러 메시지 관찰
+        hookViewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
+            errorMessage?.let {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                hookViewModel.clearErrorMessage()
+            }
+        }
     }
 
     fun setTagSelectionListener(listener: TagSelectionListener) {
         tagSelectionListener = listener
     }
 
-    companion object {
-        fun newInstance(multiChoiceList: LinkedHashMap<String, Boolean>): TagListFragment {
-            val fragment = TagListFragment()
-            val args = Bundle()
-            args.putSerializable("multiChoiceList", multiChoiceList)
-            fragment.arguments = args
-            return fragment
-        }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

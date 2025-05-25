@@ -110,6 +110,12 @@
     <string name="tut_msg6">Let me show you how to use Hook conveniently!</string>
     <string name="tut_msg7">Explain it again!</string>
     <string name="yes2">Alright!</string>
-
+    <string name="plz_input_title">Please enter the title.</string>
+    <string name="plz_input_url">Enter the URL.</string>
+    <string name="get_current_url">Get the most recent copied URL!</string>
+    <string name="no_valid_url">Clipboard does not have a valid URL.</string>
+    <string name="empty_clipboard">Clipboard is empty.</string>
+    <string name="exist_tag">Tag already exists.</string>
+    <string name="exist_app">Click the back button to exit the app.</string>
 
 </resources>

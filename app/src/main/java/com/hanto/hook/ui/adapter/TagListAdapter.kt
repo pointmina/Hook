@@ -1,16 +1,17 @@
 package com.hanto.hook.ui.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.hanto.hook.databinding.ItemTagBinding
 
-class TagListAdapter(private val context: Context, private val tagMap: MutableMap<String, Boolean>) :
-    RecyclerView.Adapter<TagListAdapter.TagViewHolder>() {
+class TagListAdapter(
+    private val tagMap: MutableMap<String, Boolean> // Context 제거
+) : RecyclerView.Adapter<TagListAdapter.TagViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TagViewHolder {
-        val binding = ItemTagBinding.inflate(LayoutInflater.from(context), parent, false)
+        // parent.context 사용으로 Context 문제 해결
+        val binding = ItemTagBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return TagViewHolder(binding)
     }
 
@@ -28,11 +29,14 @@ class TagListAdapter(private val context: Context, private val tagMap: MutableMa
 
         init {
             binding.checkbox.setOnCheckedChangeListener { _, isChecked ->
-                val tag = tagMap.keys.elementAt(adapterPosition)
-                tagMap[tag] = isChecked
+                val position = bindingAdapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val tag = tagMap.keys.elementAt(position)
+                    tagMap[tag] = isChecked
+                }
             }
 
-            //사용자 편의를 위해 체크 선택 범위를 넓힘
+            // 사용자 편의를 위해 체크 선택 범위를 넓힘
             binding.tvTagName.setOnClickListener {
                 val currentCheckState = binding.checkbox.isChecked
                 binding.checkbox.isChecked = !currentCheckState

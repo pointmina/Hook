@@ -5,7 +5,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
 import com.hanto.hook.BaseActivity
 import com.hanto.hook.R
 import com.hanto.hook.data.TagSelectionListener
@@ -13,18 +12,19 @@ import com.hanto.hook.data.model.Hook
 import com.hanto.hook.data.model.Tag
 import com.hanto.hook.databinding.ActivityHookDetailBinding
 import com.hanto.hook.viewmodel.HookViewModel
-import kotlinx.coroutines.launch
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class HookDetailActivity : BaseActivity(), TagSelectionListener {
 
-    val TAG = "HookDetailActivity"
-
     companion object {
+        private const val TAG = "HookDetailActivity"
         const val EXTRA_HOOK = "HOOK"
     }
 
     private lateinit var binding: ActivityHookDetailBinding
 
+    // Hilt를 통해 ViewModel 자동 주입
     private val hookViewModel: HookViewModel by viewModels()
 
     private var isUrlValid = true
@@ -36,8 +36,8 @@ class HookDetailActivity : BaseActivity(), TagSelectionListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate()")
-
         super.onCreate(savedInstanceState)
+
         binding = ActivityHookDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -48,6 +48,12 @@ class HookDetailActivity : BaseActivity(), TagSelectionListener {
             observeTagsForHook(it.hookId)
         }
 
+        setupViews(hook)
+        setupObservers()
+        updateButtonState()
+    }
+
+    private fun setupViews(hook: Hook?) {
         binding.btnHookEdit.setOnClickListener {
             val updatedTitle = binding.tvHandedTitle.text.toString().trim()
             val updatedDescription = binding.tvHandedDesc.text.toString().trim()
@@ -55,13 +61,11 @@ class HookDetailActivity : BaseActivity(), TagSelectionListener {
 
             when {
                 updatedTitle.isBlank() -> {
-                    Toast.makeText(this, "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.plz_input_title), Toast.LENGTH_SHORT).show()
                 }
-
                 updatedUrl.isBlank() -> {
-                    Toast.makeText(this, "URL을 입력해주세요.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.plz_input_url), Toast.LENGTH_SHORT).show()
                 }
-
                 else -> {
                     hook?.let { currentHook ->
                         val updatedHook = currentHook.copy(
@@ -69,34 +73,31 @@ class HookDetailActivity : BaseActivity(), TagSelectionListener {
                             url = updatedUrl,
                             description = updatedDescription,
                         )
-
-                        lifecycleScope.launch {
-                            runCatching {
-                                hookViewModel.updateHookAndTags(updatedHook, tagNames.toList())
-                            }.onSuccess {
-                                finish()
-                            }.onFailure { e ->
-                                Log.e(TAG, "Error updating hook", e)
-                                Toast.makeText(
-                                    this@HookDetailActivity,
-                                    "업데이트 실패. 다시 시도해주세요.",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        }
+                        hookViewModel.updateHookAndTags(updatedHook, tagNames.toList())
+                        finish()
                     }
                 }
-
             }
-
         }
-
 
         binding.tvTag.setOnClickListener {
             showTagListFragment()
         }
+    }
 
-        updateButtonState()
+    private fun setupObservers() {
+        // 에러 메시지 관찰
+        hookViewModel.errorMessage.observe(this) { errorMessage ->
+            errorMessage?.let {
+                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+                hookViewModel.clearErrorMessage()
+            }
+        }
+
+        // 로딩 상태 관찰
+        hookViewModel.isLoading.observe(this) { isLoading ->
+            binding.btnHookEdit.isEnabled = !isLoading && isUrlValid && isTitleValid
+        }
     }
 
     private fun bindHookDetails(hook: Hook) {
@@ -108,16 +109,14 @@ class HookDetailActivity : BaseActivity(), TagSelectionListener {
     }
 
     private fun observeTagsForHook(hookId: String) {
-        hookId.let { id ->
-            hookViewModel.getTagsForHook(id)?.observe(this) { fetchedTags ->
-                tagsForHook = fetchedTags
-                binding.tvTag.text = fetchedTags.toTagString()
+        hookViewModel.getTagsForHook(hookId).observe(this) { fetchedTags ->
+            tagsForHook = fetchedTags
+            binding.tvTag.text = fetchedTags.toTagString()
 
-                tagNames = fetchedTags.map { it.name }.toSet()
+            tagNames = fetchedTags.map { it.name }.toSet()
 
-                fetchedTags.forEach { tag ->
-                    multiChoiceList[tag.name] = true
-                }
+            fetchedTags.forEach { tag ->
+                multiChoiceList[tag.name] = true
             }
         }
     }
@@ -127,7 +126,6 @@ class HookDetailActivity : BaseActivity(), TagSelectionListener {
             .joinToString(separator = " ") { tag -> "#${tag.name}" }
     }
 
-
     private fun updateButtonState() {
         val isValid = isUrlValid && isTitleValid
         binding.btnHookEdit.apply {
@@ -135,16 +133,6 @@ class HookDetailActivity : BaseActivity(), TagSelectionListener {
             val color = if (isValid) R.color.purple else R.color.gray_100
             setBackgroundColor(ContextCompat.getColor(this@HookDetailActivity, color))
         }
-    }
-
-    override fun onResume() {
-        Log.d(TAG, "onResume()")
-        super.onResume()
-    }
-
-    override fun onDestroy() {
-        Log.d(TAG, "onDestroy()")
-        super.onDestroy()
     }
 
     private fun updateTagsInView() {
@@ -166,5 +154,15 @@ class HookDetailActivity : BaseActivity(), TagSelectionListener {
         val fragment = TagListFragment.newInstance(multiChoiceList)
         fragment.setTagSelectionListener(this)
         fragment.show(supportFragmentManager, "TagListFragment")
+    }
+
+    override fun onResume() {
+        Log.d(TAG, "onResume()")
+        super.onResume()
+    }
+
+    override fun onDestroy() {
+        Log.d(TAG, "onDestroy()")
+        super.onDestroy()
     }
 }

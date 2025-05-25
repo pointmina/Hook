@@ -25,11 +25,14 @@ import com.hanto.hook.databinding.FragmentTagBinding
 import com.hanto.hook.ui.adapter.DragManageAdapterCallback
 import com.hanto.hook.ui.adapter.TagAdapter
 import com.hanto.hook.viewmodel.HookViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class TagFragment : Fragment() {
 
-
-    val TAG = "TagFragment"
+    companion object {
+        private const val TAG = "TagFragment"
+    }
 
     private var _binding: FragmentTagBinding? = null
     private val binding get() = _binding!!
@@ -37,7 +40,7 @@ class TagFragment : Fragment() {
 
     private val hookViewModel: HookViewModel by viewModels()
 
-    private val dialog by lazy {
+    private val addTagDialog by lazy {
         Dialog(requireContext()).apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             setContentView(R.layout.activity_add_tag)
@@ -46,12 +49,12 @@ class TagFragment : Fragment() {
             val btnAddTagName = findViewById<Button>(R.id.btn_add_tag_name)
 
             btnAddTagName.setOnClickListener {
-                val name = tvAddTagName.text.toString()
+                val name = tvAddTagName.text.toString().trim()
                 if (name.isNotEmpty()) {
                     clearEditText(tvAddTagName)
                     this.dismiss()
                 } else {
-                    Toast.makeText(requireContext(), "태그 이름을 입력하세요.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.plz_input_tag), Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -77,19 +80,24 @@ class TagFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val btAddTag: ImageButton = view.findViewById(R.id.btAddTag)
+        setupViews()
+        setupRecyclerView()
+        setupObservers()
+    }
+
+    private fun setupViews() {
+        val btAddTag: ImageButton = view?.findViewById(R.id.btAddTag) ?: return
         btAddTag.setOnClickListener {
-            dialog.show()
+            addTagDialog.show()
         }
+    }
 
-
+    private fun setupRecyclerView() {
         val flexboxLayoutManager = FlexboxLayoutManager(requireContext()).apply {
             justifyContent = JustifyContent.SPACE_EVENLY
             flexDirection = FlexDirection.ROW
         }
         binding.rvTagViewTagContainer.layoutManager = flexboxLayoutManager
-
-
 
         tagAdapter = TagAdapter(object : TagAdapter.OnItemClickListener {
             override fun onClick(tagName: String) {
@@ -99,25 +107,29 @@ class TagFragment : Fragment() {
                 startActivity(intent)
             }
         }).apply {
-            recyclerView = binding.rvTagViewTagContainer // RecyclerView 전달
+            recyclerView = binding.rvTagViewTagContainer
         }
-
-
 
         binding.rvTagViewTagContainer.adapter = tagAdapter
 
-
         val itemTouchHelper = ItemTouchHelper(DragManageAdapterCallback(tagAdapter))
         itemTouchHelper.attachToRecyclerView(binding.rvTagViewTagContainer)
+    }
 
-
+    private fun setupObservers() {
         hookViewModel.distinctTagNames.observe(viewLifecycleOwner) { tagNames ->
-            Log.d("SelectedTagActivity","distinctTagNames $tagNames")
+            Log.d(TAG, "distinctTagNames $tagNames")
             tagAdapter.submitList(tagNames)
         }
 
+        // 에러 메시지 관찰
+        hookViewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
+            errorMessage?.let {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                hookViewModel.clearErrorMessage()
+            }
+        }
     }
-
 
     override fun onResume() {
         Log.d(TAG, "onResume")
@@ -133,5 +145,4 @@ class TagFragment : Fragment() {
     private fun clearEditText(editText: EditText) {
         editText.text.clear()
     }
-
 }

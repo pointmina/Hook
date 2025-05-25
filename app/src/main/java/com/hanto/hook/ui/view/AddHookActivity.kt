@@ -8,103 +8,97 @@ import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
 import com.hanto.hook.BaseActivity
 import com.hanto.hook.R
 import com.hanto.hook.data.TagSelectionListener
 import com.hanto.hook.data.model.Hook
-import com.hanto.hook.data.model.Tag
 import com.hanto.hook.databinding.ActivityAddHookBinding
+import com.hanto.hook.util.DateUtils
+import com.hanto.hook.util.UrlUtils
 import com.hanto.hook.viewmodel.HookViewModel
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
+import dagger.hilt.android.AndroidEntryPoint
 
-@Suppress("DEPRECATION")
+@AndroidEntryPoint
 class AddHookActivity : BaseActivity(), TagSelectionListener {
+
+    companion object {
+        private const val TAG = "AddHookActivity"
+        private const val MAX_TITLE_LENGTH = 120
+        private const val MAX_DESCRIPTION_LENGTH = 80
+    }
+
     private lateinit var binding: ActivityAddHookBinding
 
-    val TAG = "ActivityAddHook"
+    // Hilt를 통해 ViewModel 자동 주입
+    private val hookViewModel: HookViewModel by viewModels()
 
     private var isUrlValid = false
     private var isTitleValid = false
     private var isExpanded = false
-
-    private lateinit var hookViewModel: HookViewModel
 
     private var selectedTags: List<String> = emptyList()
     private val multiChoiceList = linkedMapOf<String, Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate()")
-
         super.onCreate(savedInstanceState)
+
         binding = ActivityAddHookBinding.inflate(layoutInflater)
-        val view = binding.root
+        setContentView(binding.root)
 
-        hookViewModel = HookViewModel()
+        setupInitialTags()
+        setupViews()
+        setupTextWatchers()
+        setupObservers()
+        updateButtonState()
+    }
 
+    private fun setupInitialTags() {
         val tags = intent.getStringArrayListExtra("item_tag_list")
         tags?.forEach { tag ->
             multiChoiceList[tag] = true
         }
+    }
 
-        setContentView(view)
-        updateButtonState()
-
+    private fun setupViews() {
         binding.ivAppbarBackButton.setOnClickListener {
             finish()
         }
 
         binding.ivUrlLink.setOnClickListener {
-            val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-            if (clipboard.hasPrimaryClip()) {
-                val clipData = clipboard.primaryClip
-                if (clipData != null && clipData.itemCount > 0) {
-                    // 클립보드의 첫 번째 항목의 텍스트 데이터
-                    val item = clipData.getItemAt(0)
-                    val pasteData = item.text
-
-                    if (pasteData != null && (pasteData.startsWith("http://") || pasteData.startsWith(
-                            "https://"
-                        ))
-                    ) {
-                        binding.tvUrlLink.setText(pasteData)
-                        Toast.makeText(this, "가장 최근에 복사한 URL을 가져왔어요!", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(this, "클립보드에 유효한 URL이 없습니다.", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            } else {
-                Toast.makeText(this, "클립보드가 비어 있습니다.", Toast.LENGTH_SHORT).show()
-            }
+            pasteUrlFromClipboard()
         }
 
-        val limitString1 = "${binding.tvUrlTitle.text.length} / 120"
-        val limitString2 = "${binding.tvUrlDescription.text.length} / 80"
-        binding.tvLimit1.text = limitString1
-        binding.tvLimit2.text = limitString2
+        binding.containerTag.setOnClickListener {
+            val fragment = TagListFragment.newInstance(multiChoiceList)
+            fragment.setTagSelectionListener(this)
+            fragment.show(supportFragmentManager, "TagListFragment")
+        }
 
-        //content에 따라 버튼 active
+        binding.ivAddNewHook.setOnClickListener {
+            insertHookIntoDB()
+        }
+
+        updateLimitStrings()
+    }
+
+    private fun setupTextWatchers() {
         binding.tvUrlLink.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val input = s.toString()
                 isUrlValid = input.isNotBlank() && !input.contains(" ")
 
-                if (!isUrlValid) {
-                    binding.tvGuide.visibility = View.VISIBLE
-                } else {
-                    binding.tvGuide.visibility = View.GONE
-                    updateButtonState() // 버튼 상태 업데이트
-                }
+                binding.tvGuide.visibility = if (!isUrlValid) View.VISIBLE else View.GONE
+                updateButtonState()
             }
 
-            override fun afterTextChanged(s: Editable?) {
-            }
+            override fun afterTextChanged(s: Editable?) {}
         })
+
         binding.tvUrlLink.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_NEXT) {
                 binding.tvUrlTitle.requestFocus()
@@ -118,21 +112,18 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 s?.let {
-                    val innerLimitString1 = "${s.length} / 120"
-                    binding.tvLimit1.text = innerLimitString1
+                    val limitString1 = "${s.length} / $MAX_TITLE_LENGTH"
+                    binding.tvLimit1.text = limitString1
 
                     isTitleValid = s.toString().trim().isNotEmpty()
-                    if (!isTitleValid) {
-                        binding.tvGuideTitle.visibility = View.VISIBLE
-                    } else {
-                        binding.tvGuideTitle.visibility = View.GONE
-                        updateButtonState()
-                    }
+                    binding.tvGuideTitle.visibility = if (!isTitleValid) View.VISIBLE else View.GONE
+                    updateButtonState()
                 }
             }
 
             override fun afterTextChanged(s: Editable?) {}
         })
+
         binding.tvUrlTitle.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_NEXT && isExpanded) {
                 binding.tvUrlDescription.requestFocus()
@@ -151,35 +142,94 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 s?.let {
-                    val innerLimitString2 = "${s.length} / 80"
-                    binding.tvLimit2.text = innerLimitString2
+                    val limitString2 = "${s.length} / $MAX_DESCRIPTION_LENGTH"
+                    binding.tvLimit2.text = limitString2
                 }
             }
 
             override fun afterTextChanged(s: Editable?) {}
         })
+    }
 
-        // 태그 선택
-        binding.containerTag.setOnClickListener {
-            val fragment = TagListFragment.newInstance(multiChoiceList)
-            fragment.setTagSelectionListener(this)
-            fragment.show(supportFragmentManager, "TagListFragment")
+    private fun setupObservers() {
+        // 에러 메시지 관찰
+        hookViewModel.errorMessage.observe(this) { errorMessage ->
+            errorMessage?.let {
+                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+                hookViewModel.clearErrorMessage()
+            }
         }
 
+        // 로딩 상태 관찰
+        hookViewModel.isLoading.observe(this) { isLoading ->
+            binding.ivAddNewHook.isEnabled = !isLoading && isUrlValid && isTitleValid
+        }
+    }
 
-        // 더보기 뷰
-        binding.containerLinkInfoEtc.setOnClickListener {
-            val tvUrlDescription = binding.tvUrlDescription
-            val tvTag = binding.tvTag
-            val containerTag = binding.containerTag
-//            val downArrow = binding.ivDownArrow
-            val tvLimit2 = binding.tvLimit2
-//            toggleExpandCollapse(tvUrlDescription, tvTag, containerTag, downArrow, tvLimit2)
+    private fun pasteUrlFromClipboard() {
+        val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+        if (clipboard.hasPrimaryClip()) {
+            val clipData = clipboard.primaryClip
+            if (clipData != null && clipData.itemCount > 0) {
+                val item = clipData.getItemAt(0)
+                val pasteData = item.text?.toString()
+
+                if (pasteData != null && UrlUtils.isValidUrl(pasteData)) {
+                    binding.tvUrlLink.setText(pasteData)
+                    Toast.makeText(this, getString(R.string.get_current_url), Toast.LENGTH_SHORT)
+                        .show()
+                } else {
+                    Toast.makeText(this, getString(R.string.no_valid_url), Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+        } else {
+            Toast.makeText(this, getString(R.string.empty_clipboard), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun updateLimitStrings() {
+        val limitString1 = "${binding.tvUrlTitle.text.length} / $MAX_TITLE_LENGTH"
+        val limitString2 = "${binding.tvUrlDescription.text.length} / $MAX_DESCRIPTION_LENGTH"
+        binding.tvLimit1.text = limitString1
+        binding.tvLimit2.text = limitString2
+    }
+
+    private fun insertHookIntoDB() {
+        val url = binding.tvUrlLink.text.toString().trim()
+        val title = binding.tvUrlTitle.text.toString().trim()
+        val description = binding.tvUrlDescription.text.toString().trim()
+        val hookId = DateUtils.generateHookId()
+
+        if (title.isEmpty()) {
+            Toast.makeText(this, getString(R.string.plz_input_title), Toast.LENGTH_SHORT).show()
+            return
         }
 
-        binding.ivAddNewHook.setOnClickListener {
-            insertHookIntoDB()
-        }
+        val hook = Hook(
+            hookId = hookId,
+            title = title,
+            url = UrlUtils.ensureProtocol(url),
+            description = description
+        )
+
+        hookViewModel.insertHookWithTags(hook, selectedTags)
+        finish()
+    }
+
+    private fun updateButtonState() {
+        val isValid = isUrlValid && isTitleValid
+        val finishButton = binding.ivAddNewHook
+        finishButton.isEnabled = isValid
+
+        val color = if (isValid) R.color.purple else R.color.gray_100
+        finishButton.setBackgroundColor(ContextCompat.getColor(this, color))
+    }
+
+    override fun onTagsSelected(tags: List<String>) {
+        binding.containerTag.text = tags.joinToString(" ") { "#$it" }
+        selectedTags = tags.distinct()
+        Log.d(TAG, "onTagsSelected : $tags")
     }
 
     override fun onResume() {
@@ -191,90 +241,4 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
         Log.d(TAG, "onDestroy()")
         super.onDestroy()
     }
-
-
-    private fun insertHookIntoDB() {
-        val url = binding.tvUrlLink.text.toString()
-        val title = binding.tvUrlTitle.text.toString().trim()
-        val description = binding.tvUrlDescription.text.toString()
-        val hookId = getCurrentTimeAsString()
-
-        if (title.isEmpty()) {
-            Toast.makeText(this, "제목을 입력하세요.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val hook = Hook(
-            hookId = hookId,
-            title = title,
-            url = url,
-            description = description
-        )
-
-        hookViewModel.insertHook(hook)
-
-        //2. Tag 삽입 (Hook 삽입이 완료된 후 실행)
-        if (selectedTags.isEmpty()) {
-            Log.d(TAG, "선택된 태그가 없습니다.")
-        } else {
-            selectedTags.forEach { tagName ->
-                val tag = Tag(
-                    hookId = hookId,
-                    name = tagName
-                )
-                hookViewModel.insertTag(tag)
-            }
-        }
-        finish()
-    }
-
-
-    private fun updateButtonState() {
-        val isValid = isUrlValid && isTitleValid
-        val finishButton = binding.ivAddNewHook
-        finishButton.isEnabled = isValid
-
-        if (isValid) {
-            finishButton.setBackgroundColor(getResources().getColor(R.color.purple))
-        } else {
-            finishButton.setBackgroundColor(getResources().getColor(R.color.gray_100))
-        }
-    }
-
-    private fun toggleExpandCollapse(
-        tvUrlDescription: TextView,
-        tvTag: TextView,
-        containerTag: TextView,
-        downArrow: ImageView,
-        tvLimit2: TextView
-    ) {
-        isExpanded = !isExpanded
-
-        if (isExpanded) {
-            tvUrlDescription.visibility = View.INVISIBLE
-            tvTag.visibility = View.INVISIBLE
-            containerTag.visibility = View.INVISIBLE
-            downArrow.setImageResource(R.drawable.ic_up_arrow)
-            tvLimit2.visibility = View.INVISIBLE
-        } else {
-            tvUrlDescription.visibility = View.VISIBLE
-            tvTag.visibility = View.VISIBLE
-            containerTag.visibility = View.VISIBLE
-            downArrow.setImageResource(R.drawable.ic_down_arrow)
-            tvLimit2.visibility = View.VISIBLE
-        }
-    }
-
-    override fun onTagsSelected(tags: List<String>) {
-        binding.containerTag.text = tags.joinToString(" ") { "#$it" }
-        selectedTags = tags.distinct()
-        Log.d(TAG, "onTagsSelected : ${tags.toString()}")
-    }
-
-    private fun getCurrentTimeAsString(): String {
-        val dateFormat = SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault())
-        val currentTime = Calendar.getInstance().time
-        return dateFormat.format(currentTime)
-    }
-
 }

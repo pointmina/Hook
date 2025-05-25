@@ -14,10 +14,15 @@ import com.hanto.hook.databinding.ActivitySelectedTagBinding
 import com.hanto.hook.ui.adapter.SelectedTagHookListAdapter
 import com.hanto.hook.util.BottomDialogHelper
 import com.hanto.hook.viewmodel.HookViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SelectedTagActivity : BaseActivity(), TagUpdateListener {
 
-    private val TAG = "SelectedTagActivity"
+    companion object {
+        private const val TAG = "SelectedTagActivity"
+    }
+
     private lateinit var binding: ActivitySelectedTagBinding
     private lateinit var selectedTagHookListAdapter: SelectedTagHookListAdapter
 
@@ -29,63 +34,38 @@ class SelectedTagActivity : BaseActivity(), TagUpdateListener {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate()")
 
-        // Binding 초기화
         binding = ActivitySelectedTagBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // 뒤로 가기 버튼 처리
+        setupViews()
+        setupRecyclerView()
+        setupObservers()
+        getIntentData()
+    }
+
+    private fun setupViews() {
         binding.ivAppbarSelectedTagBackButton.setOnClickListener {
             finish()
         }
 
-        // 태그 이름을 인텐트로 받아옴
-        selectedTagName = intent.getStringExtra("selectedTagName").orEmpty()
-        binding.tvSelectedTag.text = selectedTagName
-
-        // 어댑터 설정
-        setupRecyclerView()
-
-        // 태그 훅 데이터 관찰
-        observeTagHooks(selectedTagName)
-
-        // 태그 변경 버튼 클릭
         binding.ivTagChange.setOnClickListener {
-            val changeTagFragment = ChangeTagFragment()
-            val bundle = Bundle().apply {
-                putString("selectedTag", selectedTagName)
-            }
-            changeTagFragment.arguments = bundle
-            changeTagFragment.setTagUpdateListener(this)
-            changeTagFragment.show(supportFragmentManager, "ChangeTagFragment")
+            showChangeTagFragment()
         }
 
-        // 태그 삭제 버큰 클릭
         binding.ivTagDelete.setOnClickListener {
-            val deleteTagFragment = DeleteTagFragment()
-            deleteTagFragment.setOnTagDeletedListener(object :
-                DeleteTagFragment.OnTagDeletedListener {
-                override fun onTagDeleted() {
-                    finish()
-                }
-            })
-            val bundle = Bundle().apply {
-                putString("selectedTag", selectedTagName)
-            }
-            deleteTagFragment.arguments = bundle
-            deleteTagFragment.show(supportFragmentManager, "DeleteTagFragment")
+            showDeleteTagFragment()
         }
-
-
     }
 
     private fun setupRecyclerView() {
-        selectedTagHookListAdapter = SelectedTagHookListAdapter(hooks = ArrayList(),
+        selectedTagHookListAdapter = SelectedTagHookListAdapter(
+            hooks = ArrayList(),
             object : SelectedTagHookListAdapter.OnItemClickListener {
                 override fun onClick(position: Int) {
                     val selectedHook = selectedTagHookListAdapter.getItem(position)
-                    Intent(this@SelectedTagActivity, WebViewActivity::class.java).also { intent ->
-                        selectedHook?.let { hook ->
-                            intent.putExtra(WebViewActivity.EXTRA_URL, hook.url)
+                    selectedHook?.let { hook ->
+                        val intent = Intent(this@SelectedTagActivity, WebViewActivity::class.java).apply {
+                            putExtra("HOOK_URL", hook.url)
                         }
                         startActivity(intent)
                     }
@@ -95,57 +75,94 @@ class SelectedTagActivity : BaseActivity(), TagUpdateListener {
                     val selectedHook = selectedTagHookListAdapter.getItem(position)
                     selectedHook?.let { hook ->
                         BottomDialogHelper.showHookOptionsDialog(
-                            this@SelectedTagActivity, hook, hookViewModel,
+                            this@SelectedTagActivity, hook, hookViewModel
                         )
                     }
                 }
-            })
+            }
+        )
 
         binding.rvUrlHookList.apply {
             adapter = selectedTagHookListAdapter
             layoutManager = LinearLayoutManager(this@SelectedTagActivity)
-            addItemDecoration(DividerItemDecoration(
-                this@SelectedTagActivity, DividerItemDecoration.VERTICAL
-            ).apply {
-                ResourcesCompat.getDrawable(resources, R.drawable.divider, null)?.let {
-                    setDrawable(it)
+            addItemDecoration(
+                DividerItemDecoration(this@SelectedTagActivity, DividerItemDecoration.VERTICAL).apply {
+                    ResourcesCompat.getDrawable(resources, R.drawable.divider, null)?.let {
+                        setDrawable(it)
+                    }
                 }
-            })
+            )
         }
     }
 
-    private fun observeTagHooks(tagName: String) {
-        Log.d(TAG, "Observing hooks for tag: $tagName")
+    private fun setupObservers() {
+        // 선택된 태그에 해당하는 훅들 관찰
+        hookViewModel.hooksBySelectedTag.observe(this) { hooks ->
+            if (hooks.isNotEmpty()) {
+                val distinctHooks = hooks.distinctBy { it.id }
+                Log.d(TAG, "Distinct Hooks fetched: ${distinctHooks.size}")
+                selectedTagHookListAdapter.submitList(distinctHooks)
+                binding.tvTagCount.text = distinctHooks.size.toString()
+            } else {
+                selectedTagHookListAdapter.submitList(emptyList())
+                binding.tvTagCount.text = "0"
+            }
+        }
 
-        hookViewModel.fetchHooksByTagName(tagName)
-
-        hookViewModel.hooksByTagName.observe(this) { event ->
-            event.getContentIfNotHandled()?.let { hooks ->
-                if (hooks.isNotEmpty()) {
-                    // 중복 제거
-                    val distinctHooks = hooks.distinctBy { it.id }
-
-                    Log.d(TAG, "Distinct Hooks fetched: ${distinctHooks.size}")
-                    selectedTagHookListAdapter.submitList(distinctHooks)
-                    binding.tvTagCount.text = distinctHooks.size.toString()
-
-                }
+        // 에러 메시지 관찰
+        hookViewModel.errorMessage.observe(this) { errorMessage ->
+            errorMessage?.let {
+                Log.e(TAG, "Error: $it")
+                hookViewModel.clearErrorMessage()
             }
         }
     }
 
+    private fun getIntentData() {
+        selectedTagName = intent.getStringExtra("selectedTagName").orEmpty()
+        binding.tvSelectedTag.text = selectedTagName
+
+        // ViewModel에 선택된 태그 설정
+        hookViewModel.selectTagName(selectedTagName)
+    }
+
+    private fun showChangeTagFragment() {
+        val changeTagFragment = ChangeTagFragment()
+        val bundle = Bundle().apply {
+            putString("selectedTag", selectedTagName)
+        }
+        changeTagFragment.arguments = bundle
+        changeTagFragment.setTagUpdateListener(this)
+        changeTagFragment.show(supportFragmentManager, "ChangeTagFragment")
+    }
+
+    private fun showDeleteTagFragment() {
+        val deleteTagFragment = DeleteTagFragment()
+        deleteTagFragment.setOnTagDeletedListener(object : DeleteTagFragment.OnTagDeletedListener {
+            override fun onTagDeleted() {
+                finish()
+            }
+        })
+        val bundle = Bundle().apply {
+            putString("selectedTag", selectedTagName)
+        }
+        deleteTagFragment.arguments = bundle
+        deleteTagFragment.show(supportFragmentManager, "DeleteTagFragment")
+    }
 
     override fun onTagUpdated(tag: String) {
         Log.d(TAG, "onTagUpdated: $tag")
         selectedTagName = tag
         binding.tvSelectedTag.text = tag
 
-        observeTagHooks(tag)
+        // ViewModel에 새로운 태그 설정
+        hookViewModel.selectTagName(tag)
     }
-
 
     override fun onDestroy() {
         super.onDestroy()
+        // 선택된 태그 초기화
+        hookViewModel.clearSelectedTag()
         Log.d(TAG, "onDestroy()")
     }
 }

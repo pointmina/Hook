@@ -2,31 +2,36 @@ package com.hanto.hook.ui.view
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hanto.hook.R
 import com.hanto.hook.data.model.ChatMessage
 import com.hanto.hook.databinding.ActivityTutorialBinding
 import com.hanto.hook.ui.adapter.ChatAdapter
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class TutorialActivity : AppCompatActivity() {
 
+    companion object {
+        private const val TAG = "TutorialActivity"
+        private const val MESSAGE_DELAY = 1500L
+        private const val DIALOG_DELAY = 1000L
+    }
+
     private lateinit var binding: ActivityTutorialBinding
     private lateinit var chatAdapter: ChatAdapter
-
     private var userResponse: String? = null
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTutorialBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         setupRecyclerView()
         loadChatMessages()
-
     }
 
     private fun setupRecyclerView() {
@@ -44,8 +49,10 @@ class TutorialActivity : AppCompatActivity() {
             ChatMessage(getString(R.string.tut_msg3), isUser = false, isDialog = true)
         )
 
-        initialMessages.forEachIndexed { index, message ->
-            Handler(Looper.getMainLooper()).postDelayed({
+        // Coroutine 사용으로 Deprecated Handler 교체
+        lifecycleScope.launch {
+            initialMessages.forEachIndexed { index, message ->
+                delay(index * MESSAGE_DELAY)
                 addChatMessage(message)
                 if (message.isDialog) {
                     showMessageDialog(
@@ -56,7 +63,7 @@ class TutorialActivity : AppCompatActivity() {
                         "first"
                     )
                 }
-            }, index * 1500L)
+            }
         }
     }
 
@@ -70,25 +77,32 @@ class TutorialActivity : AppCompatActivity() {
             )
         }
 
-        nextMessages.forEachIndexed { index, message ->
-            Handler(Looper.getMainLooper()).postDelayed({
+        // Coroutine 사용으로 Deprecated Handler 교체
+        lifecycleScope.launch {
+            nextMessages.forEachIndexed { index, message ->
+                delay((index + 1) * MESSAGE_DELAY)
                 addChatMessage(message)
                 if (index == nextMessages.lastIndex && message.isDialog) {
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        if (isPositiveResponse) {
-                            showMessageDialog(getString(R.string.tut_msg7), getString(R.string.yes), getString(R.string.yes), "two", "skip")
-                        } else {
-                            showMessageDialog(
-                                getString(R.string.no),
-                                getString(R.string.yes),
-                                getString(R.string.yes2),
-                                "one",
-                                "tutorial"
-                            )
-                        }
-                    }, 1000L)
+                    delay(DIALOG_DELAY)
+                    if (isPositiveResponse) {
+                        showMessageDialog(
+                            getString(R.string.tut_msg7),
+                            getString(R.string.yes),
+                            getString(R.string.yes),
+                            "two",
+                            "skip"
+                        )
+                    } else {
+                        showMessageDialog(
+                            getString(R.string.no),
+                            getString(R.string.yes),
+                            getString(R.string.yes2),
+                            "one",
+                            "tutorial"
+                        )
+                    }
                 }
-            }, (index + 1) * 1500L)
+            }
         }
     }
 
@@ -98,13 +112,10 @@ class TutorialActivity : AppCompatActivity() {
         binding.rvChat.scrollToPosition(chatAdapter.itemCount - 1)
     }
 
-
-
     private fun goToTutorialScreen() {
-        Intent(this, OnboardingActivity::class.java).also {
-            startActivity(it)
-            finish()
-        }
+        val intent = Intent(this, OnboardingActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     private fun showMessageDialog(
@@ -130,31 +141,35 @@ class TutorialActivity : AppCompatActivity() {
     }
 
     private fun handleTwoButtonDialog(leftMessage: String, rightMessage: String, buttonAct: String) {
-        binding.btnLeft.visibility = View.VISIBLE
-        binding.btnRight.visibility = View.VISIBLE
-        binding.btnLeft.text = leftMessage
-        binding.btnRight.text = rightMessage
-
-        binding.btnLeft.setOnClickListener {
-            handleUserResponse(leftMessage)
-            binding.dialogChat.visibility = View.GONE
-            if (buttonAct == "skip") goToTutorialScreen() else showNextMessages(false)
+        binding.btnLeft.apply {
+            visibility = View.VISIBLE
+            text = leftMessage
+            setOnClickListener {
+                handleUserResponse(leftMessage)
+                binding.dialogChat.visibility = View.GONE
+                if (buttonAct == "skip") goToTutorialScreen() else showNextMessages(false)
+            }
         }
 
-        binding.btnRight.setOnClickListener {
-            handleUserResponse(rightMessage)
-            binding.dialogChat.visibility = View.GONE
-            if (buttonAct == "skip") goToMainScreen() else showNextMessages(true)
+        binding.btnRight.apply {
+            visibility = View.VISIBLE
+            text = rightMessage
+            setOnClickListener {
+                handleUserResponse(rightMessage)
+                binding.dialogChat.visibility = View.GONE
+                if (buttonAct == "skip") goToMainScreen() else showNextMessages(true)
+            }
         }
     }
 
     private fun handleOneButtonDialog(oneMessage: String, buttonAct: String) {
-        binding.btnOne.visibility = View.VISIBLE
-        binding.btnOne.text = oneMessage
-
-        binding.btnOne.setOnClickListener {
-            handleUserResponse(oneMessage)
-            if (buttonAct == "tutorial") goToTutorialScreen() else goToMainScreen()
+        binding.btnOne.apply {
+            visibility = View.VISIBLE
+            text = oneMessage
+            setOnClickListener {
+                handleUserResponse(oneMessage)
+                if (buttonAct == "tutorial") goToTutorialScreen() else goToMainScreen()
+            }
         }
     }
 
@@ -165,11 +180,16 @@ class TutorialActivity : AppCompatActivity() {
         chatAdapter.submitList(updatedMessages)
     }
 
-
     private fun goToMainScreen() {
         val sharedPref = getSharedPreferences("hook_prefs", MODE_PRIVATE)
         sharedPref.edit().putBoolean("isFirstLaunch", false).apply()
-        startActivity(Intent(this, HomeActivity::class.java))
+
+        val intent = Intent(this, HomeActivity::class.java)
+        startActivity(intent)
         finish()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 }
