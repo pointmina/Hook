@@ -36,7 +36,6 @@ class TagListFragment : DialogFragment() {
     private lateinit var multiChoiceList: LinkedHashMap<String, Boolean>
     private lateinit var adapter: TagListAdapter
 
-    
     private val hookViewModel: HookViewModel by viewModels()
 
     override fun onCreateView(

@@ -1,5 +1,6 @@
 package com.hanto.hook.util
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.util.Log
@@ -79,7 +80,53 @@ class BottomDialogHelper {
                 dialog.dismiss()
             }
 
+            // 공유하기 버튼 클릭 시
+            val btnShare: MaterialButton = view.findViewById(R.id.btn_share_hook)
+            btnShare.setOnClickListener {
+                Log.d(TAG, "Share button clicked for hook: ${selectedItem.hookId}")
+
+                try {
+                    shareHook(context, selectedItem)
+                    Log.d(TAG, "shareHook called successfully")
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error sharing hook", e)
+                }
+                dialog.dismiss()
+            }
+
             dialog.show()
+        }
+
+        @SuppressLint("QueryPermissionsNeeded")
+        private fun shareHook(context: Context, hook: Hook) {
+            // 공유할 텍스트 구성
+            val shareText = buildString {
+                append("${hook.title}\n")
+
+                hook.description?.let { content ->
+                    append("${content}\n")
+                }
+
+                hook.url?.let { content ->
+                    append(content)
+                }
+            }
+
+            val shareIntent = Intent().apply {
+                action = Intent.ACTION_SEND
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, shareText)
+
+                putExtra(Intent.EXTRA_SUBJECT, hook.title)
+            }
+
+            val chooser = Intent.createChooser(shareIntent, context.getString(R.string.share_hook))
+
+            if (shareIntent.resolveActivity(context.packageManager) != null) {
+                context.startActivity(chooser)
+            } else {
+                Log.e(TAG, "No app available to handle share intent")
+            }
         }
     }
 }

@@ -33,7 +33,7 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    // Hilt를 통해 ViewModel 자동 주입
+    
     private val hookViewModel: HookViewModel by viewModels()
     private lateinit var adapter: HookAdapter
 
