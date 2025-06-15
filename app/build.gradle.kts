@@ -32,7 +32,7 @@ android {
         applicationId = "com.hanto.hook"
         minSdk = 24
         targetSdk = 34
-        versionCode = 8
+        versionCode = 9
         versionName = "1.5"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
