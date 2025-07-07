@@ -64,6 +64,10 @@ class ChangeTagFragment : DialogFragment() {
                 ).show()
             }
         }
+
+        binding.btnCancel.setOnClickListener {
+            dismiss()
+        }
     }
 
     private fun setupObservers() {

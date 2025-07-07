@@ -93,6 +93,7 @@
     <string name="tutorial_again">Watch the tutorial again</string>
     <string name="question_tut_again">Would you like to watch the tutorial again?</string>
     <string name="question_really_delete_tag">Are you sure you want to delete?</string>
+    <string name="question_really_modi_tag">Are you sure you want to modify tag?</string>
     <string name="delete_tag">Delete tag</string>
     <string name="modify_tag">Modify tag</string>
     <string name="delete_tag_content">The saved tag will be deleted.</string>

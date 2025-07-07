@@ -58,6 +58,10 @@ class DeleteTagFragment : DialogFragment() {
                 deleteTag(selectedTagName)
             }
         }
+
+        binding.btnCancel.setOnClickListener {
+            dismiss()
+        }
     }
 
     private fun setupObservers() {

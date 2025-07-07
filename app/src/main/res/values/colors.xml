@@ -3,14 +3,18 @@
     <color name="black">#FF000000</color>
     <color name="tutorial_background">#17989898</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="gray_700">#474F5A</color>
+
+    <color name="gray_100">#EBEBEB</color>
+    <color name="gray_200">#B8BDC3</color>
     <color name="gray_300">#8E8D93</color>
+    <color name="gray_700">#474F5A</color>
+
     <color name="blue_500">#337CFF</color>
     <color name="blue_200">#EEF4FF</color>
     <color name="purple">#6230F2</color>
     <color name="purple_50">#9A79FA</color>
     <color name="purple_100">#6C3DF4</color>
-    <color name="gray_100">#EBEBEB</color>
+
     <color name="green">#38C820</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="google_blue" tools:ignore="MissingDefaultResource">#459DE4</color>
