@@ -8,7 +8,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="15dp"
+        android:layout_marginBottom="10dp"
         android:background="@drawable/rounded_background_little"
         android:maxWidth="400dp"
         android:padding="15dp"
@@ -26,6 +28,7 @@
             android:text="@string/question_really_delete_tag"
             android:textSize="16sp"
             android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/container_tag_name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
