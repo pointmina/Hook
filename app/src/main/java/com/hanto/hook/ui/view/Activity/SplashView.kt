@@ -1,4 +1,4 @@
-package com.hanto.hook.ui.view
+package com.hanto.hook.ui.view.Activity
 
 import android.annotation.SuppressLint
 import android.content.Intent

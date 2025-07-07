@@ -18,32 +18,29 @@
         android:theme="@style/Theme.Hook"
         tools:targetApi="31">
         <activity
-            android:name=".ui.view.OnboardingActivity"
+            android:name=".ui.view.Activity.OnboardingActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.view.WebViewActivity"
+            android:name=".ui.view.Activity.WebViewActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.view.HookDetailActivity"
+            android:name=".ui.view.Activity.HookDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.view.SettingActivity"
+            android:name=".ui.view.Activity.TutorialActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.view.TutorialActivity"
+            android:name=".ui.view.Activity.SelectedTagActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.view.SelectedTagActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.view.AddHookActivity"
+            android:name=".ui.view.Activity.AddHookActivity"
             android:exported="false"
-            android:parentActivityName=".ui.view.HomeActivity" />
+            android:parentActivityName=".ui.view.Activity.HomeActivity" />
         <activity
-            android:name=".ui.view.HomeActivity"
+            android:name=".ui.view.Activity.HomeActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.view.UrlHandlingActivity"
+            android:name=".ui.view.Activity.UrlHandlingActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/Theme.Hook.Dialog">
@@ -56,7 +53,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.view.SplashView"
+            android:name=".ui.view.Activity.SplashView"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

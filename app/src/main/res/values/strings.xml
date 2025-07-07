@@ -10,19 +10,19 @@
     <string name="label_setting">설 정</string>
 
 
-    <!--    folder -->
+    <!--folder -->
     <string name="appbar_title_folder_screen">폴 더</string>
     <string name="description_select_tag">선택 태그 값</string>
     <string name="app_title">Hook</string>
 
-    <!--    Splashview-->
+    <!--splashView-->
     <string name="label_splah_title">h o o k!</string>
     <string name="label_tag_count">개의 훅</string>
     <string name="label_google_login">로그인 버튼</string>
     <string name="label_recent_tag">최근에 저장한 훅</string>
 
 
-    <!--    url_hook_detail-->
+    <!--url_hook_detail-->
     <string name="description_back_button">back button</string>
     <string name="description_link">링크</string>
     <string name="label_url_hook_detail_folder">폴더</string>

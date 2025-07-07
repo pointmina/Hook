@@ -1,4 +1,4 @@
-package com.hanto.hook
+package com.hanto.hook.ui.view.Activity
 
 import android.content.Context
 import android.graphics.Rect
@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-abstract class BaseActivity() : AppCompatActivity() {
+abstract class BaseActivity : AppCompatActivity() {
     override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
         event?.let {
             if (event.action == MotionEvent.ACTION_DOWN) {

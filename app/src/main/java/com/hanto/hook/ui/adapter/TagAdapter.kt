@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.hanto.hook.R
 import com.hanto.hook.databinding.ItemTagTagBinding
-import java.util.Collections
 
 class TagAdapter(
     private val listener: OnItemClickListener
@@ -93,7 +92,7 @@ class TagAdapter(
 
     private fun startShakingAnimation(view: View) {
         val animator = ObjectAnimator.ofFloat(view, "rotation", -5f, 5f).apply {
-            duration = 100 // 흔드는 속도
+            duration = 100
             repeatCount = ObjectAnimator.INFINITE
             repeatMode = ObjectAnimator.REVERSE
         }
@@ -121,5 +120,4 @@ class TagAdapter(
             viewHolder?.itemView?.let { stopShakingAnimation(it) }
         }
     }
-
 }

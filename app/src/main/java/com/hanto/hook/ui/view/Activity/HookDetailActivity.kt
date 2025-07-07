@@ -1,16 +1,16 @@
-package com.hanto.hook.ui.view
+package com.hanto.hook.ui.view.Activity
 
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
-import com.hanto.hook.BaseActivity
 import com.hanto.hook.R
 import com.hanto.hook.data.TagSelectionListener
 import com.hanto.hook.data.model.Hook
 import com.hanto.hook.data.model.Tag
 import com.hanto.hook.databinding.ActivityHookDetailBinding
+import com.hanto.hook.ui.view.Fragment.TagListFragment
 import com.hanto.hook.viewmodel.HookViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -60,11 +60,15 @@ class HookDetailActivity : BaseActivity(), TagSelectionListener {
 
             when {
                 updatedTitle.isBlank() -> {
-                    Toast.makeText(this, getString(R.string.plz_input_title), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.plz_input_title), Toast.LENGTH_SHORT)
+                        .show()
                 }
+
                 updatedUrl.isBlank() -> {
-                    Toast.makeText(this, getString(R.string.plz_input_url), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.plz_input_url), Toast.LENGTH_SHORT)
+                        .show()
                 }
+
                 else -> {
                     hook?.let { currentHook ->
                         val updatedHook = currentHook.copy(

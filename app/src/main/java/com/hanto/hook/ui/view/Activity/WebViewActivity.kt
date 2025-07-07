@@ -1,4 +1,4 @@
-package com.hanto.hook.ui.view
+package com.hanto.hook.ui.view.Activity
 
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
@@ -14,7 +14,6 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
-import com.hanto.hook.BaseActivity
 import com.hanto.hook.R
 import com.hanto.hook.databinding.ActivityWebviewBinding
 

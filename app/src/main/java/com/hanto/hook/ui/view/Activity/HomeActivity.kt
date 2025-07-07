@@ -1,11 +1,10 @@
-package com.hanto.hook.ui.view
+package com.hanto.hook.ui.view.Activity
 
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import com.hanto.hook.BaseActivity
 import com.hanto.hook.R
 import com.hanto.hook.databinding.ActivityHomeBinding
 import dagger.hilt.android.AndroidEntryPoint

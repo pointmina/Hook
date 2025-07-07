@@ -31,9 +31,4 @@ class TagHomeAdapter(private var tags: List<Tag>) :
     override fun getItemCount(): Int {
         return tags.size
     }
-
-    fun updateTags(newTags: List<Tag>) {
-        tags = newTags
-        notifyDataSetChanged()
-    }
 }

@@ -8,7 +8,7 @@
     <!--첫번째 진입점은 homeFragment-->
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.hanto.hook.ui.view.HomeFragment"
+        android:name="com.hanto.hook.ui.view.Fragment.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home">
 
@@ -24,21 +24,12 @@
             android:id="@+id/action_navigation_home_to_addHookActivity"
             app:destination="@id/addHookActivity" />
 
-        <action
-            android:id="@+id/action_navigation_home_to_settingActivity"
-            app:destination="@id/settingActivity"
-            app:enterAnim="@anim/slide_in_left"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_right"
-            app:popExitAnim="@anim/slide_out_right"
-            app:popUpTo="@id/navigation_home" />
-
     </fragment>
 
 
     <fragment
         android:id="@+id/navigation_tag"
-        android:name="com.hanto.hook.ui.view.TagFragment"
+        android:name="com.hanto.hook.ui.view.Fragment.TagFragment"
         android:label="TagFragment"
         tools:layout="@layout/fragment_tag">
 
@@ -46,39 +37,26 @@
     </fragment>
 
 
-    <!--    로그아웃때문에 setting에 잠깐걸어놈-->
-    <!--    <activity-->
-    <!--        android:id="@+id/navigation_setting"-->
-    <!--        android:name="com.hanto.Hook.view.LoginTestActivity"-->
-    <!--        android:label="activity_login_test"-->
-    <!--        tools:layout="@layout/activity_login_test" />-->
-
     <activity
         android:id="@+id/webViewActivity"
-        android:name="com.hanto.hook.ui.view.WebViewActivity"
+        android:name="com.hanto.hook.ui.view.Activity.WebViewActivity"
         android:label="activity_webview"
         tools:layout="@layout/activity_webview" />
 
     <activity
         android:id="@+id/addHookActivity"
-        android:name="com.hanto.hook.ui.view.AddHookActivity"
+        android:name="com.hanto.hook.ui.view.Activity.AddHookActivity"
         android:label="AddHookActivity" />
 
     <activity
-        android:id="@+id/settingActivity"
-        android:name="com.hanto.hook.ui.view.SettingActivity"
-        android:label="activity_setting"
-        tools:layout="@layout/activity_setting" />
-
-    <activity
         android:id="@+id/selectedTagAvtivity"
-        android:name="com.hanto.hook.ui.view.SelectedTagActivity"
+        android:name="com.hanto.hook.ui.view.Activity.SelectedTagActivity"
         android:label="activity_selected_tag"
         tools:layout="@layout/activity_selected_tag" />
 
     <fragment
         android:id="@+id/changeTagFragment"
-        android:name="com.hanto.hook.ui.view.ChangeTagFragment"
+        android:name="com.hanto.hook.ui.view.Fragment.ChangeTagFragment"
         android:label="ChangeTagFragment"
         tools:layout="@layout/fragment_change_tag" />
 

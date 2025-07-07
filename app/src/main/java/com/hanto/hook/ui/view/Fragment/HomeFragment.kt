@@ -1,4 +1,4 @@
-package com.hanto.hook.ui.view
+package com.hanto.hook.ui.view.Fragment
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -18,6 +18,8 @@ import com.hanto.hook.R
 import com.hanto.hook.data.model.Hook
 import com.hanto.hook.databinding.FragmentHomeBinding
 import com.hanto.hook.ui.adapter.HookAdapter
+import com.hanto.hook.ui.view.Activity.OnboardingActivity
+import com.hanto.hook.ui.view.Activity.WebViewActivity
 import com.hanto.hook.util.BottomDialogHelper
 import com.hanto.hook.util.SoundSearcher
 import com.hanto.hook.viewmodel.HookViewModel
@@ -33,7 +35,7 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    
+
     private val hookViewModel: HookViewModel by viewModels()
     private lateinit var adapter: HookAdapter
 

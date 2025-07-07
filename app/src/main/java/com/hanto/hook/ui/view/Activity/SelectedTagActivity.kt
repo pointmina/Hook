@@ -1,4 +1,4 @@
-package com.hanto.hook.ui.view
+package com.hanto.hook.ui.view.Activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,11 +7,12 @@ import androidx.activity.viewModels
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.hanto.hook.BaseActivity
 import com.hanto.hook.R
 import com.hanto.hook.data.TagUpdateListener
 import com.hanto.hook.databinding.ActivitySelectedTagBinding
 import com.hanto.hook.ui.adapter.SelectedTagHookListAdapter
+import com.hanto.hook.ui.view.Fragment.ChangeTagFragment
+import com.hanto.hook.ui.view.Fragment.DeleteTagFragment
 import com.hanto.hook.util.BottomDialogHelper
 import com.hanto.hook.viewmodel.HookViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -64,9 +65,10 @@ class SelectedTagActivity : BaseActivity(), TagUpdateListener {
                 override fun onClick(position: Int) {
                     val selectedHook = selectedTagHookListAdapter.getItem(position)
                     selectedHook?.let { hook ->
-                        val intent = Intent(this@SelectedTagActivity, WebViewActivity::class.java).apply {
-                            putExtra("HOOK_URL", hook.url)
-                        }
+                        val intent =
+                            Intent(this@SelectedTagActivity, WebViewActivity::class.java).apply {
+                                putExtra("HOOK_URL", hook.url)
+                            }
                         startActivity(intent)
                     }
                 }
@@ -86,7 +88,10 @@ class SelectedTagActivity : BaseActivity(), TagUpdateListener {
             adapter = selectedTagHookListAdapter
             layoutManager = LinearLayoutManager(this@SelectedTagActivity)
             addItemDecoration(
-                DividerItemDecoration(this@SelectedTagActivity, DividerItemDecoration.VERTICAL).apply {
+                DividerItemDecoration(
+                    this@SelectedTagActivity,
+                    DividerItemDecoration.VERTICAL
+                ).apply {
                     ResourcesCompat.getDrawable(resources, R.drawable.divider, null)?.let {
                         setDrawable(it)
                     }
@@ -96,7 +101,6 @@ class SelectedTagActivity : BaseActivity(), TagUpdateListener {
     }
 
     private fun setupObservers() {
-        // 선택된 태그에 해당하는 훅들 관찰
         hookViewModel.hooksBySelectedTag.observe(this) { hooks ->
             if (hooks.isNotEmpty()) {
                 val distinctHooks = hooks.distinctBy { it.id }
@@ -109,7 +113,6 @@ class SelectedTagActivity : BaseActivity(), TagUpdateListener {
             }
         }
 
-        // 에러 메시지 관찰
         hookViewModel.errorMessage.observe(this) { errorMessage ->
             errorMessage?.let {
                 Log.e(TAG, "Error: $it")
@@ -122,7 +125,6 @@ class SelectedTagActivity : BaseActivity(), TagUpdateListener {
         selectedTagName = intent.getStringExtra("selectedTagName").orEmpty()
         binding.tvSelectedTag.text = selectedTagName
 
-        // ViewModel에 선택된 태그 설정
         hookViewModel.selectTagName(selectedTagName)
     }
 
@@ -155,13 +157,11 @@ class SelectedTagActivity : BaseActivity(), TagUpdateListener {
         selectedTagName = tag
         binding.tvSelectedTag.text = tag
 
-        // ViewModel에 새로운 태그 설정
         hookViewModel.selectTagName(tag)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        // 선택된 태그 초기화
         hookViewModel.clearSelectedTag()
         Log.d(TAG, "onDestroy()")
     }

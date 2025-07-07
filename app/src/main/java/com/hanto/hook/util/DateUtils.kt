@@ -12,7 +12,7 @@ object DateUtils {
     private const val HOOK_ID_DATE_FORMAT = "yyyyMMddHHmmss"
 
     /**
-     * 현재 시간을 기반으로 고유한 Hook ID를 생성합니다.
+     * 현재 시간을 기반으로 고유한 Hook ID를 생성
      * @return Hook ID로 사용할 문자열
      */
     fun generateHookId(): String {
@@ -22,7 +22,7 @@ object DateUtils {
     }
 
     /**
-     * 특정 포맷으로 현재 시간을 문자열로 반환합니다.
+     * 특정 포맷으로 현재 시간을 문자열로 반환
      * @param format 날짜 포맷 문자열
      * @return 포맷된 날짜 문자열
      */

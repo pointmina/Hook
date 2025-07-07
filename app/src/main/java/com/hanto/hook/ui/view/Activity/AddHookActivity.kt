@@ -1,4 +1,4 @@
-package com.hanto.hook.ui.view
+package com.hanto.hook.ui.view.Activity
 
 import android.content.ClipboardManager
 import android.os.Bundle
@@ -11,11 +11,11 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
-import com.hanto.hook.BaseActivity
 import com.hanto.hook.R
 import com.hanto.hook.data.TagSelectionListener
 import com.hanto.hook.data.model.Hook
 import com.hanto.hook.databinding.ActivityAddHookBinding
+import com.hanto.hook.ui.view.Fragment.TagListFragment
 import com.hanto.hook.util.DateUtils
 import com.hanto.hook.util.UrlUtils
 import com.hanto.hook.viewmodel.HookViewModel

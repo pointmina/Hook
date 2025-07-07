@@ -7,7 +7,7 @@
     android:background="@color/white"
     android:paddingStart="24dp"
     android:paddingEnd="24dp"
-    tools:context=".ui.view.HookDetailActivity">
+    tools:context=".ui.view.Activity.HookDetailActivity">
 
 
     <com.google.android.material.appbar.MaterialToolbar
