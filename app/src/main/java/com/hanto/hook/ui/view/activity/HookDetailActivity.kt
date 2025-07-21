@@ -10,7 +10,7 @@ import com.hanto.hook.data.TagSelectionListener
 import com.hanto.hook.data.model.Hook
 import com.hanto.hook.data.model.Tag
 import com.hanto.hook.databinding.ActivityHookDetailBinding
-import com.hanto.hook.ui.view.Fragment.TagListFragment
+import com.hanto.hook.ui.view.fragment.TagListFragment
 import com.hanto.hook.viewmodel.HookViewModel
 import dagger.hilt.android.AndroidEntryPoint
 

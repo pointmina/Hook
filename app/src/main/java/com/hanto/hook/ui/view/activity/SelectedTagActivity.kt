@@ -11,8 +11,8 @@ import com.hanto.hook.R
 import com.hanto.hook.data.TagUpdateListener
 import com.hanto.hook.databinding.ActivitySelectedTagBinding
 import com.hanto.hook.ui.adapter.SelectedTagHookListAdapter
-import com.hanto.hook.ui.view.Fragment.ChangeTagFragment
-import com.hanto.hook.ui.view.Fragment.DeleteTagFragment
+import com.hanto.hook.ui.view.fragment.ChangeTagFragment
+import com.hanto.hook.ui.view.fragment.DeleteTagFragment
 import com.hanto.hook.util.BottomDialogHelper
 import com.hanto.hook.viewmodel.HookViewModel
 import dagger.hilt.android.AndroidEntryPoint

@@ -1,4 +1,4 @@
-package com.hanto.hook.ui.view.Fragment
+package com.hanto.hook.ui.view.fragment
 
 import android.app.Dialog
 import android.content.Intent

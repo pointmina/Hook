@@ -8,7 +8,7 @@
     <!--첫번째 진입점은 homeFragment-->
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.hanto.hook.ui.view.Fragment.HomeFragment"
+        android:name="com.hanto.hook.ui.view.fragment.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home">
 
@@ -29,7 +29,7 @@
 
     <fragment
         android:id="@+id/navigation_tag"
-        android:name="com.hanto.hook.ui.view.Fragment.TagFragment"
+        android:name="com.hanto.hook.ui.view.fragment.TagFragment"
         android:label="TagFragment"
         tools:layout="@layout/fragment_tag">
 
@@ -56,7 +56,7 @@
 
     <fragment
         android:id="@+id/changeTagFragment"
-        android:name="com.hanto.hook.ui.view.Fragment.ChangeTagFragment"
+        android:name="com.hanto.hook.ui.view.fragment.ChangeTagFragment"
         android:label="ChangeTagFragment"
         tools:layout="@layout/fragment_change_tag" />
 

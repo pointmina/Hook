@@ -1,6 +1,7 @@
-package com.hanto.hook.ui.view.Fragment
+package com.hanto.hook.ui.view.fragment
 
 import android.os.Bundle
+import android.text.Editable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -8,29 +9,23 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
-import com.hanto.hook.databinding.FragmentDeleteTagBinding
+import com.hanto.hook.R
+import com.hanto.hook.data.TagUpdateListener
+import com.hanto.hook.databinding.FragmentChangeTagBinding
 import com.hanto.hook.viewmodel.HookViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class DeleteTagFragment : DialogFragment() {
+class ChangeTagFragment : DialogFragment() {
 
     companion object {
-        private const val TAG = "DeleteTagFragment"
+        private const val TAG = "ChangeTagFragment"
     }
 
-    interface OnTagDeletedListener {
-        fun onTagDeleted()
-    }
-
-    private var listener: OnTagDeletedListener? = null
-
-    fun setOnTagDeletedListener(listener: OnTagDeletedListener) {
-        this.listener = listener
-    }
-
-    private var _binding: FragmentDeleteTagBinding? = null
+    private var _binding: FragmentChangeTagBinding? = null
     private val binding get() = _binding!!
+
+    private var tagUpdateListener: TagUpdateListener? = null
 
     private val hookViewModel: HookViewModel by viewModels()
 
@@ -39,11 +34,12 @@ class DeleteTagFragment : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentDeleteTagBinding.inflate(inflater, container, false)
+        _binding = FragmentChangeTagBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Log.d(TAG, "onViewCreated")
         super.onViewCreated(view, savedInstanceState)
 
         setupViews()
@@ -53,9 +49,19 @@ class DeleteTagFragment : DialogFragment() {
     private fun setupViews() {
         val selectedTagName = arguments?.getString("selectedTag")
 
-        binding.btnDeleteTag.setOnClickListener {
-            if (selectedTagName != null) {
-                deleteTag(selectedTagName)
+        binding.tvChangeTagName.text =
+            selectedTagName?.let { Editable.Factory.getInstance().newEditable(it) }
+
+        binding.btnChangeTagName.setOnClickListener {
+            val newTagName = binding.tvChangeTagName.text.toString().trim()
+            if (newTagName.isNotEmpty() && selectedTagName != null) {
+                updateTagName(selectedTagName, newTagName)
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.plz_input_tag),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
 
@@ -75,20 +81,23 @@ class DeleteTagFragment : DialogFragment() {
 
         // 로딩 상태 관찰
         hookViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            binding.btnDeleteTag.isEnabled = !isLoading
+            binding.btnChangeTagName.isEnabled = !isLoading
         }
     }
 
-    private fun deleteTag(tagName: String) {
-        Log.d(TAG, "deleteTag: $tagName")
+    private fun updateTagName(oldTagName: String, newTagName: String) {
+        Log.d(TAG, "updateTagName: $oldTagName -> $newTagName")
 
-        hookViewModel.deleteTagByTagName(tagName)
-        listener?.onTagDeleted()
+        hookViewModel.updateTagName(oldTagName, newTagName)
+        tagUpdateListener?.onTagUpdated(newTagName)
         dismiss()
     }
 
+    fun setTagUpdateListener(listener: TagUpdateListener) {
+        tagUpdateListener = listener
+    }
+
     override fun onDestroyView() {
-        Log.d(TAG, "onDestroyView")
         super.onDestroyView()
         _binding = null
     }
