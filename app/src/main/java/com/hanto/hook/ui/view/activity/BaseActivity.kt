@@ -1,4 +1,4 @@
-package com.hanto.hook.ui.view.Activity
+package com.hanto.hook.ui.view.activity
 
 import android.content.Context
 import android.graphics.Rect

@@ -4,6 +4,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
 
     <application
         android:name=".MainApplication"
@@ -18,29 +20,29 @@
         android:theme="@style/Theme.Hook"
         tools:targetApi="31">
         <activity
-            android:name=".ui.view.Activity.OnboardingActivity"
+            android:name=".ui.view.activity.OnboardingActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.view.Activity.WebViewActivity"
+            android:name=".ui.view.activity.WebViewActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.view.Activity.HookDetailActivity"
+            android:name=".ui.view.activity.HookDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.view.Activity.TutorialActivity"
+            android:name=".ui.view.activity.TutorialActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.view.Activity.SelectedTagActivity"
+            android:name=".ui.view.activity.SelectedTagActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.view.Activity.AddHookActivity"
+            android:name=".ui.view.activity.AddHookActivity"
             android:exported="false"
-            android:parentActivityName=".ui.view.Activity.HomeActivity" />
+            android:parentActivityName=".ui.view.activity.HomeActivity" />
         <activity
-            android:name=".ui.view.Activity.HomeActivity"
+            android:name=".ui.view.activity.HomeActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.view.Activity.UrlHandlingActivity"
+            android:name=".ui.view.activity.UrlHandlingActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/Theme.Hook.Dialog">
@@ -53,7 +55,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.view.Activity.SplashView"
+            android:name=".ui.view.activity.SplashView"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

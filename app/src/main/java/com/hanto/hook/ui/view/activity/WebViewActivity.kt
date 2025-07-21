@@ -1,9 +1,8 @@
-package com.hanto.hook.ui.view.Activity
+package com.hanto.hook.ui.view.activity
 
 import android.annotation.SuppressLint
-import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.net.Uri
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.webkit.JavascriptInterface
@@ -14,6 +13,7 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
+import androidx.core.net.toUri
 import com.hanto.hook.R
 import com.hanto.hook.databinding.ActivityWebviewBinding
 
@@ -90,16 +90,24 @@ class WebViewActivity : BaseActivity() {
                     val urlToString = request.url.toString()
                     Log.d(TAG, "Navigating to URL: $urlToString")
 
-                    if (urlToString.startsWith("http") || urlToString.startsWith("https")) {
+                    if (urlToString.startsWith("http://") || urlToString.startsWith("https://")) {
                         return false
                     }
-                    try {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(urlToString))
-                        startActivity(intent)
-                    } catch (e: ActivityNotFoundException) {
-                        Log.e(TAG, "지원되지 않는 URL 스킴: $urlToString", e)
+
+                    return handleCustomScheme(urlToString)
+                }
+
+                @Suppress("DEPRECATION")
+                override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+                    Log.d(TAG, "Navigating to URL (deprecated): $url")
+
+                    // HTTP/HTTPS URL인 경우 웹뷰에서 로드
+                    if (url.startsWith("http://") || url.startsWith("https://")) {
+                        return false
                     }
-                    return true
+
+                    // 커스텀 스킴인 경우 앱 실행 시도
+                    return handleCustomScheme(url)
                 }
             }
 
@@ -120,6 +128,46 @@ class WebViewActivity : BaseActivity() {
                     Log.d(TAG, "Received data from JavaScript: $data")
                 }
             }, "Android")
+        }
+    }
+
+    private fun handleCustomScheme(url: String): Boolean {
+        Log.d(TAG, "handleCustomScheme 호출됨: $url")
+
+        try {
+            val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+            // 해당 스킴을 처리할 수 있는 앱이 있는지 확인
+            val packageManager = packageManager
+            val resolveInfo =
+                packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY)
+
+            if (resolveInfo != null) {
+                Log.d(TAG, "앱이 설치되어 있음. 앱 실행: $url")
+                Log.d(TAG, "처리할 앱: ${resolveInfo.activityInfo.packageName}")
+                startActivity(intent)
+                return true
+            } else {
+                Log.d(TAG, "앱이 설치되어 있지 않음. 무시: $url")
+
+                val activities =
+                    packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+                Log.d(TAG, "queryIntentActivities 결과: ${activities.size}개")
+
+                if (activities.isNotEmpty()) {
+                    Log.d(TAG, "queryIntentActivities에서 앱 발견. 재시도")
+                    startActivity(intent)
+                    return true
+                }
+            }
+
+            return true
+
+        } catch (e: Exception) {
+            Log.e(TAG, "커스텀 스킴 처리 중 오류: $url", e)
+            return true
         }
     }
 

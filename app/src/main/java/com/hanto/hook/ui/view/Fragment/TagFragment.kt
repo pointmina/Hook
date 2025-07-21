@@ -24,7 +24,7 @@ import com.hanto.hook.R
 import com.hanto.hook.databinding.FragmentTagBinding
 import com.hanto.hook.ui.adapter.DragManageAdapterCallback
 import com.hanto.hook.ui.adapter.TagAdapter
-import com.hanto.hook.ui.view.Activity.SelectedTagActivity
+import com.hanto.hook.ui.view.activity.SelectedTagActivity
 import com.hanto.hook.viewmodel.HookViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
