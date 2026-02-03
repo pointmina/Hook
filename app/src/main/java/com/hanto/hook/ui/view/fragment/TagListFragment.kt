@@ -1,4 +1,4 @@
-package com.hanto.hook.ui.view
+package com.hanto.hook.ui.view.fragment
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -36,7 +36,6 @@ class TagListFragment : DialogFragment() {
     private lateinit var multiChoiceList: LinkedHashMap<String, Boolean>
     private lateinit var adapter: TagListAdapter
 
-    
     private val hookViewModel: HookViewModel by viewModels()
 
     override fun onCreateView(
@@ -61,7 +60,8 @@ class TagListFragment : DialogFragment() {
     private fun setupArguments() {
         arguments?.let {
             @Suppress("UNCHECKED_CAST")
-            multiChoiceList = it.getSerializable("multiChoiceList") as LinkedHashMap<String, Boolean>
+            multiChoiceList =
+                it.getSerializable("multiChoiceList") as LinkedHashMap<String, Boolean>
         }
     }
 
@@ -83,12 +83,20 @@ class TagListFragment : DialogFragment() {
             val newTag = binding.tvAddNewTag.text.toString().trim()
             when {
                 newTag.isEmpty() -> {
-                    Toast.makeText(requireContext(), getString(R.string.plz_input_tag), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.plz_input_tag),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
+
                 multiChoiceList.containsKey(newTag) -> {
-                    Toast.makeText(requireContext(),
-                        getString(R.string.exist_tag), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.exist_tag), Toast.LENGTH_SHORT
+                    ).show()
                 }
+
                 else -> {
                     multiChoiceList[newTag] = true
                     adapter.notifyDataSetChanged()
@@ -101,7 +109,6 @@ class TagListFragment : DialogFragment() {
             dismiss()
         }
 
-        // OK 버튼 클릭 리스너
         binding.btnOk.setOnClickListener {
             val selectedTags = multiChoiceList.filterValues { it }.keys.toList()
             tagSelectionListener?.onTagsSelected(selectedTags)
@@ -110,7 +117,6 @@ class TagListFragment : DialogFragment() {
     }
 
     private fun setupObservers() {
-        // ViewModel에서 태그 가져오기
         hookViewModel.distinctTagNames.observe(viewLifecycleOwner) { tagNames ->
             tagNames.forEach { tagName ->
                 if (!multiChoiceList.containsKey(tagName)) {
@@ -120,7 +126,6 @@ class TagListFragment : DialogFragment() {
             adapter.notifyDataSetChanged()
         }
 
-        // 에러 메시지 관찰
         hookViewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
             errorMessage?.let {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()

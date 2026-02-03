@@ -1,4 +1,4 @@
-package com.hanto.hook.ui.view
+package com.hanto.hook.ui.view.fragment
 
 import android.os.Bundle
 import android.util.Log
@@ -57,6 +57,10 @@ class DeleteTagFragment : DialogFragment() {
             if (selectedTagName != null) {
                 deleteTag(selectedTagName)
             }
+        }
+
+        binding.btnCancel.setOnClickListener {
+            dismiss()
         }
     }
 

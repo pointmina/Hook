@@ -19,15 +19,12 @@ object DatabaseModule {
     @Provides
     fun provideDatabase(@ApplicationContext context: Context): AppDatabase {
         return Room.databaseBuilder(
-            context,
-            AppDatabase::class.java,
-            "hook_database"
+            context, AppDatabase::class.java, "hook_database"
         ).build()
     }
 
     @Provides
-    fun provideBookmarkArticleDao(database: AppDatabase): HookDao {
+    fun provideHookDao(database: AppDatabase): HookDao {
         return database.hookDao()
     }
-
 }

@@ -1,5 +1,5 @@
-import java.util.Properties
 import java.io.FileInputStream
+import java.util.Properties
 
 plugins {
     id("com.android.application")
@@ -17,7 +17,7 @@ if (localPropertiesFile.exists()) {
 
 android {
     namespace = "com.hanto.hook"
-    compileSdk = 34
+    compileSdk = 35
 
     signingConfigs {
         create("release") {
@@ -31,9 +31,9 @@ android {
     defaultConfig {
         applicationId = "com.hanto.hook"
         minSdk = 24
-        targetSdk = 34
-        versionCode = 8
-        versionName = "1.4"
+        targetSdk = 35
+        versionCode = 13
+        versionName = "1.9"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

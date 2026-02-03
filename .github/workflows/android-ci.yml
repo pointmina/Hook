@@ -1,0 +1,35 @@
+# Android CI 파이프라인 1단계: 기본 환경 준비
+name: Android CI 1단계 - 환경 준비
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ work ]
+  pull_request:
+    branches: [ work, main ]
+
+jobs:
+  setup:
+    name: 1단계: CI 기본 골격 세팅
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1) 저장소 코드 내려받기
+      - name: 저장소 체크아웃
+        uses: actions/checkout@v4
+
+      # 2) 안드로이드 빌드에 필요한 JDK 17 설치
+      - name: JDK 17 설치
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+
+      # 3) Gradle Wrapper 실행 권한 부여 (CI 환경은 기본 권한이 없음)
+      - name: Gradle Wrapper 실행 권한 부여
+        run: chmod +x gradlew
+
+      # 4) Gradle Wrapper 무결성 검사로 보안 강화
+      - name: Gradle Wrapper 검증
+        uses: gradle/wrapper-validation-action@v2

@@ -1,4 +1,4 @@
-package com.hanto.hook.ui.view
+package com.hanto.hook.ui.view.fragment
 
 import android.os.Bundle
 import android.text.Editable
@@ -63,6 +63,10 @@ class ChangeTagFragment : DialogFragment() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
+        }
+
+        binding.btnCancel.setOnClickListener {
+            dismiss()
         }
     }
 

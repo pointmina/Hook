@@ -1,4 +1,4 @@
-package com.hanto.hook.ui.view
+package com.hanto.hook.ui.view.fragment
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -18,6 +18,8 @@ import com.hanto.hook.R
 import com.hanto.hook.data.model.Hook
 import com.hanto.hook.databinding.FragmentHomeBinding
 import com.hanto.hook.ui.adapter.HookAdapter
+import com.hanto.hook.ui.view.activity.OnboardingActivity
+import com.hanto.hook.ui.view.activity.WebViewActivity
 import com.hanto.hook.util.BottomDialogHelper
 import com.hanto.hook.util.SoundSearcher
 import com.hanto.hook.viewmodel.HookViewModel

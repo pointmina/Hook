@@ -80,10 +80,14 @@ object SoundSearcher {
     private fun isMatchingChar(valueChar: Char, searchChar: Char): Boolean {
         if (isInitialSound(searchChar) && isHangul(valueChar)) {
             val match = getInitialSound(valueChar) == searchChar
-            Log.d("SoundSearcher", "초성 매칭: valueChar=$valueChar, searchChar=$searchChar, result=$match")
+            Log.d(
+                "SoundSearcher",
+                "초성 매칭: valueChar=$valueChar, searchChar=$searchChar, result=$match"
+            )
             return match
         }
-        val match = (isSpecialCharacter(searchChar) && valueChar == searchChar) || valueChar == searchChar
+        val match =
+            (isSpecialCharacter(searchChar) && valueChar == searchChar) || valueChar == searchChar
         Log.d("SoundSearcher", "일반 매칭: valueChar=$valueChar, searchChar=$searchChar, result=$match")
         return match
     }

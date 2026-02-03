@@ -1,4 +1,4 @@
-package com.hanto.hook.ui.view
+package com.hanto.hook.ui.view.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -11,6 +11,7 @@ import com.hanto.hook.R
 import com.hanto.hook.data.TagSelectionListener
 import com.hanto.hook.data.model.Hook
 import com.hanto.hook.databinding.ActivityUrlHandlingBinding
+import com.hanto.hook.ui.view.fragment.TagListFragment
 import com.hanto.hook.util.DateUtils
 import com.hanto.hook.util.UrlUtils
 import com.hanto.hook.viewmodel.HookViewModel
@@ -63,12 +64,12 @@ class UrlHandlingActivity : AppCompatActivity(), TagSelectionListener {
             fragment.show(supportFragmentManager, "TagListFragment")
         }
 
-        // 취소 버튼
+        // 취소
         binding.btnCancel.setOnClickListener {
             finish()
         }
 
-        // 저장하기 버튼
+        // 저장하기
         binding.btnCreate.setOnClickListener {
             insertHookIntoDB()
         }
@@ -95,7 +96,7 @@ class UrlHandlingActivity : AppCompatActivity(), TagSelectionListener {
             sharedText?.let {
                 val url = UrlUtils.extractUrlFromText(it)
                 if (url != null) {
-                    binding.tvEditUrl.setText(url)
+                    binding.tvEditUrl.text = url
                 }
             }
         }

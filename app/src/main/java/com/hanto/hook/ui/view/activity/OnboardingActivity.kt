@@ -1,4 +1,4 @@
-package com.hanto.hook.ui.view
+package com.hanto.hook.ui.view.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -84,7 +84,8 @@ class OnboardingActivity : AppCompatActivity() {
                 val isFirstPage = position == 0
                 binding.buttonNext.visibility = if (isLastPage) View.GONE else View.VISIBLE
                 binding.buttonSkip.visibility = if (isLastPage) View.GONE else View.GONE
-                binding.buttonBack.visibility = if (isLastPage || isFirstPage) View.GONE else View.VISIBLE
+                binding.buttonBack.visibility =
+                    if (isLastPage || isFirstPage) View.GONE else View.VISIBLE
                 binding.buttonLetsStart.visibility = if (isLastPage) View.VISIBLE else View.GONE
             }
         })

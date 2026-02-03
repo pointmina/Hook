@@ -10,7 +10,7 @@ object UrlUtils {
     private const val HTTPS_PREFIX = "https://"
 
     /**
-     * 텍스트에서 URL을 추출합니다.
+     * 텍스트에서 URL을 추출
      * @param text 검색할 텍스트
      * @return 발견된 첫 번째 URL, 없으면 null
      */
@@ -20,7 +20,7 @@ object UrlUtils {
     }
 
     /**
-     * 문자열이 유효한 URL인지 확인합니다.
+     * 문자열이 유효한 URL인지 확인
      * @param url 확인할 URL 문자열
      * @return 유효한 URL이면 true
      */
@@ -31,7 +31,7 @@ object UrlUtils {
     }
 
     /**
-     * URL에 프로토콜이 없으면 https://를 추가합니다.
+     * URL에 프로토콜이 없으면 https://를 추가
      * @param url 처리할 URL
      * @return 프로토콜이 포함된 URL
      */

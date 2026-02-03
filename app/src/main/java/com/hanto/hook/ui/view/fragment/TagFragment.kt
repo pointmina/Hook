@@ -1,4 +1,4 @@
-package com.hanto.hook.ui.view
+package com.hanto.hook.ui.view.fragment
 
 import android.app.Dialog
 import android.content.Intent
@@ -24,6 +24,7 @@ import com.hanto.hook.R
 import com.hanto.hook.databinding.FragmentTagBinding
 import com.hanto.hook.ui.adapter.DragManageAdapterCallback
 import com.hanto.hook.ui.adapter.TagAdapter
+import com.hanto.hook.ui.view.activity.SelectedTagActivity
 import com.hanto.hook.viewmodel.HookViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -54,7 +55,11 @@ class TagFragment : Fragment() {
                     clearEditText(tvAddTagName)
                     this.dismiss()
                 } else {
-                    Toast.makeText(requireContext(), getString(R.string.plz_input_tag), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.plz_input_tag),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
 

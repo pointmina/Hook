@@ -7,7 +7,6 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import com.hanto.hook.data.model.Hook
-import com.hanto.hook.data.model.HookWithTags
 import com.hanto.hook.data.model.Tag
 
 @Dao
@@ -55,6 +54,7 @@ interface HookDao {
 
     /**
      * 훅과 연관된 모든 태그를 함께 삭제
+     * Transaction을 사용하여 데이터 일관성을 보장
      */
     @Transaction
     suspend fun deleteHookAndTags(hookId: String) {
@@ -97,7 +97,7 @@ interface HookDao {
     // ---------------------- 조회 ---------------------- //
 
     /**
-     * 데이터베이스의 모든 훅을 조회
+     * 데이터베이스의 모든 훅을 조회 (고정된 항목이 먼저 표시)
      * @return 훅 리스트 LiveData
      */
     @Query("SELECT * FROM Hook ORDER BY isPinned DESC, id DESC")
@@ -126,7 +126,6 @@ interface HookDao {
     /**
      * 특정 태그를 가진 훅들을 조회
      */
-    @Transaction
     @Query("""
         SELECT DISTINCT Hook.* FROM Hook 
         INNER JOIN Tag ON Hook.hookId = Tag.hookId 

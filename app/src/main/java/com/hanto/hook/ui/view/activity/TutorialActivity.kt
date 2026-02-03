@@ -1,4 +1,4 @@
-package com.hanto.hook.ui.view
+package com.hanto.hook.ui.view.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -140,7 +140,11 @@ class TutorialActivity : AppCompatActivity() {
         binding.btnRight.visibility = View.GONE
     }
 
-    private fun handleTwoButtonDialog(leftMessage: String, rightMessage: String, buttonAct: String) {
+    private fun handleTwoButtonDialog(
+        leftMessage: String,
+        rightMessage: String,
+        buttonAct: String
+    ) {
         binding.btnLeft.apply {
             visibility = View.VISIBLE
             text = leftMessage

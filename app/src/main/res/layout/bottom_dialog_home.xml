@@ -37,10 +37,29 @@
         app:icon="@drawable/ic_hook_white"
         app:iconPadding="-20dp"
         app:iconSize="17dp"
-        app:layout_constraintBottom_toTopOf="@id/btn_modify_hook"
+        app:layout_constraintBottom_toTopOf="@id/btn_share_hook"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/horizontal_bar" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_share_hook"
+        android:layout_width="300dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/textview_detail_border"
+        android:backgroundTint="@color/purple"
+        android:elevation="5dp"
+        android:text="@string/share"
+        android:textAppearance="@style/AppTextPrimary.S14"
+        android:textColor="@color/white"
+        app:icon="@drawable/ic_share"
+        app:iconPadding="-20dp"
+        app:iconSize="17dp"
+        app:layout_constraintBottom_toTopOf="@id/btn_modify_hook"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_set_pin" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_modify_hook"
@@ -59,7 +78,7 @@
         app:layout_constraintBottom_toTopOf="@id/bt_delete_hook"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_set_pin" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_share_hook" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/bt_delete_hook"

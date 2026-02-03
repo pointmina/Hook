@@ -21,7 +21,7 @@ class HookRepository @Inject constructor(
         private const val TAG = "HookRepository"
     }
 
-    // ---------------------- 데이터 삽입 메서드 ---------------------- //
+    // ---------------------- 데이터 삽입---------------------- //
 
     suspend fun insertHook(hook: Hook): Long = withContext(Dispatchers.IO) {
         try {
@@ -41,7 +41,7 @@ class HookRepository @Inject constructor(
         }
     }
 
-    // ---------------------- 데이터 삭제 메서드 ---------------------- //
+    // ---------------------- 데이터 삭제---------------------- //
 
     suspend fun deleteHook(hookId: String) = withContext(Dispatchers.IO) {
         try {
@@ -79,7 +79,7 @@ class HookRepository @Inject constructor(
         }
     }
 
-    // ---------------------- 데이터 업데이트 메서드 ---------------------- //
+    // ---------------------- 데이터 업데이트---------------------- //
 
     suspend fun updateHook(hook: Hook) = withContext(Dispatchers.IO) {
         try {
@@ -90,7 +90,7 @@ class HookRepository @Inject constructor(
         }
     }
 
-    suspend fun updateTagsForHook(hookId: String, selectedTags: List<String>) =
+    private suspend fun updateTagsForHook(hookId: String, selectedTags: List<String>) =
         withContext(Dispatchers.IO) {
             try {
                 // 기존 태그들 삭제
@@ -110,7 +110,6 @@ class HookRepository @Inject constructor(
     suspend fun updateHookAndTags(hook: Hook, selectedTags: List<String>) =
         withContext(Dispatchers.IO) {
             try {
-                // 트랜잭션으로 처리하여 데이터 일관성 보장
                 hookDao.updateHook(hook)
                 updateTagsForHook(hook.hookId, selectedTags)
             } catch (e: Exception) {
@@ -131,16 +130,13 @@ class HookRepository @Inject constructor(
 
     suspend fun setPinned(hookId: String, isPinned: Boolean) = withContext(Dispatchers.IO) {
         try {
-            Log.d(TAG, "Repository: Updating pin status: hookId=$hookId, isPinned=$isPinned")
             hookDao.updatePinStatus(hookId, isPinned)
-            Log.d(TAG, "Repository: Pin status update completed")
         } catch (e: Exception) {
             Log.e(TAG, "Repository: Error updating pin status: $hookId", e)
-            throw e
         }
     }
 
-    // ---------------------- 데이터 조회 메서드 ---------------------- //
+    // ---------------------- 데이터 조회---------------------- //
 
     fun getAllHooks(): LiveData<List<HookWithTags>> = hookDao.getHooksWithTags()
 
@@ -150,13 +146,4 @@ class HookRepository @Inject constructor(
 
     fun getHooksByTagName(tagName: String): LiveData<List<HookWithTags>> =
         hookDao.getHooksByTagName(tagName)
-
-    suspend fun getHookById(hookId: String): Hook? = withContext(Dispatchers.IO) {
-        try {
-            hookDao.getHookById(hookId)
-        } catch (e: Exception) {
-            Log.e(TAG, "Error getting hook by ID: $hookId", e)
-            null
-        }
-    }
 }

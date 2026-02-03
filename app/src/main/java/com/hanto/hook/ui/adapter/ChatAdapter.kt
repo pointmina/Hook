@@ -27,7 +27,6 @@ class ChatAdapter : ListAdapter<ChatMessage, RecyclerView.ViewHolder>(ChatDiffCa
         }
     }
 
-    // 사용자 메시지 ViewHolder
     inner class UserMessageViewHolder(private val binding: ItemChatMeBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -37,7 +36,6 @@ class ChatAdapter : ListAdapter<ChatMessage, RecyclerView.ViewHolder>(ChatDiffCa
         }
     }
 
-    // 봇 메시지 ViewHolder
     inner class BotMessageViewHolder(private val binding: ItemChatOtherBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
