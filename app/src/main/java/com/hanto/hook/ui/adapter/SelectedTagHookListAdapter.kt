@@ -7,10 +7,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.hanto.hook.data.model.Hook
+import com.hanto.hook.data.model.HookWithTags
 import com.hanto.hook.databinding.ItemSelectedTagHookListBinding
 
 class SelectedTagHookListAdapter(
-    private var hooks: List<Hook> = listOf(),
+    private var hooks: List<HookWithTags> = listOf(),
     private val listener: OnItemClickListener
 ) : RecyclerView.Adapter<SelectedTagHookListAdapter.SelectedTagHookViewHolder>() {
 
@@ -19,8 +20,9 @@ class SelectedTagHookListAdapter(
         fun onOptionButtonClick(position: Int)
     }
 
-    fun submitList(newHooks: List<Hook>) {
+    fun submitList(newHooks: List<HookWithTags>) {
         Log.d("SelectedTagHookListAdapter", "submitList called with size: ${newHooks.size}")
+
         val diffCallback = HookDiffCallback(hooks, newHooks)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         hooks = newHooks
@@ -41,9 +43,8 @@ class SelectedTagHookListAdapter(
 
     override fun getItemCount(): Int = hooks.size
 
-    fun getItem(position: Int): Hook? = hooks.getOrNull(position)
+    fun getItem(position: Int): Hook? = hooks.getOrNull(position)?.hook
 
-    // 뷰홀더 클래스
     inner class SelectedTagHookViewHolder(private val binding: ItemSelectedTagHookListBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -56,11 +57,12 @@ class SelectedTagHookListAdapter(
             }
         }
 
-        fun bind(hook: Hook) {
+        fun bind(hookWithTags: HookWithTags) {
+            val hook = hookWithTags.hook
+
             with(binding) {
                 tvTitle.text = hook.title
                 tvUrlLink.text = hook.url
-                tvTagDescription.text = hook.description
 
                 if (!hook.description.isNullOrEmpty()) {
                     tvTagDescription.visibility = View.VISIBLE
@@ -86,9 +88,7 @@ class SelectedTagHookListAdapter(
                 btOption.setOnClickListener {
                     listener.onOptionButtonClick(adapterPosition)
                 }
-
             }
         }
     }
-
 }

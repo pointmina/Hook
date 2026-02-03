@@ -33,7 +33,7 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    // Hilt를 통해 ViewModel 자동 주입
+
     private val hookViewModel: HookViewModel by viewModels()
     private lateinit var adapter: HookAdapter
 
@@ -61,8 +61,6 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
     private fun setupAdapter() {
         adapter = HookAdapter(
             hooks = ArrayList(),
-            hookViewModel = hookViewModel,
-            lifecycleOwner = viewLifecycleOwner,
             onItemClickListener = this,
             onItemClick = { hook ->
                 val intent = Intent(requireContext(), WebViewActivity::class.java).apply {
@@ -118,20 +116,20 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
     }
 
     private fun setupObservers() {
-        hookViewModel.hooks.observe(viewLifecycleOwner) { hooks: List<Hook> ->
+        hookViewModel.hooks.observe(viewLifecycleOwner) { hooksWithTags ->
             val layoutManager = binding.rvHome.layoutManager as LinearLayoutManager
             val currentPosition = layoutManager.findFirstVisibleItemPosition()
             val offset = layoutManager.findViewByPosition(currentPosition)?.top ?: 0
 
-            val isNewDataAdded = hooks.size > adapter.itemCount
+            val isNewDataAdded = hooksWithTags.size > adapter.itemCount
 
-            if (hooks.isEmpty()) {
+            if (hooksWithTags.isEmpty()) {
                 binding.txtAddHook.visibility = View.VISIBLE
             } else {
                 binding.txtAddHook.visibility = View.GONE
             }
 
-            adapter.updateHooks(hooks) {
+            adapter.updateHooks(hooksWithTags) {
                 val shimmerContainer = binding.sfLoading
                 shimmerContainer.stopShimmer()
                 shimmerContainer.visibility = View.GONE
@@ -144,7 +142,6 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
             }
         }
 
-        // 에러 메시지 관찰
         hookViewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
             errorMessage?.let {
                 Log.e(TAG, "Error: $it")
@@ -152,7 +149,6 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
             }
         }
 
-        // 로딩 상태 관찰
         hookViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             if (isLoading) {
                 binding.sfLoading.startShimmer()
@@ -225,13 +221,14 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
     }
 
     private fun filterHooks(query: String) {
-        val hooks = hookViewModel.hooks.value ?: emptyList()
+        val hooks = hookViewModel.hooks.value ?: emptyList() // List<HookWithTags>
+
         val filteredHooks = if (query.isBlank()) {
             hooks
         } else {
-            hooks.filter { hook ->
-                SoundSearcher.matchString(hook.title, query) ||
-                        (hook.description?.let { SoundSearcher.matchString(it, query) } ?: false)
+            hooks.filter { item ->
+                SoundSearcher.matchString(item.hook.title, query) ||
+                        (item.hook.description?.let { SoundSearcher.matchString(it, query) } ?: false)
             }
         }
         adapter.updateHooks(filteredHooks)

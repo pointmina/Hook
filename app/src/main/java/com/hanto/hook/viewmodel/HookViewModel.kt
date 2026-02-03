@@ -8,6 +8,7 @@ import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.hanto.hook.data.model.Hook
+import com.hanto.hook.data.model.HookWithTags
 import com.hanto.hook.data.model.Tag
 import com.hanto.hook.data.repository.HookRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,7 +27,7 @@ class HookViewModel @Inject constructor(
 
     // ---------------------- LiveData 필드 ---------------------- //
 
-    val hooks: LiveData<List<Hook>> = hookRepository.getAllHooks()
+    val hooks: LiveData<List<HookWithTags>> = hookRepository.getAllHooks()
     private val tagNames: LiveData<List<String>> = hookRepository.getAllTagNames()
 
     // 중복 제거된 태그 이름들
@@ -38,7 +39,7 @@ class HookViewModel @Inject constructor(
     private val _selectedTagName = MutableLiveData<String?>()
     val selectedTagName: LiveData<String?> = _selectedTagName
 
-    val hooksBySelectedTag: LiveData<List<Hook>> = _selectedTagName.switchMap { tagName ->
+    val hooksBySelectedTag: LiveData<List<HookWithTags>> = _selectedTagName.switchMap { tagName ->
         if (tagName.isNullOrBlank()) {
             MutableLiveData(emptyList())
         } else {
@@ -64,7 +65,7 @@ class HookViewModel @Inject constructor(
                 Log.d(TAG, "Hook inserted successfully: ${hook.title}")
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to insert hook: ${hook.title}", e)
-                _errorMessage.value = "훅 저장 중 오류가 발생했습니다: ${e.message}"
+                _errorMessage.value = "훅 저장 중 오류가 발생 : ${e.message}"
             } finally {
                 _isLoading.value = false
             }
@@ -78,7 +79,7 @@ class HookViewModel @Inject constructor(
                 Log.d(TAG, "Tag inserted successfully: ${tag.name}")
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to insert tag: ${tag.name}", e)
-                _errorMessage.value = "태그 저장 중 오류가 발생했습니다: ${e.message}"
+                _errorMessage.value = "태그 저장 중 오류가 발생 : ${e.message}"
             }
         }
     }
@@ -100,7 +101,7 @@ class HookViewModel @Inject constructor(
                 Log.d(TAG, "Hook with tags inserted successfully: ${hook.title}")
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to insert hook with tags: ${hook.title}", e)
-                _errorMessage.value = "훅과 태그 저장 중 오류가 발생했습니다: ${e.message}"
+                _errorMessage.value = "훅과 태그 저장 중 오류가 발생: ${e.message}"
             } finally {
                 _isLoading.value = false
             }
@@ -117,7 +118,7 @@ class HookViewModel @Inject constructor(
                 Log.d(TAG, "Hook deleted successfully: $hookId")
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to delete hook: $hookId", e)
-                _errorMessage.value = "훅 삭제 중 오류가 발생했습니다: ${e.message}"
+                _errorMessage.value = "훅 삭제 중 오류가 발생: ${e.message}"
             } finally {
                 _isLoading.value = false
             }
@@ -131,7 +132,7 @@ class HookViewModel @Inject constructor(
                 Log.d(TAG, "Tags deleted for hook: $hookId")
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to delete tags for hook: $hookId", e)
-                _errorMessage.value = "태그 삭제 중 오류가 발생했습니다: ${e.message}"
+                _errorMessage.value = "태그 삭제 중 오류가 발생: ${e.message}"
             }
         }
     }
@@ -144,7 +145,7 @@ class HookViewModel @Inject constructor(
                 Log.d(TAG, "Hook and tags deleted successfully: $hookId")
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to delete hook and tags: $hookId", e)
-                _errorMessage.value = "훅과 태그 삭제 중 오류가 발생했습니다: ${e.message}"
+                _errorMessage.value = "훅과 태그 삭제 중 오류가 발생: ${e.message}"
             } finally {
                 _isLoading.value = false
             }
@@ -159,7 +160,7 @@ class HookViewModel @Inject constructor(
                 Log.d(TAG, "Tag deleted successfully: $tagName")
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to delete tag: $tagName", e)
-                _errorMessage.value = "태그 삭제 중 오류가 발생했습니다: ${e.message}"
+                _errorMessage.value = "태그 삭제 중 오류가 발생: ${e.message}"
             } finally {
                 _isLoading.value = false
             }
@@ -176,7 +177,7 @@ class HookViewModel @Inject constructor(
                 Log.d(TAG, "Hook and tags updated successfully: ${hook.hookId}")
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to update hook and tags: ${hook.hookId}", e)
-                _errorMessage.value = "훅과 태그 업데이트 중 오류가 발생했습니다: ${e.message}"
+                _errorMessage.value = "훅과 태그 업데이트 중 오류가 발생: ${e.message}"
             } finally {
                 _isLoading.value = false
             }
@@ -191,7 +192,7 @@ class HookViewModel @Inject constructor(
                 Log.d(TAG, "Tag name updated: $oldTagName -> $newTagName")
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to update tag name: $oldTagName -> $newTagName", e)
-                _errorMessage.value = "태그 이름 변경 중 오류가 발생했습니다: ${e.message}"
+                _errorMessage.value = "태그 이름 변경 중 오류가 발생: ${e.message}"
             } finally {
                 _isLoading.value = false
             }
@@ -209,7 +210,7 @@ class HookViewModel @Inject constructor(
 
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to update pin status: $hookId", e)
-                _errorMessage.value = "고정 상태 변경 중 오류가 발생했습니다: ${e.message}"
+                _errorMessage.value = "고정 상태 변경 중 오류가 발생: ${e.message}"
             }
         }
     }
@@ -218,8 +219,7 @@ class HookViewModel @Inject constructor(
     fun getTagsForHook(hookId: String): LiveData<List<Tag>> = hookRepository.getTagsForHook(hookId)
 
     /**
-     * 특정 태그명으로 훅들을 조회합니다.
-     * switchMap을 사용하여 메모리 누수를 방지합니다.
+     * 특정 태그명으로 훅들을 조회
      */
     fun selectTagName(tagName: String) {
         if (_selectedTagName.value != tagName) {
@@ -227,16 +227,14 @@ class HookViewModel @Inject constructor(
         }
     }
 
-    /**
-     * 선택된 태그를 초기화합니다.
-     */
+
+    //선택된 태그 초기화
     fun clearSelectedTag() {
         _selectedTagName.value = null
     }
 
-    /**
-     * 에러 메시지를 초기화합니다.
-     */
+
+    //에러 메시지 초기화
     fun clearErrorMessage() {
         _errorMessage.value = null
     }

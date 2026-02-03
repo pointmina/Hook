@@ -3,27 +3,23 @@ package com.hanto.hook.ui.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.hanto.hook.data.model.Hook
+import com.hanto.hook.data.model.HookWithTags
 import com.hanto.hook.data.model.Tag
 import com.hanto.hook.databinding.ItemHookBinding
-import com.hanto.hook.viewmodel.HookViewModel
 
 class HookAdapter(
-    private var hooks: MutableList<Hook>,
-    private val hookViewModel: HookViewModel,
-    private val lifecycleOwner: LifecycleOwner,
+    private var hooks: MutableList<HookWithTags>,
     private val onItemClickListener: OnItemClickListener,
     private val onItemClick: (Hook) -> Unit,
 ) : RecyclerView.Adapter<HookAdapter.ViewHolder>() {
 
-    private var filteredHooks: MutableList<Hook> = hooks.toMutableList()
-    private val tagsCache = mutableMapOf<String, List<Tag>>()
+    private var filteredHooks: MutableList<HookWithTags> = hooks.toMutableList()
 
     interface OnItemClickListener {
         fun onClick(hook: Hook)
@@ -34,9 +30,11 @@ class HookAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         private val tagRecyclerView: RecyclerView = binding.rvTagContainer
-        private var currentHookId: String? = null
 
-        fun bind(hook: Hook) {
+        fun bind(hookWithTags: HookWithTags) {
+            val hook = hookWithTags.hook
+            val tags = hookWithTags.tags
+
             binding.tvTitle.text = hook.title
             binding.tvUrlLink.text = hook.url
 
@@ -54,28 +52,13 @@ class HookAdapter(
                 onItemClickListener.onOptionButtonClick(bindingAdapterPosition)
             }
 
-            bindTags(hook.hookId)
-        }
-
-        private fun bindTags(hookId: String) {
-            if (currentHookId == hookId && tagsCache.containsKey(hookId)) {
-                setupTagRecyclerView(tagsCache[hookId] ?: emptyList())
-                return
-            }
-
-            currentHookId = hookId
-
-            hookViewModel.getTagsForHook(hookId).observe(lifecycleOwner) { tags ->
-                if (currentHookId == hookId) {
-                    val distinctSortedTags = tags.distinctBy { it.name }.sortedBy { it.name }
-                    tagsCache[hookId] = distinctSortedTags
-                    setupTagRecyclerView(distinctSortedTags)
-                }
-            }
+            setupTagRecyclerView(tags)
         }
 
         private fun setupTagRecyclerView(tags: List<Tag>) {
-            val tagAdapter = TagHomeAdapter(tags)
+            val sortedTags = tags.distinctBy { it.name }.sortedBy { it.name }
+
+            val tagAdapter = TagHomeAdapter(sortedTags)
             tagRecyclerView.layoutManager = FlexboxLayoutManager(binding.root.context).apply {
                 flexDirection = FlexDirection.ROW
                 justifyContent = JustifyContent.FLEX_START
@@ -84,39 +67,27 @@ class HookAdapter(
         }
     }
 
-    fun moveItem(fromPosition: Int, toPosition: Int) {
-        if (fromPosition in filteredHooks.indices && toPosition in filteredHooks.indices) {
-            val movedItem = filteredHooks.removeAt(fromPosition)
-            filteredHooks.add(toPosition, movedItem)
-            notifyItemMoved(fromPosition, toPosition)
-        }
-    }
-
-    fun updateHooks(newHooks: List<Hook>, onComplete: (() -> Unit)? = null) {
+    fun updateHooks(newHooks: List<HookWithTags>, onComplete: (() -> Unit)? = null) {
         val diffCallback = HookDiffCallback(hooks, newHooks)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
 
         hooks = newHooks.toMutableList()
-
-        val newHookIds = newHooks.map { it.hookId }.toSet()
-        tagsCache.keys.retainAll(newHookIds)
-
-        filter("")
+        filter("") // 필터 초기화 혹은 현재 검색어 유지 로직 적용
         diffResult.dispatchUpdatesTo(this)
         onComplete?.invoke()
     }
 
     fun getItem(position: Int): Hook {
-        return filteredHooks[position]
+        return filteredHooks[position].hook
     }
 
     private fun filter(query: String) {
         filteredHooks = if (query.isBlank()) {
             hooks.toMutableList()
         } else {
-            hooks.filter { hook ->
-                hook.title.contains(query, ignoreCase = true) ||
-                        (hook.description?.contains(query, ignoreCase = true) ?: false)
+            hooks.filter {
+                it.hook.title.contains(query, ignoreCase = true) ||
+                        (it.hook.description?.contains(query, ignoreCase = true) ?: false)
             }.toMutableList()
         }
         notifyDataSetChanged()
@@ -131,17 +102,9 @@ class HookAdapter(
         return ViewHolder(binding)
     }
 
-    override fun getItemCount(): Int {
-        return filteredHooks.size
-    }
+    override fun getItemCount(): Int = filteredHooks.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val hook = filteredHooks[position]
-        holder.bind(hook)
-    }
-
-    override fun onViewRecycled(holder: ViewHolder) {
-        super.onViewRecycled(holder)
-        holder.itemView.setOnClickListener(null)
+        holder.bind(filteredHooks[position])
     }
 }

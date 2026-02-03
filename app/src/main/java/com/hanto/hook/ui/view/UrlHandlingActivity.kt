@@ -31,7 +31,6 @@ class UrlHandlingActivity : AppCompatActivity(), TagSelectionListener {
     private var selectedTags: List<String> = emptyList()
     private val multiChoiceList = linkedMapOf<String, Boolean>()
 
-    // Hilt를 통해 ViewModel 자동 주입
     private val hookViewModel: HookViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {

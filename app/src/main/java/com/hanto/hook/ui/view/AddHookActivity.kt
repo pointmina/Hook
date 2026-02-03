@@ -32,7 +32,7 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
 
     private lateinit var binding: ActivityAddHookBinding
 
-    // Hilt를 통해 ViewModel 자동 주입
+
     private val hookViewModel: HookViewModel by viewModels()
 
     private var isUrlValid = false

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import com.hanto.hook.data.dao.HookDao
 import com.hanto.hook.data.model.Hook
+import com.hanto.hook.data.model.HookWithTags
 import com.hanto.hook.data.model.Tag
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -141,13 +142,13 @@ class HookRepository @Inject constructor(
 
     // ---------------------- 데이터 조회 메서드 ---------------------- //
 
-    fun getAllHooks(): LiveData<List<Hook>> = hookDao.getAllHooks()
+    fun getAllHooks(): LiveData<List<HookWithTags>> = hookDao.getHooksWithTags()
 
     fun getTagsForHook(hookId: String): LiveData<List<Tag>> = hookDao.getTagsForHook(hookId)
 
     fun getAllTagNames(): LiveData<List<String>> = hookDao.getAllTagNames()
 
-    fun getHooksByTagName(tagName: String): LiveData<List<Hook>> =
+    fun getHooksByTagName(tagName: String): LiveData<List<HookWithTags>> =
         hookDao.getHooksByTagName(tagName)
 
     suspend fun getHookById(hookId: String): Hook? = withContext(Dispatchers.IO) {
