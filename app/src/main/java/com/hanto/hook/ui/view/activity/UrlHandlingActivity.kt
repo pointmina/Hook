@@ -7,6 +7,9 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.hanto.hook.R
 import com.hanto.hook.data.TagSelectionListener
 import com.hanto.hook.data.model.Hook
@@ -16,6 +19,7 @@ import com.hanto.hook.util.DateUtils
 import com.hanto.hook.util.UrlUtils
 import com.hanto.hook.viewmodel.HookViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class UrlHandlingActivity : AppCompatActivity(), TagSelectionListener {
@@ -76,17 +80,26 @@ class UrlHandlingActivity : AppCompatActivity(), TagSelectionListener {
     }
 
     private fun setupObservers() {
-        // 에러 메시지 관찰
-        hookViewModel.errorMessage.observe(this) { errorMessage ->
-            errorMessage?.let {
-                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
-                hookViewModel.clearErrorMessage()
-            }
-        }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-        // 로딩 상태 관찰
-        hookViewModel.isLoading.observe(this) { isLoading ->
-            binding.btnCreate.isEnabled = !isLoading
+                // 1. 에러 메시지 관찰
+                launch {
+                    hookViewModel.errorMessage.collect { errorMessage ->
+                        errorMessage?.let {
+                            Toast.makeText(this@UrlHandlingActivity, it, Toast.LENGTH_SHORT).show()
+                            hookViewModel.clearErrorMessage()
+                        }
+                    }
+                }
+
+                // 2. 로딩 상태 관찰 (저장 버튼 활성화 제어)
+                launch {
+                    hookViewModel.isLoading.collect { isLoading ->
+                        binding.btnCreate.isEnabled = !isLoading
+                    }
+                }
+            }
         }
     }
 

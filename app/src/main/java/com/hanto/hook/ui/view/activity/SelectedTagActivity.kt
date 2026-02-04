@@ -3,8 +3,12 @@ package com.hanto.hook.ui.view.activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hanto.hook.R
@@ -16,6 +20,7 @@ import com.hanto.hook.ui.view.fragment.DeleteTagFragment
 import com.hanto.hook.util.BottomDialogHelper
 import com.hanto.hook.viewmodel.HookViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SelectedTagActivity : BaseActivity(), TagUpdateListener {
@@ -101,22 +106,34 @@ class SelectedTagActivity : BaseActivity(), TagUpdateListener {
     }
 
     private fun setupObservers() {
-        hookViewModel.hooksBySelectedTag.observe(this) { hooks ->
-            if (hooks.isNotEmpty()) {
-                val distinctHooks = hooks.distinctBy { it.id }
-                Log.d(TAG, "Distinct Hooks fetched: ${distinctHooks.size}")
-                selectedTagHookListAdapter.submitList(distinctHooks)
-                binding.tvTagCount.text = distinctHooks.size.toString()
-            } else {
-                selectedTagHookListAdapter.submitList(emptyList())
-                binding.tvTagCount.text = "0"
-            }
-        }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-        hookViewModel.errorMessage.observe(this) { errorMessage ->
-            errorMessage?.let {
-                Log.e(TAG, "Error: $it")
-                hookViewModel.clearErrorMessage()
+                // 1. 선택된 태그의 훅 리스트 관찰
+                launch {
+                    hookViewModel.hooksBySelectedTag.collect { hooks ->
+                        if (hooks.isNotEmpty()) {
+                            val distinctHooks = hooks.distinctBy { it.hook.hookId } // id 대신 hookId 사용 권장 (기존 로직 유지 시 id)
+                            Log.d(TAG, "Distinct Hooks fetched: ${distinctHooks.size}")
+                            selectedTagHookListAdapter.submitList(distinctHooks)
+                            binding.tvTagCount.text = distinctHooks.size.toString()
+                        } else {
+                            selectedTagHookListAdapter.submitList(emptyList())
+                            binding.tvTagCount.text = "0"
+                        }
+                    }
+                }
+
+                // 2. 에러 메시지 관찰
+                launch {
+                    hookViewModel.errorMessage.collect { errorMessage ->
+                        errorMessage?.let {
+                            Log.e(TAG, "Error: $it")
+                            Toast.makeText(this@SelectedTagActivity, it, Toast.LENGTH_SHORT).show()
+                            hookViewModel.clearErrorMessage()
+                        }
+                    }
+                }
             }
         }
     }

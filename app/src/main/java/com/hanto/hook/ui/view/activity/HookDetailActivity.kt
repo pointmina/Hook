@@ -1,18 +1,22 @@
-package com.hanto.hook.ui.view
+package com.hanto.hook.ui.view.activity
 
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
-import com.hanto.hook.BaseActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.hanto.hook.R
 import com.hanto.hook.data.TagSelectionListener
 import com.hanto.hook.data.model.Hook
 import com.hanto.hook.data.model.Tag
 import com.hanto.hook.databinding.ActivityHookDetailBinding
+import com.hanto.hook.ui.view.fragment.TagListFragment
 import com.hanto.hook.viewmodel.HookViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HookDetailActivity : BaseActivity(), TagSelectionListener {
@@ -61,11 +65,15 @@ class HookDetailActivity : BaseActivity(), TagSelectionListener {
 
             when {
                 updatedTitle.isBlank() -> {
-                    Toast.makeText(this, getString(R.string.plz_input_title), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.plz_input_title), Toast.LENGTH_SHORT)
+                        .show()
                 }
+
                 updatedUrl.isBlank() -> {
-                    Toast.makeText(this, getString(R.string.plz_input_url), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.plz_input_url), Toast.LENGTH_SHORT)
+                        .show()
                 }
+
                 else -> {
                     hook?.let { currentHook ->
                         val updatedHook = currentHook.copy(
@@ -86,17 +94,26 @@ class HookDetailActivity : BaseActivity(), TagSelectionListener {
     }
 
     private fun setupObservers() {
-        // 에러 메시지 관찰
-        hookViewModel.errorMessage.observe(this) { errorMessage ->
-            errorMessage?.let {
-                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
-                hookViewModel.clearErrorMessage()
-            }
-        }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-        // 로딩 상태 관찰
-        hookViewModel.isLoading.observe(this) { isLoading ->
-            binding.btnHookEdit.isEnabled = !isLoading && isUrlValid && isTitleValid
+                // 1. 에러 메시지 관찰
+                launch {
+                    hookViewModel.errorMessage.collect { errorMessage ->
+                        errorMessage?.let {
+                            Toast.makeText(this@HookDetailActivity, it, Toast.LENGTH_SHORT).show()
+                            hookViewModel.clearErrorMessage()
+                        }
+                    }
+                }
+
+                // 2. 로딩 상태 관찰 (버튼 활성화 여부 제어)
+                launch {
+                    hookViewModel.isLoading.collect { isLoading ->
+                        binding.btnHookEdit.isEnabled = !isLoading && isUrlValid && isTitleValid
+                    }
+                }
+            }
         }
     }
 
@@ -109,14 +126,18 @@ class HookDetailActivity : BaseActivity(), TagSelectionListener {
     }
 
     private fun observeTagsForHook(hookId: String) {
-        hookViewModel.getTagsForHook(hookId).observe(this) { fetchedTags ->
-            tagsForHook = fetchedTags
-            binding.tvTag.text = fetchedTags.toTagString()
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                hookViewModel.getTagsForHook(hookId).collect { fetchedTags ->
+                    tagsForHook = fetchedTags
+                    binding.tvTag.text = fetchedTags.toTagString()
 
-            tagNames = fetchedTags.map { it.name }.toSet()
+                    tagNames = fetchedTags.map { it.name }.toSet()
 
-            fetchedTags.forEach { tag ->
-                multiChoiceList[tag.name] = true
+                    fetchedTags.forEach { tag ->
+                        multiChoiceList[tag.name] = true
+                    }
+                }
             }
         }
     }

@@ -9,11 +9,15 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.hanto.hook.R
 import com.hanto.hook.data.TagUpdateListener
 import com.hanto.hook.databinding.FragmentChangeTagBinding
 import com.hanto.hook.viewmodel.HookViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ChangeTagFragment : DialogFragment() {
@@ -71,17 +75,26 @@ class ChangeTagFragment : DialogFragment() {
     }
 
     private fun setupObservers() {
-        // 에러 메시지 관찰
-        hookViewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
-            errorMessage?.let {
-                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-                hookViewModel.clearErrorMessage()
-            }
-        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-        // 로딩 상태 관찰
-        hookViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            binding.btnChangeTagName.isEnabled = !isLoading
+                // 1. 에러 메시지 관찰
+                launch {
+                    hookViewModel.errorMessage.collect { errorMessage ->
+                        errorMessage?.let {
+                            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                            hookViewModel.clearErrorMessage()
+                        }
+                    }
+                }
+
+                // 2. 로딩 상태 관찰 (버튼 활성화 제어)
+                launch {
+                    hookViewModel.isLoading.collect { isLoading ->
+                        binding.btnChangeTagName.isEnabled = !isLoading
+                    }
+                }
+            }
         }
     }
 

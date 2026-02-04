@@ -1,20 +1,26 @@
 package com.hanto.hook.viewmodel
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
-import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.hanto.hook.data.model.Hook
 import com.hanto.hook.data.model.HookWithTags
 import com.hanto.hook.data.model.Tag
+import com.hanto.hook.data.model.UiState
 import com.hanto.hook.data.repository.HookRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 
 @HiltViewModel
 class HookViewModel @Inject constructor(
@@ -25,127 +31,107 @@ class HookViewModel @Inject constructor(
         private const val TAG = "HookViewModel"
     }
 
-    // ---------------------- LiveData 필드 ---------------------- //
+    // ---------------------- StateFlow (UI State) ---------------------- //
 
-    val hooks: LiveData<List<HookWithTags>> = hookRepository.getAllHooks()
-    private val tagNames: LiveData<List<String>> = hookRepository.getAllTagNames()
+    // 1. 전체 훅 리스트
+    val hookUiState: StateFlow<UiState> = hookRepository.getAllHooks()
+        .map { UiState.Success(it) as UiState }
+        .catch { e -> emit(UiState.Error(e.message ?: "Unknown Error")) }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = UiState.Loading
+        )
 
-    // 중복 제거된 태그 이름들
-    val distinctTagNames: LiveData<List<String>> = tagNames.map { tagNamesList ->
-        tagNamesList.distinct().sorted()
-    }
+    // 2. 태그 이름 리스트
+    val tagNames: StateFlow<List<String>> = hookRepository.getAllTagNames()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 
-    // 선택된 태그명 관리
-    private val _selectedTagName = MutableLiveData<String?>()
-    val selectedTagName: LiveData<String?> = _selectedTagName
+    // 3. 중복 제거된 태그 이름들
+    val distinctTagNames: StateFlow<List<String>> = tagNames
+        .map { it.distinct().sorted() }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 
-    val hooksBySelectedTag: LiveData<List<HookWithTags>> = _selectedTagName.switchMap { tagName ->
-        if (tagName.isNullOrBlank()) {
-            MutableLiveData(emptyList())
-        } else {
-            hookRepository.getHooksByTagName(tagName)
-        }
-    }
+    // 4. 선택된 태그 관리
+    private val _selectedTagName = MutableStateFlow<String?>(null)
+    val selectedTagName: StateFlow<String?> = _selectedTagName.asStateFlow()
 
-    // 로딩 상태 관리
-    private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading: LiveData<Boolean> = _isLoading
-
-    // 에러 상태 관리
-    private val _errorMessage = MutableLiveData<String?>()
-    val errorMessage: LiveData<String?> = _errorMessage
-
-    // ---------------------- 데이터 삽입 메서드 ---------------------- //
-
-    fun insertHook(hook: Hook) {
-        viewModelScope.launch {
-            try {
-                _isLoading.value = true
-                hookRepository.insertHook(hook)
-                Log.d(TAG, "Hook inserted successfully: ${hook.title}")
-            } catch (e: Exception) {
-                Log.e(TAG, "Failed to insert hook: ${hook.title}", e)
-                _errorMessage.value = "훅 저장 중 오류가 발생 : ${e.message}"
-            } finally {
-                _isLoading.value = false
+    // 5. 선택된 태그에 따른 훅 리스트
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val hooksBySelectedTag: StateFlow<List<HookWithTags>> = _selectedTagName
+        .flatMapLatest { tagName ->
+            if (tagName.isNullOrBlank()) {
+                flowOf(emptyList())
+            } else {
+                hookRepository.getHooksByTagName(tagName)
             }
         }
-    }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 
-    fun insertTag(tag: Tag) {
-        viewModelScope.launch {
-            try {
-                hookRepository.insertTag(tag)
-                Log.d(TAG, "Tag inserted successfully: ${tag.name}")
-            } catch (e: Exception) {
-                Log.e(TAG, "Failed to insert tag: ${tag.name}", e)
-                _errorMessage.value = "태그 저장 중 오류가 발생 : ${e.message}"
-            }
-        }
-    }
+    // 로딩 & 에러 상태
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
+
+
+    // ---------------------- 데이터 조작 메서드 ---------------------- //
 
     fun insertHookWithTags(hook: Hook, tags: List<String>) {
         viewModelScope.launch {
+            _isLoading.value = true
             try {
-                _isLoading.value = true
-
                 // 훅 먼저 삽입
                 hookRepository.insertHook(hook)
-
                 // 태그들 삽입
                 tags.forEach { tagName ->
                     val tag = Tag(hookId = hook.hookId, name = tagName)
                     hookRepository.insertTag(tag)
                 }
-
-                Log.d(TAG, "Hook with tags inserted successfully: ${hook.title}")
+                Log.d(TAG, "Hook with tags inserted: ${hook.title}")
             } catch (e: Exception) {
-                Log.e(TAG, "Failed to insert hook with tags: ${hook.title}", e)
-                _errorMessage.value = "훅과 태그 저장 중 오류가 발생: ${e.message}"
+                handleError("훅 저장 실패", e)
             } finally {
                 _isLoading.value = false
-            }
-        }
-    }
-
-    // ---------------------- 데이터 삭제 메서드 ---------------------- //
-
-    fun deleteHook(hookId: String) {
-        viewModelScope.launch {
-            try {
-                _isLoading.value = true
-                hookRepository.deleteHook(hookId)
-                Log.d(TAG, "Hook deleted successfully: $hookId")
-            } catch (e: Exception) {
-                Log.e(TAG, "Failed to delete hook: $hookId", e)
-                _errorMessage.value = "훅 삭제 중 오류가 발생: ${e.message}"
-            } finally {
-                _isLoading.value = false
-            }
-        }
-    }
-
-    fun deleteTagByHookId(hookId: String) {
-        viewModelScope.launch {
-            try {
-                hookRepository.deleteTagByHookId(hookId)
-                Log.d(TAG, "Tags deleted for hook: $hookId")
-            } catch (e: Exception) {
-                Log.e(TAG, "Failed to delete tags for hook: $hookId", e)
-                _errorMessage.value = "태그 삭제 중 오류가 발생: ${e.message}"
             }
         }
     }
 
     fun deleteHookAndTags(hookId: String) {
         viewModelScope.launch {
+            _isLoading.value = true
             try {
-                _isLoading.value = true
                 hookRepository.deleteHookAndTags(hookId)
-                Log.d(TAG, "Hook and tags deleted successfully: $hookId")
+                Log.d(TAG, "Hook and tags deleted: $hookId")
             } catch (e: Exception) {
-                Log.e(TAG, "Failed to delete hook and tags: $hookId", e)
-                _errorMessage.value = "훅과 태그 삭제 중 오류가 발생: ${e.message}"
+                handleError("삭제 실패", e)
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun updateHookAndTags(hook: Hook, selectedTags: List<String>) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                hookRepository.updateHookAndTags(hook, selectedTags)
+                Log.d(TAG, "Hook updated: ${hook.hookId}")
+            } catch (e: Exception) {
+                handleError("업데이트 실패", e)
             } finally {
                 _isLoading.value = false
             }
@@ -154,30 +140,11 @@ class HookViewModel @Inject constructor(
 
     fun deleteTagByTagName(tagName: String) {
         viewModelScope.launch {
+            _isLoading.value = true
             try {
-                _isLoading.value = true
                 hookRepository.deleteTagByTagName(tagName)
-                Log.d(TAG, "Tag deleted successfully: $tagName")
             } catch (e: Exception) {
-                Log.e(TAG, "Failed to delete tag: $tagName", e)
-                _errorMessage.value = "태그 삭제 중 오류가 발생: ${e.message}"
-            } finally {
-                _isLoading.value = false
-            }
-        }
-    }
-
-    // ---------------------- 데이터 업데이트 메서드 ---------------------- //
-
-    fun updateHookAndTags(hook: Hook, selectedTags: List<String>) {
-        viewModelScope.launch {
-            try {
-                _isLoading.value = true
-                hookRepository.updateHookAndTags(hook, selectedTags)
-                Log.d(TAG, "Hook and tags updated successfully: ${hook.hookId}")
-            } catch (e: Exception) {
-                Log.e(TAG, "Failed to update hook and tags: ${hook.hookId}", e)
-                _errorMessage.value = "훅과 태그 업데이트 중 오류가 발생: ${e.message}"
+                handleError("태그 삭제 실패", e)
             } finally {
                 _isLoading.value = false
             }
@@ -186,13 +153,11 @@ class HookViewModel @Inject constructor(
 
     fun updateTagName(oldTagName: String, newTagName: String) {
         viewModelScope.launch {
+            _isLoading.value = true
             try {
-                _isLoading.value = true
                 hookRepository.updateTagName(oldTagName, newTagName)
-                Log.d(TAG, "Tag name updated: $oldTagName -> $newTagName")
             } catch (e: Exception) {
-                Log.e(TAG, "Failed to update tag name: $oldTagName -> $newTagName", e)
-                _errorMessage.value = "태그 이름 변경 중 오류가 발생: ${e.message}"
+                handleError("태그 수정 실패", e)
             } finally {
                 _isLoading.value = false
             }
@@ -200,49 +165,34 @@ class HookViewModel @Inject constructor(
     }
 
     fun setPinned(hookId: String, isPinned: Boolean) {
-        Log.d(TAG, "setPinned called: hookId=$hookId, isPinned=$isPinned")
         viewModelScope.launch {
             try {
                 hookRepository.setPinned(hookId, isPinned)
-                Log.d(TAG, "Pin status updated successfully: $hookId = $isPinned")
-
-                _isLoading.value = false
-
             } catch (e: Exception) {
-                Log.e(TAG, "Failed to update pin status: $hookId", e)
-                _errorMessage.value = "고정 상태 변경 중 오류가 발생: ${e.message}"
+                handleError("고정 상태 변경 실패", e)
             }
         }
     }
-    // ---------------------- 데이터 조회 메서드 ---------------------- //
 
-    fun getTagsForHook(hookId: String): LiveData<List<Tag>> = hookRepository.getTagsForHook(hookId)
+    // ---------------------- 기타 메서드 ---------------------- //
 
-    /**
-     * 특정 태그명으로 훅들을 조회
-     */
     fun selectTagName(tagName: String) {
-        if (_selectedTagName.value != tagName) {
-            _selectedTagName.value = tagName
-        }
+        _selectedTagName.value = tagName
     }
 
-
-    //선택된 태그 초기화
     fun clearSelectedTag() {
         _selectedTagName.value = null
     }
 
-
-    //에러 메시지 초기화
     fun clearErrorMessage() {
         _errorMessage.value = null
     }
 
-    // ---------------------- Lifecycle 관리 ---------------------- //
-
-    override fun onCleared() {
-        super.onCleared()
-        Log.d(TAG, "ViewModel cleared")
+    // 에러 핸들링 공통 함수
+    private fun handleError(msg: String, e: Exception) {
+        Log.e(TAG, "$msg: ${e.message}", e)
+        _errorMessage.value = "$msg: ${e.message}"
     }
+
+    fun getTagsForHook(hookId: String) = hookRepository.getTagsForHook(hookId)
 }

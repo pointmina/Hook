@@ -1,12 +1,12 @@
 package com.hanto.hook.data.repository
 
 import android.util.Log
-import androidx.lifecycle.LiveData
 import com.hanto.hook.data.dao.HookDao
 import com.hanto.hook.data.model.Hook
 import com.hanto.hook.data.model.HookWithTags
 import com.hanto.hook.data.model.Tag
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -138,12 +138,21 @@ class HookRepository @Inject constructor(
 
     // ---------------------- 데이터 조회---------------------- //
 
-    fun getAllHooks(): LiveData<List<HookWithTags>> = hookDao.getHooksWithTags()
+    fun getAllHooks(): Flow<List<HookWithTags>> = hookDao.getHooksWithTags()
 
-    fun getTagsForHook(hookId: String): LiveData<List<Tag>> = hookDao.getTagsForHook(hookId)
+    fun getTagsForHook(hookId: String): Flow<List<Tag>> = hookDao.getTagsForHook(hookId)
 
-    fun getAllTagNames(): LiveData<List<String>> = hookDao.getAllTagNames()
+    fun getAllTagNames(): Flow<List<String>> = hookDao.getAllTagNames()
 
-    fun getHooksByTagName(tagName: String): LiveData<List<HookWithTags>> =
+    fun getHooksByTagName(tagName: String): Flow<List<HookWithTags>> =
         hookDao.getHooksByTagName(tagName)
+
+    suspend fun getHookById(hookId: String): Hook? = withContext(Dispatchers.IO) {
+        try {
+            hookDao.getHookById(hookId)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error getting hook by ID: $hookId", e)
+            null
+        }
+    }
 }

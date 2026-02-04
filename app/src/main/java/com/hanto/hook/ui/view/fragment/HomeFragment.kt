@@ -10,12 +10,17 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.SearchView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hanto.hook.R
 import com.hanto.hook.data.model.Hook
+import com.hanto.hook.data.model.UiState
 import com.hanto.hook.databinding.FragmentHomeBinding
 import com.hanto.hook.ui.adapter.HookAdapter
 import com.hanto.hook.ui.view.activity.OnboardingActivity
@@ -24,6 +29,7 @@ import com.hanto.hook.util.BottomDialogHelper
 import com.hanto.hook.util.SoundSearcher
 import com.hanto.hook.viewmodel.HookViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
@@ -118,46 +124,96 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
     }
 
     private fun setupObservers() {
-        hookViewModel.hooks.observe(viewLifecycleOwner) { hooksWithTags ->
-            val layoutManager = binding.rvHome.layoutManager as LinearLayoutManager
-            val currentPosition = layoutManager.findFirstVisibleItemPosition()
-            val offset = layoutManager.findViewByPosition(currentPosition)?.top ?: 0
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-            val isNewDataAdded = hooksWithTags.size > adapter.itemCount
+                // 1. Hook 리스트 상태 관찰 (UiState: Loading, Success, Error)
+                launch {
+                    hookViewModel.hookUiState.collect { uiState ->
+                        when (uiState) {
+                            is UiState.Loading -> {
+                                binding.sfLoading.startShimmer()
+                                binding.sfLoading.visibility = View.VISIBLE
+                            }
 
-            if (hooksWithTags.isEmpty()) {
-                binding.txtAddHook.visibility = View.VISIBLE
-            } else {
-                binding.txtAddHook.visibility = View.GONE
-            }
+                            is UiState.Success -> {
+                                // 로딩 종료
+                                binding.sfLoading.stopShimmer()
+                                binding.sfLoading.visibility = View.GONE
 
-            adapter.updateHooks(hooksWithTags) {
-                val shimmerContainer = binding.sfLoading
-                shimmerContainer.stopShimmer()
-                shimmerContainer.visibility = View.GONE
+                                val hooksWithTags = uiState.data
+                                val isNewDataAdded = hooksWithTags.size > adapter.itemCount
 
-                if (isNewDataAdded) {
-                    binding.rvHome.scrollToPosition(0)
-                } else {
-                    layoutManager.scrollToPositionWithOffset(currentPosition, offset)
+                                // 데이터가 비었을 때 안내 텍스트 처리
+                                if (hooksWithTags.isEmpty()) {
+                                    binding.txtAddHook.visibility = View.VISIBLE
+                                } else {
+                                    binding.txtAddHook.visibility = View.GONE
+                                }
+
+                                // 어댑터 업데이트
+                                adapter.updateHooks(hooksWithTags) {
+                                    // 새 데이터 추가 시 스크롤 맨 위로, 아니면 위치 유지 (기존 로직)
+                                    val layoutManager =
+                                        binding.rvHome.layoutManager as LinearLayoutManager
+                                    val currentPosition =
+                                        layoutManager.findFirstVisibleItemPosition()
+                                    val offset =
+                                        layoutManager.findViewByPosition(currentPosition)?.top ?: 0
+
+                                    if (isNewDataAdded) {
+                                        binding.rvHome.scrollToPosition(0)
+                                    } else {
+                                        layoutManager.scrollToPositionWithOffset(
+                                            currentPosition,
+                                            offset
+                                        )
+                                    }
+                                }
+                            }
+
+                            is UiState.Error -> {
+                                binding.sfLoading.stopShimmer()
+                                binding.sfLoading.visibility = View.GONE
+                                Log.e(TAG, "Error: ${uiState.message}")
+                                Toast.makeText(
+                                    requireContext(),
+                                    uiState.message,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    }
                 }
-            }
-        }
 
-        hookViewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
-            errorMessage?.let {
-                Log.e(TAG, "Error: $it")
-                hookViewModel.clearErrorMessage()
-            }
-        }
+                // 2. 에러 메시지 관찰 (일회성 이벤트)
+                launch {
+                    hookViewModel.errorMessage.collect { errorMessage ->
+                        errorMessage?.let {
+                            Log.e(TAG, "Error: $it")
+                            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                            hookViewModel.clearErrorMessage()
+                        }
+                    }
+                }
 
-        hookViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            if (isLoading) {
-                binding.sfLoading.startShimmer()
-                binding.sfLoading.visibility = View.VISIBLE
-            } else {
-                binding.sfLoading.stopShimmer()
-                binding.sfLoading.visibility = View.GONE
+                // 3. 글로벌 로딩 상태 관찰 (데이터 조작 시 발생)
+                launch {
+                    hookViewModel.isLoading.collect { isLoading ->
+                        if (isLoading) {
+                            binding.sfLoading.startShimmer()
+                            binding.sfLoading.visibility = View.VISIBLE
+                        } else {
+                            // UiState.Success에서 이미 끄고 있지만, 안전장치로 유지
+                            // 단, 리스트 로딩과 겹칠 수 있으므로 상황에 따라 조절 필요
+                            // 여기서는 단순히 로딩바 제어만 수행
+                            if (hookViewModel.hookUiState.value is UiState.Success) {
+                                binding.sfLoading.stopShimmer()
+                                binding.sfLoading.visibility = View.GONE
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -223,14 +279,21 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
     }
 
     private fun filterHooks(query: String) {
-        val hooks = hookViewModel.hooks.value ?: emptyList() // List<HookWithTags>
+        // hookUiState의 현재 값을 확인하여 Success 상태일 때만 데이터를 가져옵니다.
+        val currentState = hookViewModel.hookUiState.value
+        val hooks = if (currentState is UiState.Success) {
+            currentState.data
+        } else {
+            emptyList()
+        }
 
         val filteredHooks = if (query.isBlank()) {
             hooks
         } else {
             hooks.filter { item ->
                 SoundSearcher.matchString(item.hook.title, query) ||
-                        (item.hook.description?.let { SoundSearcher.matchString(it, query) } ?: false)
+                        (item.hook.description?.let { SoundSearcher.matchString(it, query) }
+                            ?: false)
             }
         }
         adapter.updateHooks(filteredHooks)

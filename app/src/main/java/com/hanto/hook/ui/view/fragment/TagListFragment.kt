@@ -8,6 +8,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hanto.hook.R
@@ -16,6 +19,7 @@ import com.hanto.hook.databinding.FragmentTagListBinding
 import com.hanto.hook.ui.adapter.TagListAdapter
 import com.hanto.hook.viewmodel.HookViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class TagListFragment : DialogFragment() {
@@ -117,19 +121,30 @@ class TagListFragment : DialogFragment() {
     }
 
     private fun setupObservers() {
-        hookViewModel.distinctTagNames.observe(viewLifecycleOwner) { tagNames ->
-            tagNames.forEach { tagName ->
-                if (!multiChoiceList.containsKey(tagName)) {
-                    multiChoiceList[tagName] = false
-                }
-            }
-            adapter.notifyDataSetChanged()
-        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-        hookViewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
-            errorMessage?.let {
-                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-                hookViewModel.clearErrorMessage()
+                // 1. 태그 목록 관찰
+                launch {
+                    hookViewModel.distinctTagNames.collect { tagNames ->
+                        tagNames.forEach { tagName ->
+                            if (!multiChoiceList.containsKey(tagName)) {
+                                multiChoiceList[tagName] = false
+                            }
+                        }
+                        adapter.notifyDataSetChanged()
+                    }
+                }
+
+                // 2. 에러 메시지 관찰
+                launch {
+                    hookViewModel.errorMessage.collect { errorMessage ->
+                        errorMessage?.let {
+                            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                            hookViewModel.clearErrorMessage()
+                        }
+                    }
+                }
             }
         }
     }

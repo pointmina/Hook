@@ -16,6 +16,9 @@ import android.widget.ImageButton
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
@@ -27,6 +30,7 @@ import com.hanto.hook.ui.adapter.TagAdapter
 import com.hanto.hook.ui.view.activity.SelectedTagActivity
 import com.hanto.hook.viewmodel.HookViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class TagFragment : Fragment() {
@@ -122,16 +126,26 @@ class TagFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        hookViewModel.distinctTagNames.observe(viewLifecycleOwner) { tagNames ->
-            Log.d(TAG, "distinctTagNames $tagNames")
-            tagAdapter.submitList(tagNames)
-        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-        // 에러 메시지 관찰
-        hookViewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
-            errorMessage?.let {
-                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-                hookViewModel.clearErrorMessage()
+                // 1. 중복 제거된 태그 목록 관찰
+                launch {
+                    hookViewModel.distinctTagNames.collect { tagNames ->
+                        Log.d(TAG, "distinctTagNames $tagNames")
+                        tagAdapter.submitList(tagNames)
+                    }
+                }
+
+                // 2. 에러 메시지 관찰
+                launch {
+                    hookViewModel.errorMessage.collect { errorMessage ->
+                        errorMessage?.let {
+                            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                            hookViewModel.clearErrorMessage()
+                        }
+                    }
+                }
             }
         }
     }
