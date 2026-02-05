@@ -19,8 +19,6 @@ class HookAdapter(
     private val onItemClick: (Hook) -> Unit,
 ) : RecyclerView.Adapter<HookAdapter.ViewHolder>() {
 
-    private var filteredHooks: MutableList<HookWithTags> = hooks.toMutableList()
-
     interface OnItemClickListener {
         fun onClick(hook: Hook)
         fun onOptionButtonClick(position: Int)
@@ -72,29 +70,12 @@ class HookAdapter(
         val diffResult = DiffUtil.calculateDiff(diffCallback)
 
         hooks = newHooks.toMutableList()
-        filter("") // 필터 초기화 혹은 현재 검색어 유지 로직 적용
         diffResult.dispatchUpdatesTo(this)
         onComplete?.invoke()
     }
 
     fun getItem(position: Int): Hook {
-        return filteredHooks[position].hook
-    }
-
-    private fun filter(query: String) {
-        filteredHooks = if (query.isBlank()) {
-            hooks.toMutableList()
-        } else {
-            hooks.filter {
-                it.hook.title.contains(query, ignoreCase = true) ||
-                        (it.hook.description?.contains(query, ignoreCase = true) ?: false)
-            }.toMutableList()
-        }
-        notifyDataSetChanged()
-    }
-
-    fun filterHooks(query: String) {
-        filter(query)
+        return hooks[position].hook
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -102,9 +83,9 @@ class HookAdapter(
         return ViewHolder(binding)
     }
 
-    override fun getItemCount(): Int = filteredHooks.size
+    override fun getItemCount(): Int = hooks.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(filteredHooks[position])
+        holder.bind(hooks[position])
     }
 }

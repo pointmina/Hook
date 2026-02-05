@@ -26,7 +26,6 @@ import com.hanto.hook.ui.adapter.HookAdapter
 import com.hanto.hook.ui.view.activity.OnboardingActivity
 import com.hanto.hook.ui.view.activity.WebViewActivity
 import com.hanto.hook.util.BottomDialogHelper
-import com.hanto.hook.util.SoundSearcher
 import com.hanto.hook.viewmodel.HookViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -106,18 +105,19 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
             params.width = 50.dpToPx()
             binding.svSearch.layoutParams = params
 
+            hookViewModel.setSearchQuery("")
             false
         }
 
         binding.svSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                query?.let { filterHooks(it) }
+                hookViewModel.setSearchQuery(query ?: "")
                 binding.svSearch.clearFocus()
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                newText?.let { filterHooks(it) }
+                hookViewModel.setSearchQuery(newText ?: "")
                 return true
             }
         })
@@ -276,26 +276,5 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
     override fun onOptionButtonClick(position: Int) {
         val selectedHook = adapter.getItem(position)
         BottomDialogHelper.showHookOptionsDialog(requireContext(), selectedHook, hookViewModel)
-    }
-
-    private fun filterHooks(query: String) {
-        // hookUiState의 현재 값을 확인하여 Success 상태일 때만 데이터를 가져옵니다.
-        val currentState = hookViewModel.hookUiState.value
-        val hooks = if (currentState is UiState.Success) {
-            currentState.data
-        } else {
-            emptyList()
-        }
-
-        val filteredHooks = if (query.isBlank()) {
-            hooks
-        } else {
-            hooks.filter { item ->
-                SoundSearcher.matchString(item.hook.title, query) ||
-                        (item.hook.description?.let { SoundSearcher.matchString(it, query) }
-                            ?: false)
-            }
-        }
-        adapter.updateHooks(filteredHooks)
     }
 }
