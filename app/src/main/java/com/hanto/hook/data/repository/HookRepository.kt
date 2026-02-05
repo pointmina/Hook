@@ -5,9 +5,7 @@ import com.hanto.hook.data.dao.HookDao
 import com.hanto.hook.data.model.Hook
 import com.hanto.hook.data.model.HookWithTags
 import com.hanto.hook.data.model.Tag
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -23,18 +21,18 @@ class HookRepository @Inject constructor(
 
     // ---------------------- 데이터 삽입---------------------- //
 
-    suspend fun insertHook(hook: Hook): Long = withContext(Dispatchers.IO) {
+    suspend fun insertHook(hook: Hook): Long {
         try {
-            hookDao.insertHook(hook)
+            return hookDao.insertHook(hook)
         } catch (e: Exception) {
             Log.e(TAG, "Error inserting hook: ${hook.title}", e)
             throw e
         }
     }
 
-    suspend fun insertTag(tag: Tag): Long = withContext(Dispatchers.IO) {
+    suspend fun insertTag(tag: Tag): Long {
         try {
-            hookDao.insertTag(tag)
+            return hookDao.insertTag(tag)
         } catch (e: Exception) {
             Log.e(TAG, "Error inserting tag: ${tag.name}", e)
             throw e
@@ -43,7 +41,7 @@ class HookRepository @Inject constructor(
 
     // ---------------------- 데이터 삭제---------------------- //
 
-    suspend fun deleteHook(hookId: String) = withContext(Dispatchers.IO) {
+    suspend fun deleteHook(hookId: String) {
         try {
             hookDao.deleteHookById(hookId)
         } catch (e: Exception) {
@@ -52,7 +50,7 @@ class HookRepository @Inject constructor(
         }
     }
 
-    suspend fun deleteTagByHookId(hookId: String) = withContext(Dispatchers.IO) {
+    suspend fun deleteTagByHookId(hookId: String) {
         try {
             hookDao.deleteTagByHookId(hookId)
         } catch (e: Exception) {
@@ -61,7 +59,7 @@ class HookRepository @Inject constructor(
         }
     }
 
-    suspend fun deleteTagByTagName(tagName: String) = withContext(Dispatchers.IO) {
+    suspend fun deleteTagByTagName(tagName: String) {
         try {
             hookDao.deleteTagByTagName(tagName)
         } catch (e: Exception) {
@@ -70,7 +68,7 @@ class HookRepository @Inject constructor(
         }
     }
 
-    suspend fun deleteHookAndTags(hookId: String) = withContext(Dispatchers.IO) {
+    suspend fun deleteHookAndTags(hookId: String) {
         try {
             hookDao.deleteHookAndTags(hookId)
         } catch (e: Exception) {
@@ -81,7 +79,7 @@ class HookRepository @Inject constructor(
 
     // ---------------------- 데이터 업데이트---------------------- //
 
-    suspend fun updateHook(hook: Hook) = withContext(Dispatchers.IO) {
+    suspend fun updateHook(hook: Hook) {
         try {
             hookDao.updateHook(hook)
         } catch (e: Exception) {
@@ -90,45 +88,42 @@ class HookRepository @Inject constructor(
         }
     }
 
-    private suspend fun updateTagsForHook(hookId: String, selectedTags: List<String>) =
-        withContext(Dispatchers.IO) {
-            try {
-                // 기존 태그들 삭제
-                hookDao.deleteTagByHookId(hookId)
+    private suspend fun updateTagsForHook(hookId: String, selectedTags: List<String>) {
+        try {
+            // 기존 태그들 삭제
+            hookDao.deleteTagByHookId(hookId)
 
-                // 새로운 태그들 삽입
-                selectedTags.forEach { tagName ->
-                    val tag = Tag(hookId = hookId, name = tagName)
-                    hookDao.insertTag(tag)
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "Error updating tags for hook: $hookId", e)
-                throw e
+            // 새로운 태그들 삽입
+            selectedTags.forEach { tagName ->
+                val tag = Tag(hookId = hookId, name = tagName)
+                hookDao.insertTag(tag)
             }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error updating tags for hook: $hookId", e)
+            throw e
         }
+    }
 
-    suspend fun updateHookAndTags(hook: Hook, selectedTags: List<String>) =
-        withContext(Dispatchers.IO) {
-            try {
-                hookDao.updateHook(hook)
-                updateTagsForHook(hook.hookId, selectedTags)
-            } catch (e: Exception) {
-                Log.e(TAG, "Error updating hook and tags: ${hook.hookId}", e)
-                throw e
-            }
+    suspend fun updateHookAndTags(hook: Hook, selectedTags: List<String>) {
+        try {
+            hookDao.updateHook(hook)
+            updateTagsForHook(hook.hookId, selectedTags)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error updating hook and tags: ${hook.hookId}", e)
+            throw e
         }
+    }
 
-    suspend fun updateTagName(oldTagName: String, newTagName: String) =
-        withContext(Dispatchers.IO) {
-            try {
-                hookDao.updateTagName(oldTagName, newTagName)
-            } catch (e: Exception) {
-                Log.e(TAG, "Error updating tag name: $oldTagName -> $newTagName", e)
-                throw e
-            }
+    suspend fun updateTagName(oldTagName: String, newTagName: String) {
+        try {
+            hookDao.updateTagName(oldTagName, newTagName)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error updating tag name: $oldTagName -> $newTagName", e)
+            throw e
         }
+    }
 
-    suspend fun setPinned(hookId: String, isPinned: Boolean) = withContext(Dispatchers.IO) {
+    suspend fun setPinned(hookId: String, isPinned: Boolean) {
         try {
             hookDao.updatePinStatus(hookId, isPinned)
         } catch (e: Exception) {
@@ -147,12 +142,12 @@ class HookRepository @Inject constructor(
     fun getHooksByTagName(tagName: String): Flow<List<HookWithTags>> =
         hookDao.getHooksByTagName(tagName)
 
-    suspend fun getHookById(hookId: String): Hook? = withContext(Dispatchers.IO) {
+    suspend fun getHookById(hookId: String): Hook? {
         try {
-            hookDao.getHookById(hookId)
+            return hookDao.getHookById(hookId)
         } catch (e: Exception) {
             Log.e(TAG, "Error getting hook by ID: $hookId", e)
-            null
+            return null
         }
     }
 }
