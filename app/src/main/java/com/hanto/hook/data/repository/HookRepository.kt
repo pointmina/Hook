@@ -142,12 +142,5 @@ class HookRepository @Inject constructor(
     fun getHooksByTagName(tagName: String): Flow<List<HookWithTags>> =
         hookDao.getHooksByTagName(tagName)
 
-    suspend fun getHookById(hookId: String): Hook? {
-        try {
-            return hookDao.getHookById(hookId)
-        } catch (e: Exception) {
-            Log.e(TAG, "Error getting hook by ID: $hookId", e)
-            return null
-        }
-    }
+    fun getHooksWithNoTags(): Flow<List<HookWithTags>> = hookDao.getHooksWithNoTags()
 }

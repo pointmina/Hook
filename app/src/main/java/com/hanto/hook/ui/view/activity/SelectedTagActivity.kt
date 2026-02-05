@@ -142,6 +142,14 @@ class SelectedTagActivity : BaseActivity(), TagUpdateListener {
         selectedTagName = intent.getStringExtra("selectedTagName").orEmpty()
         binding.tvSelectedTag.text = selectedTagName
 
+        if (selectedTagName == HookViewModel.TAG_UNCATEGORIZED) {
+            binding.ivTagChange.visibility = android.view.View.GONE
+            binding.ivTagDelete.visibility = android.view.View.GONE
+        } else {
+            binding.ivTagChange.visibility = android.view.View.VISIBLE
+            binding.ivTagDelete.visibility = android.view.View.VISIBLE
+        }
+
         hookViewModel.selectTagName(selectedTagName)
     }
 

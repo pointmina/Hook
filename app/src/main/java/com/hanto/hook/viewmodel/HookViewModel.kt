@@ -31,6 +31,7 @@ class HookViewModel @Inject constructor(
 
     companion object {
         private const val TAG = "HookViewModel"
+        const val TAG_UNCATEGORIZED = "미분류"
     }
 
     // ---------------------- StateFlow (UI State) ---------------------- //
@@ -41,7 +42,7 @@ class HookViewModel @Inject constructor(
         _searchQuery.value = query
     }
 
-    // 1. 전체 훅 리스트
+    // 전체 훅 리스트
     val hookUiState: StateFlow<UiState> = combine(
         hookRepository.getAllHooks(),
         _searchQuery
@@ -65,7 +66,7 @@ class HookViewModel @Inject constructor(
             initialValue = UiState.Loading
         )
 
-    // 2. 태그 이름 리스트
+    // 태그 이름 리스트
     val tagNames: StateFlow<List<String>> = hookRepository.getAllTagNames()
         .stateIn(
             scope = viewModelScope,
@@ -73,7 +74,7 @@ class HookViewModel @Inject constructor(
             initialValue = emptyList()
         )
 
-    // 3. 중복 제거된 태그 이름들
+    // 중복 제거된 태그 이름들
     val distinctTagNames: StateFlow<List<String>> = tagNames
         .map { it.distinct().sorted() }
         .stateIn(
@@ -82,18 +83,28 @@ class HookViewModel @Inject constructor(
             initialValue = emptyList()
         )
 
-    // 4. 선택된 태그 관리
+    // 선택된 태그 관리
     private val _selectedTagName = MutableStateFlow<String?>(null)
     val selectedTagName: StateFlow<String?> = _selectedTagName.asStateFlow()
 
-    // 5. 선택된 태그에 따른 훅 리스트
+    val homeTags: StateFlow<List<String>> = distinctTagNames
+        .map { tags ->
+            listOf(TAG_UNCATEGORIZED) + tags
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = listOf(TAG_UNCATEGORIZED)
+        )
+
+    // 선택된 태그에 따른 훅 리스트
     @OptIn(ExperimentalCoroutinesApi::class)
     val hooksBySelectedTag: StateFlow<List<HookWithTags>> = _selectedTagName
         .flatMapLatest { tagName ->
-            if (tagName.isNullOrBlank()) {
-                flowOf(emptyList())
-            } else {
-                hookRepository.getHooksByTagName(tagName)
+            when {
+                tagName.isNullOrBlank() -> flowOf(emptyList())
+                tagName == TAG_UNCATEGORIZED -> hookRepository.getHooksWithNoTags()
+                else -> hookRepository.getHooksByTagName(tagName)
             }
         }
         .stateIn(
@@ -196,6 +207,9 @@ class HookViewModel @Inject constructor(
         }
     }
 
+    fun getTagsForHook(hookId: String) = hookRepository.getTagsForHook(hookId)
+
+
     // ---------------------- 기타 메서드 ---------------------- //
 
     fun selectTagName(tagName: String) {
@@ -216,5 +230,4 @@ class HookViewModel @Inject constructor(
         _errorMessage.value = "$msg: ${e.message}"
     }
 
-    fun getTagsForHook(hookId: String) = hookRepository.getTagsForHook(hookId)
 }

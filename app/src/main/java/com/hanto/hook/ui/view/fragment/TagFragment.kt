@@ -129,10 +129,9 @@ class TagFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-                // 1. 중복 제거된 태그 목록 관찰
                 launch {
-                    hookViewModel.distinctTagNames.collect { tagNames ->
-                        Log.d(TAG, "distinctTagNames $tagNames")
+                    hookViewModel.homeTags.collect { tagNames ->
+                        Log.d(TAG, "homeTags $tagNames")
                         tagAdapter.submitList(tagNames)
                     }
                 }

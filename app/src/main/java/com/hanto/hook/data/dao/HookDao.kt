@@ -92,4 +92,7 @@ interface HookDao {
     """)
     fun getHooksByTagName(tagName: String): Flow<List<HookWithTags>>
 
+    @Transaction
+    @Query("SELECT * FROM Hook WHERE hookId NOT IN (SELECT hookId FROM Tag) ORDER BY isPinned DESC, id DESC")
+    fun getHooksWithNoTags(): Flow<List<HookWithTags>>
 }
