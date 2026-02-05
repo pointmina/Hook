@@ -8,6 +8,8 @@
     <color name="gray_200">#B8BDC3</color>
     <color name="gray_300">#8E8D93</color>
     <color name="gray_700">#474F5A</color>
+    <color name="gray_800">#49454F</color>
+    <color name="gray_2000">#49454F</color>
 
     <color name="blue_500">#337CFF</color>
     <color name="blue_200">#EEF4FF</color>

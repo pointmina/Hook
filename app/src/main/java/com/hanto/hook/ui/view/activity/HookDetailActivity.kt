@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.hanto.hook.R
 import com.hanto.hook.data.TagSelectionListener
+import com.hanto.hook.data.model.Event
 import com.hanto.hook.data.model.Hook
 import com.hanto.hook.data.model.Tag
 import com.hanto.hook.databinding.ActivityHookDetailBinding
@@ -82,7 +83,6 @@ class HookDetailActivity : BaseActivity(), TagSelectionListener {
                             description = updatedDescription,
                         )
                         hookViewModel.updateHookAndTags(updatedHook, tagNames.toList())
-                        finish()
                     }
                 }
             }
@@ -111,6 +111,18 @@ class HookDetailActivity : BaseActivity(), TagSelectionListener {
                 launch {
                     hookViewModel.isLoading.collect { isLoading ->
                         binding.btnHookEdit.isEnabled = !isLoading && isUrlValid && isTitleValid
+                    }
+                }
+
+                // 완료 이벤트 관찰
+                launch {
+                    hookViewModel.eventFlow.collect { event ->
+                        when (event) {
+                            is Event.NavigateBack -> finish()
+                            is Event.ShowToast -> {
+                                Toast.makeText(this@HookDetailActivity, event.message, Toast.LENGTH_SHORT).show()
+                            }
+                        }
                     }
                 }
             }

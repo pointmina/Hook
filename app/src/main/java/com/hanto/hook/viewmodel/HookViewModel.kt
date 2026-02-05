@@ -3,17 +3,22 @@ package com.hanto.hook.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hanto.hook.data.model.Event
 import com.hanto.hook.data.model.Hook
 import com.hanto.hook.data.model.HookWithTags
 import com.hanto.hook.data.model.Tag
 import com.hanto.hook.data.model.UiState
 import com.hanto.hook.data.repository.HookRepository
+import com.hanto.hook.util.JsoupUtils
 import com.hanto.hook.util.SoundSearcher
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
@@ -22,6 +27,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,6 +41,9 @@ class HookViewModel @Inject constructor(
     }
 
     // ---------------------- StateFlow (UI State) ---------------------- //
+
+    private val _eventFlow = MutableSharedFlow<Event>()
+    val eventFlow = _eventFlow.asSharedFlow()
 
     private val _searchQuery = MutableStateFlow("")
 
@@ -127,16 +136,30 @@ class HookViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                // 훅 먼저 삽입
-                hookRepository.insertHook(hook)
-                // 태그들 삽입
+                // 썸네일 이미지 크롤링
+                val ogImageUrl = withContext(Dispatchers.IO) {
+                    JsoupUtils.getOgImageUrl(hook.url)
+                }
+
+                val hookWithImage = hook.copy(imageUrl = ogImageUrl)
+
+                // 훅 및 태그 삽입
+                hookRepository.insertHook(hookWithImage)
                 tags.forEach { tagName ->
                     val tag = Tag(hookId = hook.hookId, name = tagName)
                     hookRepository.insertTag(tag)
                 }
                 Log.d(TAG, "Hook with tags inserted: ${hook.title}")
+
+                // 작업 완료 신호 전송
+                _eventFlow.emit(Event.NavigateBack)
+
             } catch (e: Exception) {
-                handleError("훅 저장 실패", e)
+                if (e is kotlinx.coroutines.CancellationException) {
+                    Log.d(TAG, "Job cancelled", e)
+                } else {
+                    handleError("훅 저장 실패", e)
+                }
             } finally {
                 _isLoading.value = false
             }
@@ -161,10 +184,28 @@ class HookViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                hookRepository.updateHookAndTags(hook, selectedTags)
+                val ogImageUrl = withContext(Dispatchers.IO) {
+                    JsoupUtils.getOgImageUrl(hook.url)
+                }
+
+                // 이미지 갱신 처리
+                val finalHook = if (!ogImageUrl.isNullOrBlank()) {
+                    hook.copy(imageUrl = ogImageUrl)
+                } else {
+                    hook
+                }
+
+                hookRepository.updateHookAndTags(finalHook, selectedTags)
                 Log.d(TAG, "Hook updated: ${hook.hookId}")
+
+                _eventFlow.emit(Event.NavigateBack)
+
             } catch (e: Exception) {
-                handleError("업데이트 실패", e)
+                if (e is kotlinx.coroutines.CancellationException) {
+                    Log.d(TAG, "Update job cancelled", e)
+                } else {
+                    handleError("업데이트 실패", e)
+                }
             } finally {
                 _isLoading.value = false
             }

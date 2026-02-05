@@ -140,6 +140,10 @@ dependencies {
     androidTestImplementation("com.google.dagger:hilt-android-testing:2.48.1")
     kspAndroidTest("com.google.dagger:hilt-compiler:2.48.1")
 
-    //LeakCanary
-    // debugImplementation ("com.squareup.leakcanary:leakcanary-android:2.9.1")
+    // 웹 크롤링을 위한 Jsoup
+    implementation("org.jsoup:jsoup:1.17.2")
+
+    // 이미지 로딩을 위한 Glide
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    ksp("com.github.bumptech.glide:compiler:4.16.0")
 }

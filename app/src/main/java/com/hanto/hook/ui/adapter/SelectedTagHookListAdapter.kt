@@ -6,6 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.hanto.hook.data.model.Hook
 import com.hanto.hook.data.model.HookWithTags
 import com.hanto.hook.databinding.ItemSelectedTagHookListBinding
@@ -75,6 +78,21 @@ class SelectedTagHookListAdapter(
                     binding.iconIsPinned.visibility = View.VISIBLE
                 } else {
                     binding.iconIsPinned.visibility = View.GONE
+                }
+
+                if (!hook.imageUrl.isNullOrBlank()) {
+                    ivThumbnail.visibility = View.VISIBLE
+
+                    Glide.with(root.context)
+                        .load(hook.imageUrl)
+                        .transform(
+                            CenterCrop(),
+                            RoundedCorners(20)
+                        )
+                        .into(ivThumbnail)
+                } else {
+                    ivThumbnail.visibility = View.GONE
+                    Glide.with(root.context).clear(ivThumbnail)
                 }
 
                 root.setOnClickListener {

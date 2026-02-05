@@ -5,6 +5,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
@@ -44,6 +47,21 @@ class HookAdapter(
             }
 
             binding.iconIsPinned.visibility = if (hook.isPinned) View.VISIBLE else View.GONE
+
+            if (!hook.imageUrl.isNullOrBlank()) {
+                binding.ivThumbnail.visibility = View.VISIBLE
+
+                Glide.with(binding.root.context)
+                    .load(hook.imageUrl)
+                    .transform(
+                        CenterCrop(),
+                        RoundedCorners(20)
+                    )
+                    .into(binding.ivThumbnail)
+            } else {
+                binding.ivThumbnail.visibility = View.GONE
+                Glide.with(binding.root.context).clear(binding.ivThumbnail)
+            }
 
             binding.root.setOnClickListener { onItemClick(hook) }
             binding.icOption.setOnClickListener {

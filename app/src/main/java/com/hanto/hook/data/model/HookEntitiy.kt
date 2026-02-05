@@ -14,7 +14,8 @@ data class Hook(
     var title: String,
     var url: String?,
     var description: String?,
-    var isPinned: Boolean = false
+    var isPinned: Boolean = false,
+    var imageUrl: String? = null
 ) : Parcelable
 
 

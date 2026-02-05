@@ -3,6 +3,7 @@ package com.hanto.hook.ui.view.activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -12,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.hanto.hook.R
 import com.hanto.hook.data.TagSelectionListener
+import com.hanto.hook.data.model.Event
 import com.hanto.hook.data.model.Hook
 import com.hanto.hook.databinding.ActivityUrlHandlingBinding
 import com.hanto.hook.ui.view.fragment.TagListFragment
@@ -90,10 +92,31 @@ class UrlHandlingActivity : AppCompatActivity(), TagSelectionListener {
                     }
                 }
 
-                // 2. 로딩 상태 관찰 (저장 버튼 활성화 제어)
                 launch {
                     hookViewModel.isLoading.collect { isLoading ->
+                        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+
                         binding.btnCreate.isEnabled = !isLoading
+                        binding.btnCancel.isEnabled = !isLoading
+
+                        binding.tvEditTitle.isEnabled = !isLoading
+                        binding.tvEditDescription.isEnabled = !isLoading
+                    }
+                }
+
+                // 3. 완료 이벤트 관찰
+                launch {
+                    hookViewModel.eventFlow.collect { event ->
+                        when (event) {
+                            is Event.NavigateBack -> finish()
+                            is Event.ShowToast -> {
+                                Toast.makeText(
+                                    this@UrlHandlingActivity,
+                                    event.message,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
                     }
                 }
             }
@@ -121,7 +144,6 @@ class UrlHandlingActivity : AppCompatActivity(), TagSelectionListener {
         val title = binding.tvEditTitle.text.toString().trim()
         val url = binding.tvEditUrl.text.toString().trim()
         val description = binding.tvEditDescription.text.toString().trim()
-
         val hookId = java.util.UUID.randomUUID().toString()
 
         if (title.isEmpty()) {
@@ -137,7 +159,6 @@ class UrlHandlingActivity : AppCompatActivity(), TagSelectionListener {
         )
 
         hookViewModel.insertHookWithTags(hook, selectedTags)
-        finish()
     }
 
     override fun onTagsSelected(tags: List<String>) {

@@ -16,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.hanto.hook.R
 import com.hanto.hook.data.TagSelectionListener
+import com.hanto.hook.data.model.Event
 import com.hanto.hook.data.model.Hook
 import com.hanto.hook.databinding.ActivityAddHookBinding
 import com.hanto.hook.ui.view.fragment.TagListFragment
@@ -174,6 +175,21 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
                         binding.ivAddNewHook.isEnabled = !isLoading && isUrlValid && isTitleValid
                     }
                 }
+
+                launch {
+                    hookViewModel.eventFlow.collect { event ->
+                        when (event) {
+                            is Event.NavigateBack -> finish()
+                            is Event.ShowToast -> {
+                                Toast.makeText(
+                                    this@AddHookActivity,
+                                    event.message,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -227,7 +243,6 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
         )
 
         hookViewModel.insertHookWithTags(hook, selectedTags)
-        finish()
     }
 
     private fun updateButtonState() {
