@@ -1,112 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/bottom_view"
+    android:id="@+id/bottom_sheet_scroll_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="bottom"
-    android:animateLayoutChanges="false"
-    android:orientation="horizontal"
-    android:paddingLeft="20dp"
-    android:paddingRight="20dp"
-    app:behavior_hideable="false"
-    app:behavior_peekHeight="0dp"
-    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+    android:fillViewport="true">
 
-    <ImageView
-        android:id="@+id/horizontal_bar"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bottom_view"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:src="@drawable/ic_horizontal_rule"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:paddingHorizontal="60dp"
+        android:paddingBottom="20dp">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_set_pin"
-        android:layout_width="300dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/textview_detail_border"
-        android:backgroundTint="@color/purple"
-        android:elevation="5dp"
-        android:text="@string/set_pin"
-        android:textAppearance="@style/AppTextPrimary.S14"
-        android:textColor="@color/white"
-        app:icon="@drawable/ic_hook_white"
-        app:iconPadding="-20dp"
-        app:iconSize="17dp"
-        app:layout_constraintBottom_toTopOf="@id/btn_share_hook"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/horizontal_bar" />
+        <ImageView
+            android:id="@+id/horizontal_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:src="@drawable/ic_horizontal_rule"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_share_hook"
-        android:layout_width="300dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/textview_detail_border"
-        android:backgroundTint="@color/purple"
-        android:elevation="5dp"
-        android:text="@string/share"
-        android:textAppearance="@style/AppTextPrimary.S14"
-        android:textColor="@color/white"
-        app:icon="@drawable/ic_share"
-        app:iconPadding="-20dp"
-        app:iconSize="17dp"
-        app:layout_constraintBottom_toTopOf="@id/btn_modify_hook"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_set_pin" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_set_pin"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/textview_detail_border"
+            android:backgroundTint="@color/purple"
+            android:elevation="5dp"
+            android:text="@string/set_pin"
+            android:textAppearance="@style/AppTextPrimary.S14"
+            android:textColor="@color/white"
+            app:icon="@drawable/ic_hook_white"
+            app:iconPadding="-20dp"
+            app:iconSize="17dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/horizontal_bar" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_modify_hook"
-        android:layout_width="300dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/textview_detail_border"
-        android:backgroundTint="@color/purple"
-        android:elevation="5dp"
-        android:text="@string/modify"
-        android:textAppearance="@style/AppTextPrimary.S14"
-        android:textColor="@color/white"
-        app:icon="@drawable/ic_draw"
-        app:iconPadding="-20dp"
-        app:iconSize="20dp"
-        app:layout_constraintBottom_toTopOf="@id/bt_delete_hook"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_share_hook" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_share_hook"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/textview_detail_border"
+            android:backgroundTint="@color/purple"
+            android:elevation="5dp"
+            android:text="@string/share"
+            android:textAppearance="@style/AppTextPrimary.S14"
+            android:textColor="@color/white"
+            app:icon="@drawable/ic_share"
+            app:iconPadding="-20dp"
+            app:iconSize="17dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_set_pin" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/bt_delete_hook"
-        android:layout_width="300dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="50dp"
-        android:background="@drawable/textview_detail_border"
-        android:backgroundTint="@color/purple"
-        android:text="@string/delete"
-        android:textAppearance="@style/AppTextPrimary.S14"
-        android:textColor="@color/white"
-        app:elevation="4dp"
-        app:icon="@drawable/ic_delete"
-        app:iconPadding="-20dp"
-        app:iconSize="24dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_modify_hook" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_modify_hook"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/textview_detail_border"
+            android:backgroundTint="@color/purple"
+            android:elevation="5dp"
+            android:text="@string/modify"
+            android:textAppearance="@style/AppTextPrimary.S14"
+            android:textColor="@color/white"
+            app:icon="@drawable/ic_draw"
+            app:iconPadding="-20dp"
+            app:iconSize="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_share_hook" />
 
-    <!--
-    STATE_EXPANDED : 완전히 펼쳐진 상태
-    STATE_COLLAPSED : 접혀있는 상태
-    STATE_HIDDEN : 아래로 숨겨진 상태
-    STATE_HALF_EXPANDED : 절반으로 펼쳐진 상태
-    STATE_DRAGGING : 드래깅 되고 있는 상태
-    STATE_SETTING : 드래그/스와이프 직후 고정된 상태
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/bt_delete_hook"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/textview_detail_border"
+            android:backgroundTint="@color/purple"
+            android:text="@string/delete"
+            android:textAppearance="@style/AppTextPrimary.S14"
+            android:textColor="@color/white"
+            app:elevation="4dp"
+            app:icon="@drawable/ic_delete"
+            app:iconPadding="-20dp"
+            app:iconSize="24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_modify_hook" />
 
-    -->
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

@@ -12,7 +12,6 @@
         android:layout_marginEnd="15dp"
         android:layout_marginBottom="10dp"
         android:background="@drawable/rounded_background_little"
-        android:maxWidth="400dp"
         android:padding="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

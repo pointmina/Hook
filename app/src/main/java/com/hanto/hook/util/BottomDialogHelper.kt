@@ -5,6 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
+import android.widget.FrameLayout
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.hanto.hook.R
@@ -25,9 +28,21 @@ class BottomDialogHelper {
             val dialog = BottomSheetDialog(context, R.style.CustomBottomSheetDialogTheme)
             val view = LayoutInflater.from(context).inflate(R.layout.bottom_dialog_home, null)
             dialog.setContentView(view)
+
+            dialog.setOnShowListener { dialogInterface ->
+                val bottomSheetDialog = dialogInterface as BottomSheetDialog
+                val bottomSheet =
+                    bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as? FrameLayout
+
+                bottomSheet?.let { sheet ->
+                    val behavior = BottomSheetBehavior.from(sheet)
+                    behavior.state = BottomSheetBehavior.STATE_EXPANDED
+                    behavior.skipCollapsed = true
+                }
+            }
+
             dialog.setCancelable(true)
 
-            // 고정하기
             val btnPinHook: MaterialButton = view.findViewById(R.id.btn_set_pin)
 
             btnPinHook.text = if (selectedItem.isPinned) {
