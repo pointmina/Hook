@@ -45,6 +45,9 @@ class HookViewModel @Inject constructor(
     private val _eventFlow = MutableSharedFlow<Event>()
     val eventFlow = _eventFlow.asSharedFlow()
 
+    private val _deleteSuccessEvent = MutableSharedFlow<Unit>()
+    val deleteSuccessEvent = _deleteSuccessEvent.asSharedFlow()
+
     private val _searchQuery = MutableStateFlow("")
 
     fun setSearchQuery(query: String) {
@@ -217,6 +220,7 @@ class HookViewModel @Inject constructor(
             _isLoading.value = true
             try {
                 hookRepository.deleteTagByTagName(tagName)
+                _deleteSuccessEvent.emit(Unit)
             } catch (e: Exception) {
                 handleError("태그 삭제 실패", e)
             } finally {

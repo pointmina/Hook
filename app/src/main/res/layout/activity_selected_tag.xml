@@ -8,7 +8,6 @@
     android:background="@color/white"
     tools:context=".ui.view.activity.SelectedTagActivity">
 
-
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toorbar_selected_tag"
         android:layout_width="0dp"
@@ -24,91 +23,92 @@
         android:layout_marginStart="20dp"
         android:src="@drawable/ic_arrow_back"
         app:layout_constraintBottom_toBottomOf="@id/toorbar_selected_tag"
-        app:layout_constraintStart_toStartOf="@id/toorbar_selected_tag"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/toorbar_selected_tag" />
 
     <View
         android:id="@+id/view_tag_area"
         android:layout_width="0dp"
-        android:layout_height="103dp"
-        android:layout_marginTop="10dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="-10dp"
         android:background="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="@id/iv_tag_change"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toorbar_selected_tag" />
 
-    <!--    요기에 태그 한개만 나온다함..-->
     <TextView
         android:id="@+id/sharp"
         android:layout_width="wrap_content"
-        android:layout_height="35dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="10dp"
         android:fontFamily="@font/notosan_r"
         android:text="@string/sharp"
         android:textColor="@color/black"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@id/view_tag_area"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/view_tag_area" />
 
     <TextView
         android:id="@+id/tv_selected_tag"
         android:layout_width="wrap_content"
-        android:layout_height="35dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="8dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
         android:contentDescription="@string/description_select_tag"
         android:fontFamily="@font/notosan_r"
         android:textColor="@color/black"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@id/sharp"
-        app:layout_constraintTop_toTopOf="@id/view_tag_area"
+        app:layout_constraintBottom_toBottomOf="@id/sharp"
+        app:layout_constraintStart_toEndOf="@id/sharp"
+        app:layout_constraintTop_toTopOf="@id/sharp"
         tools:text="종합설계" />
 
     <TextView
         android:id="@+id/tv_tag_count"
         android:layout_width="wrap_content"
-        android:layout_height="28dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginBottom="4dp"
         android:fontFamily="@font/notosans_m"
         android:textColor="@color/gray_300"
         android:textSize="14sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/tv_selected_tag"
         app:layout_constraintStart_toEndOf="@id/tv_selected_tag"
-        app:layout_constraintTop_toTopOf="@id/tv_selected_tag"
         tools:text="10" />
 
     <TextView
         android:id="@+id/txt_tag_count"
         android:layout_width="wrap_content"
-        android:layout_height="28dp"
-        android:layout_marginTop="12dp"
+        android:layout_height="wrap_content"
         android:fontFamily="@font/notosans_m"
         android:text="@string/label_tag_count"
         android:textColor="@color/gray_300"
         android:textSize="14sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/tv_tag_count"
         app:layout_constraintStart_toEndOf="@id/tv_tag_count"
-        app:layout_constraintTop_toTopOf="@id/tv_selected_tag" />
-
+        app:layout_constraintTop_toTopOf="@id/tv_tag_count" />
 
     <TextView
         android:id="@+id/iv_tag_change"
         android:layout_width="0dp"
         android:layout_height="36dp"
+        android:layout_marginTop="18dp"
         android:layout_marginEnd="7dp"
-        android:layout_marginBottom="8dp"
         android:background="@color/gray_100"
         android:gravity="center"
         android:text="@string/description_save_changes"
+        android:textColor="@color/black"
         android:textSize="14sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/view_tag_area"
         app:layout_constraintEnd_toStartOf="@id/iv_tag_delete"
-        app:layout_constraintStart_toStartOf="@id/sharp" />
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintStart_toStartOf="@id/sharp"
+        app:layout_constraintTop_toBottomOf="@id/tv_selected_tag" />
 
     <TextView
         android:id="@+id/iv_tag_delete"
@@ -119,17 +119,19 @@
         android:background="@color/gray_100"
         android:gravity="center"
         android:text="@string/delete_tag"
+        android:textColor="@color/black"
         android:textSize="14sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/iv_tag_change"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/iv_tag_change"
         app:layout_constraintTop_toTopOf="@id/iv_tag_change" />
-
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_url_hook_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

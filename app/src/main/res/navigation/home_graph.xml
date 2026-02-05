@@ -54,11 +54,4 @@
         android:label="activity_selected_tag"
         tools:layout="@layout/activity_selected_tag" />
 
-    <fragment
-        android:id="@+id/changeTagFragment"
-        android:name="com.hanto.hook.ui.view.fragment.ChangeTagFragment"
-        android:label="ChangeTagFragment"
-        tools:layout="@layout/fragment_change_tag" />
-
-
 </navigation>

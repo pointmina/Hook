@@ -119,5 +119,6 @@
     <string name="exist_tag">Tag already exists.</string>
     <string name="exist_app">Click the back button to exit the app.</string>
     <string name="share_hook">Share Hook</string>
+    <string name="delete_tag_success_message">Tag deleted</string>
 
 </resources>

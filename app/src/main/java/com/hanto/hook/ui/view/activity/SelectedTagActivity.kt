@@ -3,6 +3,7 @@ package com.hanto.hook.ui.view.activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.content.res.ResourcesCompat
@@ -12,18 +13,16 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hanto.hook.R
-import com.hanto.hook.data.TagUpdateListener
 import com.hanto.hook.databinding.ActivitySelectedTagBinding
 import com.hanto.hook.ui.adapter.SelectedTagHookListAdapter
-import com.hanto.hook.ui.view.fragment.ChangeTagFragment
-import com.hanto.hook.ui.view.fragment.DeleteTagFragment
+import com.hanto.hook.ui.view.fragment.CommonDialogFragment // [변경] 통합 다이얼로그 Import
 import com.hanto.hook.util.BottomDialogHelper
 import com.hanto.hook.viewmodel.HookViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class SelectedTagActivity : BaseActivity(), TagUpdateListener {
+class SelectedTagActivity : BaseActivity() {
 
     companion object {
         private const val TAG = "SelectedTagActivity"
@@ -108,12 +107,11 @@ class SelectedTagActivity : BaseActivity(), TagUpdateListener {
     private fun setupObservers() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-
                 // 1. 선택된 태그의 훅 리스트 관찰
                 launch {
                     hookViewModel.hooksBySelectedTag.collect { hooks ->
                         if (hooks.isNotEmpty()) {
-                            val distinctHooks = hooks.distinctBy { it.hook.hookId } // id 대신 hookId 사용 권장 (기존 로직 유지 시 id)
+                            val distinctHooks = hooks.distinctBy { it.hook.hookId }
                             Log.d(TAG, "Distinct Hooks fetched: ${distinctHooks.size}")
                             selectedTagHookListAdapter.submitList(distinctHooks)
                             binding.tvTagCount.text = distinctHooks.size.toString()
@@ -134,6 +132,18 @@ class SelectedTagActivity : BaseActivity(), TagUpdateListener {
                         }
                     }
                 }
+
+                // 태그 삭제
+                launch {
+                    hookViewModel.deleteSuccessEvent.collect {
+                        val intent = Intent().apply {
+                            putExtra("EXTRA_TAG_NAME", selectedTagName) // 삭제된 태그 이름
+                            putExtra("ACTION_TYPE", "DELETE")           // 작업 타입
+                        }
+                        setResult(RESULT_OK, intent)
+                        finish()
+                    }
+                }
             }
         }
     }
@@ -143,46 +153,43 @@ class SelectedTagActivity : BaseActivity(), TagUpdateListener {
         binding.tvSelectedTag.text = selectedTagName
 
         if (selectedTagName == HookViewModel.TAG_UNCATEGORIZED) {
-            binding.ivTagChange.visibility = android.view.View.GONE
-            binding.ivTagDelete.visibility = android.view.View.GONE
+            binding.ivTagChange.visibility = View.GONE
+            binding.ivTagDelete.visibility = View.GONE
         } else {
-            binding.ivTagChange.visibility = android.view.View.VISIBLE
-            binding.ivTagDelete.visibility = android.view.View.VISIBLE
+            binding.ivTagChange.visibility = View.VISIBLE
+            binding.ivTagDelete.visibility = View.VISIBLE
         }
 
         hookViewModel.selectTagName(selectedTagName)
     }
 
     private fun showChangeTagFragment() {
-        val changeTagFragment = ChangeTagFragment()
-        val bundle = Bundle().apply {
-            putString("selectedTag", selectedTagName)
-        }
-        changeTagFragment.arguments = bundle
-        changeTagFragment.setTagUpdateListener(this)
-        changeTagFragment.show(supportFragmentManager, "ChangeTagFragment")
+        val dialog = CommonDialogFragment.newInputInstance(
+            title = getString(R.string.question_really_modi_tag),
+            hint = getString(R.string.plz_input_tag),
+            prefilledText = selectedTagName,
+            positiveText = getString(R.string.description_save_changes),
+            onInputConfirm = { newTagName ->
+                hookViewModel.updateTagName(selectedTagName, newTagName)
+
+                selectedTagName = newTagName
+                binding.tvSelectedTag.text = newTagName
+                hookViewModel.selectTagName(newTagName)
+            }
+        )
+        dialog.show(supportFragmentManager, CommonDialogFragment.TAG)
     }
 
     private fun showDeleteTagFragment() {
-        val deleteTagFragment = DeleteTagFragment()
-        deleteTagFragment.setOnTagDeletedListener(object : DeleteTagFragment.OnTagDeletedListener {
-            override fun onTagDeleted() {
-                finish()
+        val dialog = CommonDialogFragment.newInstance(
+            title = getString(R.string.question_really_delete_tag),
+            message = getString(R.string.delete_tag_content),
+            positiveText = getString(R.string.delete_tag),
+            onPositiveClick = {
+                hookViewModel.deleteTagByTagName(selectedTagName)
             }
-        })
-        val bundle = Bundle().apply {
-            putString("selectedTag", selectedTagName)
-        }
-        deleteTagFragment.arguments = bundle
-        deleteTagFragment.show(supportFragmentManager, "DeleteTagFragment")
-    }
-
-    override fun onTagUpdated(tag: String) {
-        Log.d(TAG, "onTagUpdated: $tag")
-        selectedTagName = tag
-        binding.tvSelectedTag.text = tag
-
-        hookViewModel.selectTagName(tag)
+        )
+        dialog.show(supportFragmentManager, CommonDialogFragment.TAG)
     }
 
     override fun onDestroy() {

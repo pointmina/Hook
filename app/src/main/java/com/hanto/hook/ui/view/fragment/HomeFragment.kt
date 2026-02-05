@@ -40,7 +40,6 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-
     private val hookViewModel: HookViewModel by viewModels()
     private lateinit var adapter: HookAdapter
 
@@ -219,21 +218,21 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
     }
 
     private fun setupTutorialButton() {
-        // 튜토리얼 다시보기
-        val btSetting = view?.findViewById<ImageView>(R.id.btn_tut_again)
+        val btSetting = binding.root.findViewById<ImageView>(R.id.btn_tut_again)
+
         btSetting?.setOnClickListener {
-            val dialog = TwoButtonDialogFragment(
+            val dialog = CommonDialogFragment.newInstance(
                 title = getString(R.string.title_tut_again),
-                content = getString(R.string.question_tut_again),
-                positiveButtonText = getString(R.string.yes),
-                negativeButtonText = getString(R.string.no),
+                message = getString(R.string.question_tut_again),
+                positiveText = getString(R.string.yes),
+                negativeText = getString(R.string.no),
                 onPositiveClick = {
                     Intent(requireContext(), OnboardingActivity::class.java).also {
                         startActivity(it)
                     }
                 }
             )
-            dialog.show(parentFragmentManager, "TwoButtonDialog")
+            dialog.show(parentFragmentManager, CommonDialogFragment.TAG)
         }
     }
 

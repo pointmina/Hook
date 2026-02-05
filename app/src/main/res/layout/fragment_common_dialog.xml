@@ -2,11 +2,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.view.fragment.ChangeTagFragment">
+    android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/view_delete_tag"
+        android:id="@+id/view_dialog_two_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
@@ -21,18 +20,15 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_percent="0.95">
 
-        <me.grantland.widget.AutofitTextView
-            android:id="@+id/tv_link_info"
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:text="@string/question_really_modi_tag"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@id/container_tag_name"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text=" 제목 " />
 
         <View
             android:id="@+id/container_tag_name"
@@ -42,10 +38,28 @@
             android:background="@drawable/textview_detail_border"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_link_info" />
+            app:layout_constraintTop_toBottomOf="@id/tv_title" />
+
+        <me.grantland.widget.AutofitTextView
+            android:id="@+id/tv_message"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:background="@color/transparent"
+            android:fontFamily="@font/notosan_r"
+            android:maxLines="1"
+            android:text="@string/question_tut_again"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/container_tag_name"
+            app:layout_constraintEnd_toEndOf="@id/container_tag_name"
+            app:layout_constraintStart_toStartOf="@id/container_tag_name"
+            app:layout_constraintTop_toTopOf="@id/container_tag_name"
+            tools:visibility="visible" />
 
         <EditText
-            android:id="@+id/tv_change_tag_name"
+            android:id="@+id/et_input"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -56,47 +70,49 @@
             android:textSize="24sp"
             android:textStyle="bold"
             android:theme="@style/MyCheckBox"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/container_tag_name"
             app:layout_constraintEnd_toEndOf="@id/container_tag_name"
             app:layout_constraintStart_toStartOf="@id/container_tag_name"
             app:layout_constraintTop_toTopOf="@id/container_tag_name" />
 
         <TextView
-            android:id="@+id/btn_change_tag_name"
+            android:id="@+id/btn_negative"
             android:layout_width="0dp"
             android:layout_height="52dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="5dp"
             android:background="@drawable/rounded_background_little"
             android:backgroundTint="@color/gray_100"
+            android:fontFamily="@font/notosan_r"
             android:gravity="center"
-            android:text="@string/description_save_changes"
             android:textColor="@color/black"
             android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/btn_cancel"
+            app:layout_constraintEnd_toStartOf="@id/btn_positive"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/container_tag_name" />
+            app:layout_constraintTop_toBottomOf="@id/container_tag_name"
+            tools:text="아니요" />
 
         <TextView
-            android:id="@+id/btn_cancel"
+            android:id="@+id/btn_positive"
             android:layout_width="0dp"
             android:layout_height="52dp"
             android:layout_marginStart="5dp"
             android:layout_marginTop="16dp"
             android:background="@drawable/rounded_background_little"
             android:backgroundTint="@color/purple"
+            android:fontFamily="@font/notosan_r"
             android:gravity="center"
-            android:text="@string/cancel2"
             android:textColor="@color/white"
             android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/btn_change_tag_name"
-            app:layout_constraintTop_toBottomOf="@id/container_tag_name" />
-
+            app:layout_constraintStart_toEndOf="@id/btn_negative"
+            app:layout_constraintTop_toBottomOf="@id/container_tag_name"
+            tools:text="예" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

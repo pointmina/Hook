@@ -14,6 +14,8 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -23,6 +25,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
+import com.google.android.material.snackbar.Snackbar
 import com.hanto.hook.R
 import com.hanto.hook.databinding.FragmentTagBinding
 import com.hanto.hook.ui.adapter.DragManageAdapterCallback
@@ -44,6 +47,19 @@ class TagFragment : Fragment() {
     private lateinit var tagAdapter: TagAdapter
 
     private val hookViewModel: HookViewModel by viewModels()
+
+    private val startForResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == android.app.Activity.RESULT_OK) {
+                val data = result.data
+                val tagName = data?.getStringExtra("EXTRA_TAG_NAME")
+                val actionType = data?.getStringExtra("ACTION_TYPE")
+
+                if (actionType == "DELETE") {
+                    showDeletionSnackbar(tagName)
+                }
+            }
+        }
 
     private val addTagDialog by lazy {
         Dialog(requireContext()).apply {
@@ -113,7 +129,7 @@ class TagFragment : Fragment() {
                 val intent = Intent(requireContext(), SelectedTagActivity::class.java).apply {
                     putExtra("selectedTagName", tagName)
                 }
-                startActivity(intent)
+                startForResult.launch(intent)
             }
         }).apply {
             recyclerView = binding.rvTagViewTagContainer
@@ -147,6 +163,34 @@ class TagFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun showDeletionSnackbar(tagName: String?) {
+        val message = "'$tagName' ${getString(R.string.delete_tag_success_message)}"
+
+        val snackbar = Snackbar.make(
+            binding.root,
+            message,
+            Snackbar.LENGTH_LONG
+        )
+
+        val snackbarView = snackbar.view
+
+        // 1. 배경 적용 (둥근 모서리)
+        snackbarView.background =
+            ContextCompat.getDrawable(requireContext(), R.drawable.bg_snackbar)
+
+        val params = snackbarView.layoutParams as ViewGroup.MarginLayoutParams
+        params.setMargins(
+            24,
+            0,
+            24,
+            50
+        )
+        snackbarView.layoutParams = params
+
+        snackbar.setTextColor(ContextCompat.getColor(requireContext(), R.color.purple))
+        snackbar.show()
     }
 
     override fun onResume() {
