@@ -46,7 +46,11 @@ class HookAdapter(
                 binding.tvTagDescription.visibility = View.GONE
             }
 
-            binding.iconIsPinned.visibility = if (hook.isPinned) View.VISIBLE else View.GONE
+            if (hook.isPinned) {
+                binding.iconIsPinned.visibility = View.VISIBLE
+            } else {
+                binding.iconIsPinned.visibility = View.GONE
+            }
 
             if (!hook.imageUrl.isNullOrBlank()) {
                 binding.ivThumbnail.visibility = View.VISIBLE
