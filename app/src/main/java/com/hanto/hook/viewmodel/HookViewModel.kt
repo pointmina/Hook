@@ -8,6 +8,7 @@ import com.hanto.hook.data.model.HookWithTags
 import com.hanto.hook.data.model.Tag
 import com.hanto.hook.data.model.UiState
 import com.hanto.hook.data.repository.HookRepository
+import com.hanto.hook.util.SoundSearcher
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -33,8 +35,28 @@ class HookViewModel @Inject constructor(
 
     // ---------------------- StateFlow (UI State) ---------------------- //
 
+    private val _searchQuery = MutableStateFlow("")
+
+    fun setSearchQuery(query: String) {
+        _searchQuery.value = query
+    }
+
     // 1. 전체 훅 리스트
-    val hookUiState: StateFlow<UiState> = hookRepository.getAllHooks()
+    val hookUiState: StateFlow<UiState> = combine(
+        hookRepository.getAllHooks(),
+        _searchQuery
+    ) { hooks, query ->
+        // 검색어가 비어있으면 전체 리스트 반환, 아니면 필터링
+        if (query.isBlank()) {
+            hooks
+        } else {
+            hooks.filter { item ->
+                SoundSearcher.matchString(item.hook.title, query) ||
+                        (item.hook.description?.let { SoundSearcher.matchString(it, query) }
+                            ?: false)
+            }
+        }
+    }
         .map { UiState.Success(it) as UiState }
         .catch { e -> emit(UiState.Error(e.message ?: "Unknown Error")) }
         .stateIn(
