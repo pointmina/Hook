@@ -19,7 +19,6 @@ import com.hanto.hook.data.TagSelectionListener
 import com.hanto.hook.data.model.Hook
 import com.hanto.hook.databinding.ActivityAddHookBinding
 import com.hanto.hook.ui.view.fragment.TagListFragment
-import com.hanto.hook.util.DateUtils
 import com.hanto.hook.util.UrlUtils
 import com.hanto.hook.viewmodel.HookViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -212,7 +211,8 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
         val url = binding.tvUrlLink.text.toString().trim()
         val title = binding.tvUrlTitle.text.toString().trim()
         val description = binding.tvUrlDescription.text.toString().trim()
-        val hookId = DateUtils.generateHookId()
+
+        val hookId = java.util.UUID.randomUUID().toString()
 
         if (title.isEmpty()) {
             Toast.makeText(this, getString(R.string.plz_input_title), Toast.LENGTH_SHORT).show()

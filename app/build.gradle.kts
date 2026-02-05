@@ -17,7 +17,7 @@ if (localPropertiesFile.exists()) {
 
 android {
     namespace = "com.hanto.hook"
-    compileSdk = 35
+    compileSdk = 36
 
     signingConfigs {
         create("release") {
@@ -31,7 +31,7 @@ android {
     defaultConfig {
         applicationId = "com.hanto.hook"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 13
         versionName = "1.9"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -81,8 +81,6 @@ dependencies {
     // 디자인 관련
     // Material Design 관련
     implementation("com.google.android.material:material:1.12.0")
-    // Compose 제거 (불필요한 의존성)
-    // implementation("androidx.compose.material3:material3:1.2.1")
 
     implementation("me.grantland:autofittextview:0.2.1")
 
@@ -96,7 +94,7 @@ dependencies {
     //Database
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.activity:activity:1.9.3")
-    // annotationProcessor 제거 (KSP 사용)
+
     ksp("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
 
@@ -123,9 +121,7 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0")
 
     // 생명주기, MVVM 관련
-    // paging
     implementation("androidx.paging:paging-runtime-ktx:3.2.1")
-    // coroutine (버전 통일)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     // ViewModel

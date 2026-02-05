@@ -15,7 +15,6 @@ import com.hanto.hook.data.TagSelectionListener
 import com.hanto.hook.data.model.Hook
 import com.hanto.hook.databinding.ActivityUrlHandlingBinding
 import com.hanto.hook.ui.view.fragment.TagListFragment
-import com.hanto.hook.util.DateUtils
 import com.hanto.hook.util.UrlUtils
 import com.hanto.hook.viewmodel.HookViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,9 +25,7 @@ class UrlHandlingActivity : AppCompatActivity(), TagSelectionListener {
 
     companion object {
         private const val TAG = "UrlHandlingActivity"
-        private const val DATE_FORMAT_HOOK_ID = "yyyyMMddHHmmss"
         private const val WINDOW_WIDTH_RATIO = 0.9
-        private const val URL_PATTERN = "\\bhttps?://\\S+"
     }
 
     private lateinit var binding: ActivityUrlHandlingBinding
@@ -124,7 +121,8 @@ class UrlHandlingActivity : AppCompatActivity(), TagSelectionListener {
         val title = binding.tvEditTitle.text.toString().trim()
         val url = binding.tvEditUrl.text.toString().trim()
         val description = binding.tvEditDescription.text.toString().trim()
-        val hookId = DateUtils.generateHookId()
+
+        val hookId = java.util.UUID.randomUUID().toString()
 
         if (title.isEmpty()) {
             Toast.makeText(this, getString(R.string.input_title), Toast.LENGTH_SHORT).show()
