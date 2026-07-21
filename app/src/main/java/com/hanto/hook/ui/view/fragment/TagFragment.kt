@@ -31,7 +31,7 @@ import com.hanto.hook.databinding.FragmentTagBinding
 import com.hanto.hook.ui.adapter.DragManageAdapterCallback
 import com.hanto.hook.ui.adapter.TagAdapter
 import com.hanto.hook.ui.view.activity.SelectedTagActivity
-import com.hanto.hook.viewmodel.HookViewModel
+import com.hanto.hook.viewmodel.TagViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -46,7 +46,7 @@ class TagFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var tagAdapter: TagAdapter
 
-    private val hookViewModel: HookViewModel by viewModels()
+    private val tagViewModel: TagViewModel by viewModels()
 
     private val startForResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -146,7 +146,7 @@ class TagFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
 
                 launch {
-                    hookViewModel.homeTags.collect { tagNames ->
+                    tagViewModel.homeTags.collect { tagNames ->
                         Log.d(TAG, "homeTags $tagNames")
                         tagAdapter.submitList(tagNames)
                     }
@@ -154,10 +154,10 @@ class TagFragment : Fragment() {
 
                 // 2. 에러 메시지 관찰
                 launch {
-                    hookViewModel.errorMessage.collect { errorMessage ->
+                    tagViewModel.errorMessage.collect { errorMessage ->
                         errorMessage?.let {
                             Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-                            hookViewModel.clearErrorMessage()
+                            tagViewModel.clearErrorMessage()
                         }
                     }
                 }

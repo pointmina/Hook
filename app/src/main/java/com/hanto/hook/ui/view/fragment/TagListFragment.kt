@@ -17,7 +17,7 @@ import com.hanto.hook.R
 import com.hanto.hook.data.TagSelectionListener
 import com.hanto.hook.databinding.FragmentTagListBinding
 import com.hanto.hook.ui.adapter.TagListAdapter
-import com.hanto.hook.viewmodel.HookViewModel
+import com.hanto.hook.viewmodel.TagListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -40,7 +40,7 @@ class TagListFragment : DialogFragment() {
     private lateinit var multiChoiceList: LinkedHashMap<String, Boolean>
     private lateinit var adapter: TagListAdapter
 
-    private val hookViewModel: HookViewModel by viewModels()
+    private val tagListViewModel: TagListViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -126,7 +126,7 @@ class TagListFragment : DialogFragment() {
 
                 // 1. 태그 목록 관찰
                 launch {
-                    hookViewModel.distinctTagNames.collect { tagNames ->
+                    tagListViewModel.distinctTagNames.collect { tagNames ->
                         tagNames.forEach { tagName ->
                             if (!multiChoiceList.containsKey(tagName)) {
                                 multiChoiceList[tagName] = false
@@ -138,10 +138,10 @@ class TagListFragment : DialogFragment() {
 
                 // 2. 에러 메시지 관찰
                 launch {
-                    hookViewModel.errorMessage.collect { errorMessage ->
+                    tagListViewModel.errorMessage.collect { errorMessage ->
                         errorMessage?.let {
                             Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-                            hookViewModel.clearErrorMessage()
+                            tagListViewModel.clearErrorMessage()
                         }
                     }
                 }
