@@ -10,9 +10,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.hanto.hook.R
 import com.hanto.hook.data.TagSelectionListener
-import com.hanto.hook.data.model.Event
-import com.hanto.hook.data.model.Hook
-import com.hanto.hook.data.model.Tag
+import com.hanto.hook.ui.model.Event
+import com.hanto.hook.domain.model.Hook
 import com.hanto.hook.databinding.ActivityHookDetailBinding
 import com.hanto.hook.ui.view.fragment.TagListFragment
 import com.hanto.hook.viewmodel.HookViewModel
@@ -36,7 +35,6 @@ class HookDetailActivity : BaseActivity(), TagSelectionListener {
     private var isTitleValid = true
 
     private val multiChoiceList = linkedMapOf<String, Boolean>()
-    private var tagsForHook: List<Tag>? = null
     private var tagNames: Set<String> = emptySet()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -141,22 +139,21 @@ class HookDetailActivity : BaseActivity(), TagSelectionListener {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 hookViewModel.getTagsForHook(hookId).collect { fetchedTags ->
-                    tagsForHook = fetchedTags
                     binding.tvTag.text = fetchedTags.toTagString()
 
-                    tagNames = fetchedTags.map { it.name }.toSet()
+                    tagNames = fetchedTags.toSet()
 
-                    fetchedTags.forEach { tag ->
-                        multiChoiceList[tag.name] = true
+                    fetchedTags.forEach { tagName ->
+                        multiChoiceList[tagName] = true
                     }
                 }
             }
         }
     }
 
-    private fun List<Tag>.toTagString(): String {
-        return distinctBy { it.name }
-            .joinToString(separator = " ") { tag -> "#${tag.name}" }
+    private fun List<String>.toTagString(): String {
+        return distinct()
+            .joinToString(separator = " ") { tagName -> "#$tagName" }
     }
 
     private fun updateButtonState() {

@@ -11,7 +11,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.hanto.hook.R
-import com.hanto.hook.data.model.Hook
+import com.hanto.hook.domain.model.Hook
 import com.hanto.hook.ui.view.activity.HookDetailActivity
 import com.hanto.hook.viewmodel.HookViewModel
 

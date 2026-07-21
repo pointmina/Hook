@@ -111,7 +111,7 @@ class SelectedTagActivity : BaseActivity() {
                 launch {
                     hookViewModel.hooksBySelectedTag.collect { hooks ->
                         if (hooks.isNotEmpty()) {
-                            val distinctHooks = hooks.distinctBy { it.hook.hookId }
+                            val distinctHooks = hooks.distinctBy { it.hookId }
                             Log.d(TAG, "Distinct Hooks fetched: ${distinctHooks.size}")
                             selectedTagHookListAdapter.submitList(distinctHooks)
                             binding.tvTagCount.text = distinctHooks.size.toString()

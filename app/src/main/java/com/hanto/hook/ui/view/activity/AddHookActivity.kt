@@ -16,8 +16,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.hanto.hook.R
 import com.hanto.hook.data.TagSelectionListener
-import com.hanto.hook.data.model.Event
-import com.hanto.hook.data.model.Hook
+import com.hanto.hook.ui.model.Event
+import com.hanto.hook.domain.model.Hook
 import com.hanto.hook.databinding.ActivityAddHookBinding
 import com.hanto.hook.ui.view.fragment.TagListFragment
 import com.hanto.hook.util.UrlUtils

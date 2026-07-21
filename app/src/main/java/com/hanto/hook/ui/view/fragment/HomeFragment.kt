@@ -19,8 +19,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hanto.hook.R
-import com.hanto.hook.data.model.Hook
-import com.hanto.hook.data.model.UiState
+import com.hanto.hook.domain.model.Hook
+import com.hanto.hook.ui.model.UiState
 import com.hanto.hook.databinding.FragmentHomeBinding
 import com.hanto.hook.ui.adapter.HookAdapter
 import com.hanto.hook.ui.view.activity.OnboardingActivity

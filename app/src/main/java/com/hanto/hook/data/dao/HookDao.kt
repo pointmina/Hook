@@ -4,10 +4,9 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
-import androidx.room.Update
-import com.hanto.hook.data.model.Hook
-import com.hanto.hook.data.model.HookWithTags
-import com.hanto.hook.data.model.Tag
+import com.hanto.hook.data.local.entity.HookEntity
+import com.hanto.hook.data.local.entity.TagEntity
+import com.hanto.hook.data.local.relation.HookWithTagsEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -15,10 +14,16 @@ interface HookDao {
 
     // ---------------------- 삽입 ---------------------- //
     @Insert
-    suspend fun insertHook(hook: Hook): Long
+    suspend fun insertHook(hook: HookEntity): Long
 
     @Insert
-    suspend fun insertTag(tag: Tag): Long
+    suspend fun insertTag(tag: TagEntity): Long
+
+    @Transaction
+    suspend fun insertHookWithTags(hook: HookEntity, tags: List<TagEntity>) {
+        insertHook(hook)
+        tags.forEach { insertTag(it) }
+    }
 
     // ---------------------- 삭제 ---------------------- //
     @Query("DELETE FROM Hook WHERE hookId = :hookId")
@@ -37,62 +42,61 @@ interface HookDao {
     }
 
     // ---------------------- 업데이트 ---------------------- //
-    @Update
-    suspend fun updateHook(hook: Hook)
+    // 업데이트 기준을 비즈니스 키(hookId)로 삼아, 도메인 모델이 surrogate id에 의존하지 않도록 한다.
+    @Query(
+        """
+        UPDATE Hook
+        SET title = :title, url = :url, description = :description, imageUrl = :imageUrl
+        WHERE hookId = :hookId
+        """
+    )
+    suspend fun updateHookByHookId(
+        hookId: String,
+        title: String,
+        url: String?,
+        description: String?,
+        imageUrl: String?
+    )
 
-    @Update
-    suspend fun updateTag(tag: Tag)
+    @Transaction
+    suspend fun updateHookWithTags(hook: HookEntity, tags: List<TagEntity>) {
+        updateHookByHookId(hook.hookId, hook.title, hook.url, hook.description, hook.imageUrl)
+        deleteTagByHookId(hook.hookId)
+        tags.forEach { insertTag(it) }
+    }
 
-    @Query("""
-        UPDATE Tag 
-        SET name = :newTagName 
-        WHERE name = :oldTagName
-    """)
+    @Query("UPDATE Tag SET name = :newTagName WHERE name = :oldTagName")
     suspend fun updateTagName(oldTagName: String, newTagName: String)
 
     @Query("UPDATE Hook SET isPinned = :isPinned WHERE hookId = :hookId")
     suspend fun updatePinStatus(hookId: String, isPinned: Boolean)
 
-    // ---------------------- 조회 (Flow로 변경) ---------------------- //
-
-    /**
-     * 모든 훅과 태그 조회 (Flow)
-     */
+    // ---------------------- 조회 ---------------------- //
     @Transaction
     @Query("SELECT * FROM Hook ORDER BY isPinned DESC, id DESC")
-    fun getHooksWithTags(): Flow<List<HookWithTags>>
+    fun getHooksWithTags(): Flow<List<HookWithTagsEntity>>
 
-    /**
-     * 특정 훅 조회
-     */
     @Query("SELECT * FROM Hook WHERE hookId = :hookId")
-    suspend fun getHookById(hookId: String): Hook?
+    suspend fun getHookById(hookId: String): HookEntity?
 
-    /**
-     * 특정 훅의 태그 조회 (Flow)
-     */
-    @Query("SELECT * FROM Tag WHERE hookId = :hookId")
-    fun getTagsForHook(hookId: String): Flow<List<Tag>>
+    @Query("SELECT name FROM Tag WHERE hookId = :hookId")
+    fun getTagNamesForHook(hookId: String): Flow<List<String>>
 
-    /**
-     * 모든 태그 이름 조회 (Flow)
-     */
     @Query("SELECT DISTINCT name FROM Tag ORDER BY name")
     fun getAllTagNames(): Flow<List<String>>
 
-    /**
-     * 특정 태그로 훅 조회 (Flow)
-     */
     @Transaction
-    @Query("""
-        SELECT DISTINCT Hook.* FROM Hook 
-        INNER JOIN Tag ON Hook.hookId = Tag.hookId 
+    @Query(
+        """
+        SELECT DISTINCT Hook.* FROM Hook
+        INNER JOIN Tag ON Hook.hookId = Tag.hookId
         WHERE Tag.name = :tagName
         ORDER BY Hook.isPinned DESC, Hook.id DESC
-    """)
-    fun getHooksByTagName(tagName: String): Flow<List<HookWithTags>>
+        """
+    )
+    fun getHooksByTagName(tagName: String): Flow<List<HookWithTagsEntity>>
 
     @Transaction
     @Query("SELECT * FROM Hook WHERE hookId NOT IN (SELECT hookId FROM Tag) ORDER BY isPinned DESC, id DESC")
-    fun getHooksWithNoTags(): Flow<List<HookWithTags>>
+    fun getHooksWithNoTags(): Flow<List<HookWithTagsEntity>>
 }
