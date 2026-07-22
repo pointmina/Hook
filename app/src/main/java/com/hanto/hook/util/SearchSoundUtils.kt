@@ -1,7 +1,5 @@
 package com.hanto.hook.util
 
-import android.util.Log
-
 /**
  * 초성 검색 알고리즘
  */
@@ -79,17 +77,9 @@ object SoundSearcher {
 
     private fun isMatchingChar(valueChar: Char, searchChar: Char): Boolean {
         if (isInitialSound(searchChar) && isHangul(valueChar)) {
-            val match = getInitialSound(valueChar) == searchChar
-            Log.d(
-                "SoundSearcher",
-                "초성 매칭: valueChar=$valueChar, searchChar=$searchChar, result=$match"
-            )
-            return match
+            return getInitialSound(valueChar) == searchChar
         }
-        val match =
-            (isSpecialCharacter(searchChar) && valueChar == searchChar) || valueChar == searchChar
-        Log.d("SoundSearcher", "일반 매칭: valueChar=$valueChar, searchChar=$searchChar, result=$match")
-        return match
+        return (isSpecialCharacter(searchChar) && valueChar == searchChar) || valueChar == searchChar
     }
 
     fun matchString(value: String, search: String): Boolean {
@@ -111,13 +101,9 @@ object SoundSearcher {
                 t++
             }
             if (isMatch) {
-                Log.d("SoundSearcher", "matchString 성공: value=$value, search=$search")
                 return true
             }
         }
-        Log.d("SoundSearcher", "matchString 실패: value=$value, search=$search")
         return false
     }
-
-
 }
