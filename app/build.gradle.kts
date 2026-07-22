@@ -53,6 +53,13 @@ android {
     }
 
     buildTypes {
+        getByName("debug") {
+            // 릴리즈와 별개 앱으로 취급되도록 applicationId를 분리해, 기기에
+            // 릴리즈/디버그를 동시에 설치할 수 있게 한다.
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+            resValue("string", "app_title", "DEBUG")
+        }
         getByName("release") {
             signingConfig = signingConfigs.getByName("release")
         }
