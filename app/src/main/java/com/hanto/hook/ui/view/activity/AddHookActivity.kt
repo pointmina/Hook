@@ -16,12 +16,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.hanto.hook.R
 import com.hanto.hook.data.TagSelectionListener
-import com.hanto.hook.data.model.Event
-import com.hanto.hook.data.model.Hook
+import com.hanto.hook.ui.model.Event
+import com.hanto.hook.domain.model.Hook
 import com.hanto.hook.databinding.ActivityAddHookBinding
 import com.hanto.hook.ui.view.fragment.TagListFragment
 import com.hanto.hook.util.UrlUtils
-import com.hanto.hook.viewmodel.HookViewModel
+import com.hanto.hook.viewmodel.AddHookViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -37,7 +37,7 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
     private lateinit var binding: ActivityAddHookBinding
 
     // Hilt를 통해 ViewModel 자동 주입
-    private val hookViewModel: HookViewModel by viewModels()
+    private val addHookViewModel: AddHookViewModel by viewModels()
 
     private var isUrlValid = false
     private var isTitleValid = false
@@ -161,23 +161,23 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
 
                 // 1. 에러 메시지 관찰
                 launch {
-                    hookViewModel.errorMessage.collect { errorMessage ->
+                    addHookViewModel.errorMessage.collect { errorMessage ->
                         errorMessage?.let {
                             Toast.makeText(this@AddHookActivity, it, Toast.LENGTH_SHORT).show()
-                            hookViewModel.clearErrorMessage()
+                            addHookViewModel.clearErrorMessage()
                         }
                     }
                 }
 
                 // 2. 로딩 상태 관찰 (버튼 활성화/비활성화 제어)
                 launch {
-                    hookViewModel.isLoading.collect { isLoading ->
+                    addHookViewModel.isLoading.collect { isLoading ->
                         binding.ivAddNewHook.isEnabled = !isLoading && isUrlValid && isTitleValid
                     }
                 }
 
                 launch {
-                    hookViewModel.eventFlow.collect { event ->
+                    addHookViewModel.eventFlow.collect { event ->
                         when (event) {
                             is Event.NavigateBack -> finish()
                             is Event.ShowToast -> {
@@ -242,7 +242,7 @@ class AddHookActivity : BaseActivity(), TagSelectionListener {
             description = description
         )
 
-        hookViewModel.insertHookWithTags(hook, selectedTags)
+        addHookViewModel.insertHookWithTags(hook, selectedTags)
     }
 
     private fun updateButtonState() {

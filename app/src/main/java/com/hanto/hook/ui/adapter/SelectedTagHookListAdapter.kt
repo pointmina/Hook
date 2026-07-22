@@ -9,12 +9,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.hanto.hook.data.model.Hook
-import com.hanto.hook.data.model.HookWithTags
+import com.hanto.hook.domain.model.Hook
 import com.hanto.hook.databinding.ItemSelectedTagHookListBinding
 
 class SelectedTagHookListAdapter(
-    private var hooks: List<HookWithTags> = listOf(),
+    private var hooks: List<Hook> = listOf(),
     private val listener: OnItemClickListener
 ) : RecyclerView.Adapter<SelectedTagHookListAdapter.SelectedTagHookViewHolder>() {
 
@@ -23,7 +22,7 @@ class SelectedTagHookListAdapter(
         fun onOptionButtonClick(position: Int)
     }
 
-    fun submitList(newHooks: List<HookWithTags>) {
+    fun submitList(newHooks: List<Hook>) {
         Log.d("SelectedTagHookListAdapter", "submitList called with size: ${newHooks.size}")
 
         val diffCallback = HookDiffCallback(hooks, newHooks)
@@ -46,7 +45,7 @@ class SelectedTagHookListAdapter(
 
     override fun getItemCount(): Int = hooks.size
 
-    fun getItem(position: Int): Hook? = hooks.getOrNull(position)?.hook
+    fun getItem(position: Int): Hook? = hooks.getOrNull(position)
 
     inner class SelectedTagHookViewHolder(private val binding: ItemSelectedTagHookListBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -60,9 +59,7 @@ class SelectedTagHookListAdapter(
             }
         }
 
-        fun bind(hookWithTags: HookWithTags) {
-            val hook = hookWithTags.hook
-
+        fun bind(hook: Hook) {
             with(binding) {
                 tvTitle.text = hook.title
                 tvUrlLink.text = hook.url

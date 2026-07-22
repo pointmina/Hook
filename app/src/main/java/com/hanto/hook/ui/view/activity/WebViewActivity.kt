@@ -5,7 +5,6 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
@@ -121,13 +120,6 @@ class WebViewActivity : BaseActivity() {
                 loadWithOverviewMode = true
                 mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
             }
-
-            addJavascriptInterface(object : Any() {
-                @JavascriptInterface
-                fun someFunctionFromJavaScript(data: String) {
-                    Log.d(TAG, "Received data from JavaScript: $data")
-                }
-            }, "Android")
         }
     }
 

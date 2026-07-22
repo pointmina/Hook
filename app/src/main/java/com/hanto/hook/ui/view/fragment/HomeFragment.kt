@@ -19,14 +19,14 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hanto.hook.R
-import com.hanto.hook.data.model.Hook
-import com.hanto.hook.data.model.UiState
+import com.hanto.hook.domain.model.Hook
+import com.hanto.hook.ui.model.UiState
 import com.hanto.hook.databinding.FragmentHomeBinding
 import com.hanto.hook.ui.adapter.HookAdapter
 import com.hanto.hook.ui.view.activity.OnboardingActivity
 import com.hanto.hook.ui.view.activity.WebViewActivity
 import com.hanto.hook.util.BottomDialogHelper
-import com.hanto.hook.viewmodel.HookViewModel
+import com.hanto.hook.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -40,7 +40,7 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    private val hookViewModel: HookViewModel by viewModels()
+    private val homeViewModel: HomeViewModel by viewModels()
     private lateinit var adapter: HookAdapter
 
     override fun onCreateView(
@@ -104,19 +104,19 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
             params.width = 50.dpToPx()
             binding.svSearch.layoutParams = params
 
-            hookViewModel.setSearchQuery("")
+            homeViewModel.setSearchQuery("")
             false
         }
 
         binding.svSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                hookViewModel.setSearchQuery(query ?: "")
+                homeViewModel.setSearchQuery(query ?: "")
                 binding.svSearch.clearFocus()
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                hookViewModel.setSearchQuery(newText ?: "")
+                homeViewModel.setSearchQuery(newText ?: "")
                 return true
             }
         })
@@ -128,7 +128,7 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
 
                 // 1. Hook 리스트 상태 관찰 (UiState: Loading, Success, Error)
                 launch {
-                    hookViewModel.hookUiState.collect { uiState ->
+                    homeViewModel.hookUiState.collect { uiState ->
                         when (uiState) {
                             is UiState.Loading -> {
                                 binding.sfLoading.startShimmer()
@@ -187,18 +187,18 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
 
                 // 2. 에러 메시지 관찰 (일회성 이벤트)
                 launch {
-                    hookViewModel.errorMessage.collect { errorMessage ->
+                    homeViewModel.errorMessage.collect { errorMessage ->
                         errorMessage?.let {
                             Log.e(TAG, "Error: $it")
                             Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-                            hookViewModel.clearErrorMessage()
+                            homeViewModel.clearErrorMessage()
                         }
                     }
                 }
 
                 // 3. 글로벌 로딩 상태 관찰 (데이터 조작 시 발생)
                 launch {
-                    hookViewModel.isLoading.collect { isLoading ->
+                    homeViewModel.isLoading.collect { isLoading ->
                         if (isLoading) {
                             binding.sfLoading.startShimmer()
                             binding.sfLoading.visibility = View.VISIBLE
@@ -206,7 +206,7 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
                             // UiState.Success에서 이미 끄고 있지만, 안전장치로 유지
                             // 단, 리스트 로딩과 겹칠 수 있으므로 상황에 따라 조절 필요
                             // 여기서는 단순히 로딩바 제어만 수행
-                            if (hookViewModel.hookUiState.value is UiState.Success) {
+                            if (homeViewModel.hookUiState.value is UiState.Success) {
                                 binding.sfLoading.stopShimmer()
                                 binding.sfLoading.visibility = View.GONE
                             }
@@ -274,6 +274,11 @@ class HomeFragment : Fragment(), HookAdapter.OnItemClickListener {
 
     override fun onOptionButtonClick(position: Int) {
         val selectedHook = adapter.getItem(position)
-        BottomDialogHelper.showHookOptionsDialog(requireContext(), selectedHook, hookViewModel)
+        BottomDialogHelper.showHookOptionsDialog(
+            requireContext(),
+            selectedHook,
+            onTogglePin = homeViewModel::setPinned,
+            onDelete = homeViewModel::deleteHookAndTags,
+        )
     }
 }

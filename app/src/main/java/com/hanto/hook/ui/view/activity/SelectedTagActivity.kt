@@ -17,7 +17,7 @@ import com.hanto.hook.databinding.ActivitySelectedTagBinding
 import com.hanto.hook.ui.adapter.SelectedTagHookListAdapter
 import com.hanto.hook.ui.view.fragment.CommonDialogFragment // [변경] 통합 다이얼로그 Import
 import com.hanto.hook.util.BottomDialogHelper
-import com.hanto.hook.viewmodel.HookViewModel
+import com.hanto.hook.viewmodel.SelectedTagViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -31,7 +31,7 @@ class SelectedTagActivity : BaseActivity() {
     private lateinit var binding: ActivitySelectedTagBinding
     private lateinit var selectedTagHookListAdapter: SelectedTagHookListAdapter
 
-    private val hookViewModel: HookViewModel by viewModels()
+    private val selectedTagViewModel: SelectedTagViewModel by viewModels()
 
     private var selectedTagName = ""
 
@@ -81,7 +81,10 @@ class SelectedTagActivity : BaseActivity() {
                     val selectedHook = selectedTagHookListAdapter.getItem(position)
                     selectedHook?.let { hook ->
                         BottomDialogHelper.showHookOptionsDialog(
-                            this@SelectedTagActivity, hook, hookViewModel
+                            this@SelectedTagActivity,
+                            hook,
+                            onTogglePin = selectedTagViewModel::setPinned,
+                            onDelete = selectedTagViewModel::deleteHookAndTags,
                         )
                     }
                 }
@@ -109,9 +112,9 @@ class SelectedTagActivity : BaseActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 // 1. 선택된 태그의 훅 리스트 관찰
                 launch {
-                    hookViewModel.hooksBySelectedTag.collect { hooks ->
+                    selectedTagViewModel.hooksBySelectedTag.collect { hooks ->
                         if (hooks.isNotEmpty()) {
-                            val distinctHooks = hooks.distinctBy { it.hook.hookId }
+                            val distinctHooks = hooks.distinctBy { it.hookId }
                             Log.d(TAG, "Distinct Hooks fetched: ${distinctHooks.size}")
                             selectedTagHookListAdapter.submitList(distinctHooks)
                             binding.tvTagCount.text = distinctHooks.size.toString()
@@ -124,18 +127,18 @@ class SelectedTagActivity : BaseActivity() {
 
                 // 2. 에러 메시지 관찰
                 launch {
-                    hookViewModel.errorMessage.collect { errorMessage ->
+                    selectedTagViewModel.errorMessage.collect { errorMessage ->
                         errorMessage?.let {
                             Log.e(TAG, "Error: $it")
                             Toast.makeText(this@SelectedTagActivity, it, Toast.LENGTH_SHORT).show()
-                            hookViewModel.clearErrorMessage()
+                            selectedTagViewModel.clearErrorMessage()
                         }
                     }
                 }
 
                 // 태그 삭제
                 launch {
-                    hookViewModel.deleteSuccessEvent.collect {
+                    selectedTagViewModel.deleteSuccessEvent.collect {
                         val intent = Intent().apply {
                             putExtra("EXTRA_TAG_NAME", selectedTagName) // 삭제된 태그 이름
                             putExtra("ACTION_TYPE", "DELETE")           // 작업 타입
@@ -152,7 +155,7 @@ class SelectedTagActivity : BaseActivity() {
         selectedTagName = intent.getStringExtra("selectedTagName").orEmpty()
         binding.tvSelectedTag.text = selectedTagName
 
-        if (selectedTagName == HookViewModel.TAG_UNCATEGORIZED) {
+        if (selectedTagName == com.hanto.hook.domain.model.TAG_UNCATEGORIZED) {
             binding.ivTagChange.visibility = View.GONE
             binding.ivTagDelete.visibility = View.GONE
         } else {
@@ -160,7 +163,7 @@ class SelectedTagActivity : BaseActivity() {
             binding.ivTagDelete.visibility = View.VISIBLE
         }
 
-        hookViewModel.selectTagName(selectedTagName)
+        selectedTagViewModel.selectTagName(selectedTagName)
     }
 
     private fun showChangeTagFragment() {
@@ -170,11 +173,11 @@ class SelectedTagActivity : BaseActivity() {
             prefilledText = selectedTagName,
             positiveText = getString(R.string.description_save_changes),
             onInputConfirm = { newTagName ->
-                hookViewModel.updateTagName(selectedTagName, newTagName)
+                selectedTagViewModel.updateTagName(selectedTagName, newTagName)
 
                 selectedTagName = newTagName
                 binding.tvSelectedTag.text = newTagName
-                hookViewModel.selectTagName(newTagName)
+                selectedTagViewModel.selectTagName(newTagName)
             }
         )
         dialog.show(supportFragmentManager, CommonDialogFragment.TAG)
@@ -186,7 +189,7 @@ class SelectedTagActivity : BaseActivity() {
             message = getString(R.string.delete_tag_content),
             positiveText = getString(R.string.delete_tag),
             onPositiveClick = {
-                hookViewModel.deleteTagByTagName(selectedTagName)
+                selectedTagViewModel.deleteTagByTagName(selectedTagName)
             }
         )
         dialog.show(supportFragmentManager, CommonDialogFragment.TAG)
@@ -194,7 +197,7 @@ class SelectedTagActivity : BaseActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        hookViewModel.clearSelectedTag()
+        selectedTagViewModel.clearSelectedTag()
         Log.d(TAG, "onDestroy()")
     }
 }

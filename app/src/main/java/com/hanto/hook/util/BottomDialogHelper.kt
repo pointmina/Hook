@@ -11,9 +11,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.hanto.hook.R
-import com.hanto.hook.data.model.Hook
+import com.hanto.hook.domain.model.Hook
 import com.hanto.hook.ui.view.activity.HookDetailActivity
-import com.hanto.hook.viewmodel.HookViewModel
 
 class BottomDialogHelper {
 
@@ -23,7 +22,8 @@ class BottomDialogHelper {
         fun showHookOptionsDialog(
             context: Context,
             selectedItem: Hook,
-            hookViewModel: HookViewModel
+            onTogglePin: (hookId: String, isPinned: Boolean) -> Unit,
+            onDelete: (hookId: String) -> Unit,
         ) {
             val dialog = BottomSheetDialog(context, R.style.CustomBottomSheetDialogTheme)
             val view = LayoutInflater.from(context).inflate(R.layout.bottom_dialog_home, null)
@@ -54,7 +54,7 @@ class BottomDialogHelper {
             btnPinHook.setOnClickListener {
                 val newPinnedState = !selectedItem.isPinned
                 try {
-                    hookViewModel.setPinned(selectedItem.hookId, newPinnedState)
+                    onTogglePin(selectedItem.hookId, newPinnedState)
                 } catch (e: Exception) {
                     Log.e(TAG, "Error setting pinned status", e)
                 }
@@ -75,7 +75,7 @@ class BottomDialogHelper {
             val btnDeleteHook: MaterialButton = view.findViewById(R.id.bt_delete_hook)
             btnDeleteHook.setOnClickListener {
                 try {
-                    hookViewModel.deleteHookAndTags(selectedItem.hookId)
+                    onDelete(selectedItem.hookId)
                 } catch (e: Exception) {
                     Log.e(TAG, "Error deleting hook", e)
                 }

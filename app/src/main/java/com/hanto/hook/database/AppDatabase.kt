@@ -6,11 +6,11 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.hanto.hook.data.dao.HookDao
-import com.hanto.hook.data.model.Hook
-import com.hanto.hook.data.model.Tag
+import com.hanto.hook.data.local.entity.HookEntity
+import com.hanto.hook.data.local.entity.TagEntity
 import com.hanto.hook.util.Converters
 
-@Database(entities = [Hook::class, Tag::class], version = 2)
+@Database(entities = [HookEntity::class, TagEntity::class], version = 2)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun hookDao(): HookDao

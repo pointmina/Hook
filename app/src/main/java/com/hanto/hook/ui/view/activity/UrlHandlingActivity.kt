@@ -13,12 +13,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.hanto.hook.R
 import com.hanto.hook.data.TagSelectionListener
-import com.hanto.hook.data.model.Event
-import com.hanto.hook.data.model.Hook
+import com.hanto.hook.ui.model.Event
+import com.hanto.hook.domain.model.Hook
 import com.hanto.hook.databinding.ActivityUrlHandlingBinding
 import com.hanto.hook.ui.view.fragment.TagListFragment
 import com.hanto.hook.util.UrlUtils
-import com.hanto.hook.viewmodel.HookViewModel
+import com.hanto.hook.viewmodel.AddHookViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -35,7 +35,7 @@ class UrlHandlingActivity : AppCompatActivity(), TagSelectionListener {
     private var selectedTags: List<String> = emptyList()
     private val multiChoiceList = linkedMapOf<String, Boolean>()
 
-    private val hookViewModel: HookViewModel by viewModels()
+    private val addHookViewModel: AddHookViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate")
@@ -84,16 +84,16 @@ class UrlHandlingActivity : AppCompatActivity(), TagSelectionListener {
 
                 // 1. 에러 메시지 관찰
                 launch {
-                    hookViewModel.errorMessage.collect { errorMessage ->
+                    addHookViewModel.errorMessage.collect { errorMessage ->
                         errorMessage?.let {
                             Toast.makeText(this@UrlHandlingActivity, it, Toast.LENGTH_SHORT).show()
-                            hookViewModel.clearErrorMessage()
+                            addHookViewModel.clearErrorMessage()
                         }
                     }
                 }
 
                 launch {
-                    hookViewModel.isLoading.collect { isLoading ->
+                    addHookViewModel.isLoading.collect { isLoading ->
                         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
 
                         binding.btnCreate.isEnabled = !isLoading
@@ -106,7 +106,7 @@ class UrlHandlingActivity : AppCompatActivity(), TagSelectionListener {
 
                 // 3. 완료 이벤트 관찰
                 launch {
-                    hookViewModel.eventFlow.collect { event ->
+                    addHookViewModel.eventFlow.collect { event ->
                         when (event) {
                             is Event.NavigateBack -> finish()
                             is Event.ShowToast -> {
@@ -158,7 +158,7 @@ class UrlHandlingActivity : AppCompatActivity(), TagSelectionListener {
             description = description
         )
 
-        hookViewModel.insertHookWithTags(hook, selectedTags)
+        addHookViewModel.insertHookWithTags(hook, selectedTags)
     }
 
     override fun onTagsSelected(tags: List<String>) {

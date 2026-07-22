@@ -10,12 +10,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.hanto.hook.R
 import com.hanto.hook.data.TagSelectionListener
-import com.hanto.hook.data.model.Event
-import com.hanto.hook.data.model.Hook
-import com.hanto.hook.data.model.Tag
+import com.hanto.hook.ui.model.Event
+import com.hanto.hook.domain.model.Hook
 import com.hanto.hook.databinding.ActivityHookDetailBinding
 import com.hanto.hook.ui.view.fragment.TagListFragment
-import com.hanto.hook.viewmodel.HookViewModel
+import com.hanto.hook.viewmodel.HookDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -30,13 +29,12 @@ class HookDetailActivity : BaseActivity(), TagSelectionListener {
     private lateinit var binding: ActivityHookDetailBinding
 
     // Hilt를 통해 ViewModel 자동 주입
-    private val hookViewModel: HookViewModel by viewModels()
+    private val hookDetailViewModel: HookDetailViewModel by viewModels()
 
     private var isUrlValid = true
     private var isTitleValid = true
 
     private val multiChoiceList = linkedMapOf<String, Boolean>()
-    private var tagsForHook: List<Tag>? = null
     private var tagNames: Set<String> = emptySet()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,7 +80,7 @@ class HookDetailActivity : BaseActivity(), TagSelectionListener {
                             url = updatedUrl,
                             description = updatedDescription,
                         )
-                        hookViewModel.updateHookAndTags(updatedHook, tagNames.toList())
+                        hookDetailViewModel.updateHookAndTags(updatedHook, tagNames.toList())
                     }
                 }
             }
@@ -99,24 +97,24 @@ class HookDetailActivity : BaseActivity(), TagSelectionListener {
 
                 // 1. 에러 메시지 관찰
                 launch {
-                    hookViewModel.errorMessage.collect { errorMessage ->
+                    hookDetailViewModel.errorMessage.collect { errorMessage ->
                         errorMessage?.let {
                             Toast.makeText(this@HookDetailActivity, it, Toast.LENGTH_SHORT).show()
-                            hookViewModel.clearErrorMessage()
+                            hookDetailViewModel.clearErrorMessage()
                         }
                     }
                 }
 
                 // 2. 로딩 상태 관찰 (버튼 활성화 여부 제어)
                 launch {
-                    hookViewModel.isLoading.collect { isLoading ->
+                    hookDetailViewModel.isLoading.collect { isLoading ->
                         binding.btnHookEdit.isEnabled = !isLoading && isUrlValid && isTitleValid
                     }
                 }
 
                 // 완료 이벤트 관찰
                 launch {
-                    hookViewModel.eventFlow.collect { event ->
+                    hookDetailViewModel.eventFlow.collect { event ->
                         when (event) {
                             is Event.NavigateBack -> finish()
                             is Event.ShowToast -> {
@@ -140,23 +138,22 @@ class HookDetailActivity : BaseActivity(), TagSelectionListener {
     private fun observeTagsForHook(hookId: String) {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                hookViewModel.getTagsForHook(hookId).collect { fetchedTags ->
-                    tagsForHook = fetchedTags
+                hookDetailViewModel.getTagsForHook(hookId).collect { fetchedTags ->
                     binding.tvTag.text = fetchedTags.toTagString()
 
-                    tagNames = fetchedTags.map { it.name }.toSet()
+                    tagNames = fetchedTags.toSet()
 
-                    fetchedTags.forEach { tag ->
-                        multiChoiceList[tag.name] = true
+                    fetchedTags.forEach { tagName ->
+                        multiChoiceList[tagName] = true
                     }
                 }
             }
         }
     }
 
-    private fun List<Tag>.toTagString(): String {
-        return distinctBy { it.name }
-            .joinToString(separator = " ") { tag -> "#${tag.name}" }
+    private fun List<String>.toTagString(): String {
+        return distinct()
+            .joinToString(separator = " ") { tagName -> "#$tagName" }
     }
 
     private fun updateButtonState() {
