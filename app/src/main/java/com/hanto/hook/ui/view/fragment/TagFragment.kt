@@ -85,7 +85,7 @@ class TagFragment : Fragment() {
 
             val layoutParams = WindowManager.LayoutParams().apply {
                 copyFrom(window?.attributes)
-                width = WindowManager.LayoutParams.WRAP_CONTENT
+                width = (resources.displayMetrics.widthPixels * 0.9).toInt()
                 height = WindowManager.LayoutParams.WRAP_CONTENT
                 gravity = Gravity.CENTER
             }

@@ -1,7 +1,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:background="@drawable/rounded_background_little">
@@ -9,7 +9,7 @@
 
     <View
         android:id="@+id/view_add_tag"
-        android:layout_width="375dp"
+        android:layout_width="0dp"
         android:layout_height="221dp"
         android:layout_gravity="center"
         android:background="@drawable/rounded_background_little"
@@ -32,9 +32,11 @@
 
     <View
         android:id="@+id/container_tag_name"
-        android:layout_width="327dp"
+        android:layout_width="0dp"
         android:layout_height="60dp"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="10dp"
+        android:layout_marginEnd="24dp"
         android:background="@drawable/textview_detail_border"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
@@ -46,9 +48,10 @@
 
     <EditText
         android:id="@+id/tv_add_tag_name"
-        android:layout_width="280dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
+        android:layout_marginEnd="16dp"
         android:background="@color/transparent"
         android:hint="@string/input_tag"
         android:inputType="text"
@@ -56,12 +59,13 @@
         android:textStyle="bold"
         android:theme="@style/MyCheckBox"
         app:layout_constraintBottom_toBottomOf="@id/container_tag_name"
+        app:layout_constraintEnd_toEndOf="@id/container_tag_name"
         app:layout_constraintStart_toStartOf="@id/container_tag_name"
         app:layout_constraintTop_toTopOf="@id/container_tag_name" />
 
     <Button
         android:id="@+id/btn_add_tag_name"
-        android:layout_width="327dp"
+        android:layout_width="0dp"
         android:layout_height="52dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="27dp"

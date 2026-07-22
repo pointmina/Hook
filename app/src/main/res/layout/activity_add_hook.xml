@@ -9,235 +9,255 @@
     android:paddingEnd="24dp"
     tools:context=".ui.view.activity.AddHookActivity">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar_new_hook"
-        android:layout_width="0dp"
-        android:layout_height="68dp"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll_add_hook"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        app:layout_constraintBottom_toTopOf="@id/iv_add_new_hook"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:title="새로운 훅"
-        app:titleCentered="true"
-        app:titleTextAppearance="@style/AppTexTitle.S16" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <ImageView
-        android:id="@+id/iv_appbar_back_button"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:contentDescription="@string/go_back"
-        android:padding="10dp"
-        android:src="@drawable/ic_arrow_back"
-        app:layout_constraintBottom_toBottomOf="@id/toolbar_new_hook"
-        app:layout_constraintStart_toStartOf="@id/toolbar_new_hook"
-        app:layout_constraintTop_toTopOf="parent" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/tv_link_info"
-        android:layout_width="match_parent"
-        android:layout_height="28dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/link_info"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/tv_url_link"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_new_hook" />
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar_new_hook"
+                android:layout_width="0dp"
+                android:layout_height="68dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:title="새로운 훅"
+                app:titleCentered="true"
+                app:titleTextAppearance="@style/AppTexTitle.S16" />
 
-    <EditText
-        android:id="@+id/tv_url_link"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:autofillHints="@string/hint_url_link"
-        android:background="@drawable/textview_detail_border"
-        android:hint="@string/hint_url_link"
-        android:imeOptions="actionNext"
-        android:inputType="text"
-        android:minHeight="40dp"
-        android:paddingLeft="40dp"
-        android:paddingTop="20dp"
-        android:paddingRight="20dp"
-        android:paddingBottom="20dp"
-        android:textAppearance="@style/AppTextPrimary.S16"
-        android:textColor="@color/purple"
-        android:theme="@style/MyCheckBox"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_link_info"
-        tools:ignore="TextFields" />
+            <ImageView
+                android:id="@+id/iv_appbar_back_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:contentDescription="@string/go_back"
+                android:padding="10dp"
+                android:src="@drawable/ic_arrow_back"
+                app:layout_constraintBottom_toBottomOf="@id/toolbar_new_hook"
+                app:layout_constraintStart_toStartOf="@id/toolbar_new_hook"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tvGuide"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:padding="4dp"
-        android:text="@string/not_valid_url"
-        android:textColor="@color/purple"
-        android:textSize="12sp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/tv_url_title"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_url_link" />
+            <TextView
+                android:id="@+id/tv_link_info"
+                android:layout_width="match_parent"
+                android:layout_height="28dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/link_info"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@id/tv_url_link"
+                app:layout_constraintTop_toBottomOf="@id/toolbar_new_hook" />
 
-    <ImageView
-        android:id="@+id/iv_url_link"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginEnd="16dp"
-        android:contentDescription="@string/description_link"
-        android:padding="15dp"
-        android:src="@drawable/ic_link"
-        android:textAppearance="@style/AppTextPrimary.S14"
-        android:textColor="@color/purple"
-        android:textColorHint="@color/gray_300"
-        app:layout_constraintBottom_toBottomOf="@id/tv_url_link"
-        app:layout_constraintStart_toStartOf="@id/tv_url_link"
-        app:layout_constraintTop_toTopOf="@id/tv_url_link" />
+            <EditText
+                android:id="@+id/tv_url_link"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints="@string/hint_url_link"
+                android:background="@drawable/textview_detail_border"
+                android:hint="@string/hint_url_link"
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                android:minHeight="40dp"
+                android:paddingLeft="40dp"
+                android:paddingTop="20dp"
+                android:paddingRight="20dp"
+                android:paddingBottom="20dp"
+                android:textAppearance="@style/AppTextPrimary.S16"
+                android:textColor="@color/purple"
+                android:theme="@style/MyCheckBox"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_link_info"
+                tools:ignore="TextFields" />
 
-    <EditText
-        android:id="@+id/tv_url_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:autofillHints="제목"
-        android:background="@drawable/textview_detail_border"
-        android:gravity="top|start"
-        android:hint="@string/title"
-        android:imeOptions="actionNext"
-        android:maxLength="120"
-        android:minHeight="40dp"
-        android:paddingStart="16dp"
-        android:paddingTop="15dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="15dp"
-        android:textAppearance="@style/AppTextPrimary.S16"
-        android:textColor="@color/black"
-        android:textColorHint="@color/gray_300"
-        android:theme="@style/MyCheckBox"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvGuide" />
+            <TextView
+                android:id="@+id/tvGuide"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:padding="4dp"
+                android:text="@string/not_valid_url"
+                android:textColor="@color/purple"
+                android:textSize="12sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@id/tv_url_title"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_url_link" />
 
-    <TextView
-        android:id="@+id/tvGuideTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:padding="4dp"
-        android:text="@string/not_allow_initial_blank"
-        android:textColor="@color/purple"
-        android:textSize="12sp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_url_title" />
+            <ImageView
+                android:id="@+id/iv_url_link"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="16dp"
+                android:contentDescription="@string/description_link"
+                android:padding="15dp"
+                android:src="@drawable/ic_link"
+                android:textAppearance="@style/AppTextPrimary.S14"
+                android:textColor="@color/purple"
+                android:textColorHint="@color/gray_300"
+                app:layout_constraintBottom_toBottomOf="@id/tv_url_link"
+                app:layout_constraintStart_toStartOf="@id/tv_url_link"
+                app:layout_constraintTop_toTopOf="@id/tv_url_link" />
 
-    <TextView
-        android:id="@+id/tv_limit_1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint=""
-        android:padding="5dp"
-        app:layout_constraintBottom_toBottomOf="@id/tv_url_title"
-        app:layout_constraintRight_toRightOf="@id/tv_url_title" />
+            <EditText
+                android:id="@+id/tv_url_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:autofillHints="제목"
+                android:background="@drawable/textview_detail_border"
+                android:gravity="top|start"
+                android:hint="@string/title"
+                android:imeOptions="actionNext"
+                android:maxLength="120"
+                android:minHeight="40dp"
+                android:paddingStart="16dp"
+                android:paddingTop="15dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="15dp"
+                android:textAppearance="@style/AppTextPrimary.S16"
+                android:textColor="@color/black"
+                android:textColorHint="@color/gray_300"
+                android:theme="@style/MyCheckBox"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvGuide" />
 
-    <View
-        android:id="@+id/container_link_info_etc"
-        android:layout_width="match_parent"
-        android:layout_height="28dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/tv_link_info_etc"
-        app:layout_constraintTop_toTopOf="@id/tv_link_info_etc" />
+            <TextView
+                android:id="@+id/tvGuideTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:padding="4dp"
+                android:text="@string/not_allow_initial_blank"
+                android:textColor="@color/purple"
+                android:textSize="12sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_url_title" />
 
+            <TextView
+                android:id="@+id/tv_limit_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint=""
+                android:padding="5dp"
+                app:layout_constraintBottom_toBottomOf="@id/tv_url_title"
+                app:layout_constraintRight_toRightOf="@id/tv_url_title" />
 
-    <TextView
-        android:id="@+id/tv_link_info_etc"
-        android:layout_width="wrap_content"
-        android:layout_height="28dp"
-        android:layout_marginTop="20dp"
-        android:text="@string/etc_info"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvGuideTitle" />
-
-    <!--    <ImageView-->
-    <!--        android:id="@+id/iv_downArrow"-->
-    <!--        android:layout_width="25dp"-->
-    <!--        android:layout_height="25dp"-->
-    <!--        android:contentDescription="@string/see_etc_info"-->
-    <!--        android:src="@drawable/ic_down_arrow"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintTop_toTopOf="@id/tv_link_info_etc" />-->
+            <View
+                android:id="@+id/container_link_info_etc"
+                android:layout_width="match_parent"
+                android:layout_height="28dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/tv_link_info_etc"
+                app:layout_constraintTop_toTopOf="@id/tv_link_info_etc" />
 
 
-    <EditText
-        android:id="@+id/tv_url_description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:autofillHints="설명"
-        android:background="@drawable/textview_detail_border"
-        android:gravity="top|start"
-        android:hint="@string/description"
-        android:imeOptions="actionNext"
-        android:maxLength="80"
-        android:minHeight="40dp"
-        android:paddingStart="16dp"
-        android:paddingTop="15dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="15dp"
-        android:textAppearance="@style/AppTextPrimary.S16"
-        android:textColorHint="@color/gray_300"
-        android:theme="@style/MyCheckBox"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_link_info_etc" />
+            <TextView
+                android:id="@+id/tv_link_info_etc"
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/etc_info"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvGuideTitle" />
 
-    <TextView
-        android:id="@+id/tv_limit_2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint=""
-        android:padding="5dp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@id/tv_url_description"
-        app:layout_constraintRight_toRightOf="@id/tv_url_description" />
+            <!--    <ImageView-->
+            <!--        android:id="@+id/iv_downArrow"-->
+            <!--        android:layout_width="25dp"-->
+            <!--        android:layout_height="25dp"-->
+            <!--        android:contentDescription="@string/see_etc_info"-->
+            <!--        android:src="@drawable/ic_down_arrow"-->
+            <!--        app:layout_constraintEnd_toEndOf="parent"-->
+            <!--        app:layout_constraintTop_toTopOf="@id/tv_link_info_etc" />-->
 
-    <TextView
-        android:id="@+id/tv_tag"
-        android:layout_width="wrap_content"
-        android:layout_height="28dp"
-        android:layout_marginTop="20dp"
-        android:text="@string/tag"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@id/tv_link_info_etc"
-        app:layout_constraintTop_toBottomOf="@id/tv_url_description" />
 
-    <TextView
-        android:id="@+id/container_tag"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/textview_detail_border"
-        android:hint="@string/sharp"
-        android:paddingStart="16dp"
-        android:paddingTop="15dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="15dp"
-        android:text="@string/sharp"
-        android:textAppearance="@style/AppTexTitle.S16"
-        android:textColor="@color/gray_300"
-        android:theme="@style/MyCheckBox"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_tag" />
+            <EditText
+                android:id="@+id/tv_url_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:autofillHints="설명"
+                android:background="@drawable/textview_detail_border"
+                android:gravity="top|start"
+                android:hint="@string/description"
+                android:imeOptions="actionNext"
+                android:maxLength="80"
+                android:paddingStart="16dp"
+                android:paddingTop="15dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="15dp"
+                android:textAppearance="@style/AppTextPrimary.S16"
+                android:textColorHint="@color/gray_300"
+                android:theme="@style/MyCheckBox"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_link_info_etc" />
+
+            <TextView
+                android:id="@+id/tv_limit_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint=""
+                android:padding="5dp"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@id/tv_url_description"
+                app:layout_constraintRight_toRightOf="@id/tv_url_description" />
+
+            <TextView
+                android:id="@+id/tv_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/tag"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@id/tv_link_info_etc"
+                app:layout_constraintTop_toBottomOf="@id/tv_url_description" />
+
+            <TextView
+                android:id="@+id/container_tag"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/textview_detail_border"
+                android:hint="@string/sharp"
+                android:paddingStart="16dp"
+                android:paddingTop="15dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="15dp"
+                android:text="@string/sharp"
+                android:textAppearance="@style/AppTexTitle.S16"
+                android:textColor="@color/gray_300"
+                android:theme="@style/MyCheckBox"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_tag" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
     <Button
         android:id="@+id/iv_add_new_hook"
         android:layout_width="300dp"
         android:layout_height="50dp"
-        android:layout_marginBottom="50dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="24dp"
         android:background="@drawable/button_border"
         android:backgroundTint="@color/purple"
         android:contentDescription="@string/description_save_changes"
