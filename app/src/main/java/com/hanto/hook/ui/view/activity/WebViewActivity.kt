@@ -141,19 +141,19 @@ class WebViewActivity : BaseActivity() {
                 Intent(Intent.ACTION_VIEW, url.toUri())
             }
 
-            // intent:// 페이로드는 component/package/selector 필드를 임의로 지정할 수 있어,
-            // 신뢰할 수 없는 웹 콘텐츠가 우리 앱 자신의(비공개일 수도 있는) 컴포넌트를
-            // 조작된 extra와 함께 실행시키는 데 악용될 수 있다. 자기 자신을 대상으로 하거나
-            // selector로 다른 intent를 중첩 지정하는 경우는 차단한다.
-            val targetsSelf = intent.`package` == packageName ||
-                intent.component?.packageName == packageName ||
-                intent.selector?.`package` == packageName ||
-                intent.selector?.component?.packageName == packageName
-            if (targetsSelf) {
+            // intent:// 페이로드는 component/selector 필드를 임의로 지정할 수 있어, 신뢰할
+            // 수 없는 웹 콘텐츠가 (우리 앱을 포함해) 다른 앱의 exported이지만 비공개
+            // 화면을 조작된 extra와 함께 explicit하게 실행시키는 데 악용될 수 있다.
+            // 브라우저가 intent:// 링크를 처리하는 방식과 동일하게 explicit 지정을 모두
+            // 제거하고, CATEGORY_BROWSABLE을 선언한 액티비티만 암시적으로 해석되게 강제한다.
+            intent.component = null
+            intent.selector = null
+            intent.addCategory(Intent.CATEGORY_BROWSABLE)
+
+            if (intent.`package` == packageName) {
                 Log.w(TAG, "자체 앱을 대상으로 하는 intent 스킴 차단: $url")
                 return true
             }
-            intent.selector = null
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
             try {

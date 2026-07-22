@@ -73,8 +73,15 @@ interface HookDao {
     @Query("UPDATE Hook SET isPinned = :isPinned WHERE hookId = :hookId")
     suspend fun updatePinStatus(hookId: String, isPinned: Boolean)
 
-    @Query("UPDATE Hook SET imageUrl = :imageUrl WHERE hookId = :hookId")
-    suspend fun updateHookImageUrl(hookId: String, imageUrl: String)
+    // url을 조건에 포함해, 백필이 끝나기 전에 사용자가 URL을 바꿔버린 경우
+    // 옛 URL의 썸네일이 새 URL의 레코드에 덮어써지는 것을 막는다.
+    @Query(
+        """
+        UPDATE Hook SET imageUrl = :imageUrl
+        WHERE hookId = :hookId AND (url = :url OR (url IS NULL AND :url IS NULL))
+        """
+    )
+    suspend fun updateHookImageUrl(hookId: String, url: String?, imageUrl: String)
 
     // ---------------------- 조회 ---------------------- //
     @Query("SELECT EXISTS(SELECT 1 FROM Hook LIMIT 1)")

@@ -22,7 +22,7 @@ interface HookRepository {
     // ---------------------- 쓰기 ---------------------- //
     suspend fun addHook(hook: Hook)
     suspend fun updateHook(hook: Hook)
-    suspend fun updateHookImage(hookId: String, imageUrl: String)
+    suspend fun updateHookImage(hookId: String, url: String?, imageUrl: String)
     suspend fun deleteHook(hookId: String)
     suspend fun setPinned(hookId: String, isPinned: Boolean)
     suspend fun renameTag(oldName: String, newName: String)
