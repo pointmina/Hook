@@ -7,17 +7,17 @@ import com.hanto.hook.domain.usecase.SearchHooksUseCase
 import com.hanto.hook.domain.usecase.TogglePinUseCase
 import com.hanto.hook.ui.model.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 
 @HiltViewModel
@@ -38,12 +38,20 @@ class HomeViewModel @Inject constructor(
         _searchQuery.value = query
     }
 
-    // 첫 구독 시 현재 값은 즉시 흘려보내고, 이후 타이핑만 디바운스한다.
+    // 첫 값은 즉시 흘려보내고, 이후 타이핑만 디바운스한다.
     // (전체에 debounce를 걸면 최초 목록 표시까지 딜레이가 생긴다)
-    private val debouncedSearchQuery = merge(
-        _searchQuery.take(1),
-        _searchQuery.drop(1).debounce(SEARCH_DEBOUNCE_MS)
-    )
+    // take(1)/drop(1)을 merge로 합치는 방식은 동일 StateFlow를 두 개의 독립된
+    // collector가 구독하게 되어, 두 구독이 시작되는 그 짧은 틈에 값이 바뀌면 어느
+    // 쪽에서도 emit되지 않는 레이스가 생길 수 있다. 단일 flow 체인으로 collector를
+    // 하나만 두어 이 문제를 없앤다.
+    private val isFirstSearchQuery = AtomicBoolean(true)
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val debouncedSearchQuery = _searchQuery
+        .onStart { isFirstSearchQuery.set(true) }
+        .debounce {
+            if (isFirstSearchQuery.compareAndSet(true, false)) 0L else SEARCH_DEBOUNCE_MS
+        }
 
     val hookUiState: StateFlow<UiState> = searchHooks(debouncedSearchQuery)
         .map<List<Hook>, UiState> { UiState.Success(it) }

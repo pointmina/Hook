@@ -11,6 +11,10 @@
              상태바(시계/배터리 영역)에 새어나온다. 의도한 무채색 톤으로 고정한다. -->
         <item name="colorPrimary">@color/gray_300</item>
         <item name="colorPrimaryDark">@color/gray_700</item>
+        <!-- 엣지 투 엣지 강제 환경에서는 statusBarColor가 무시되고, BaseActivity가
+             화면 최상단에 둔 상태바 높이만큼의 패딩 영역은 windowBackground로
+             채워진다. 화면마다 색이 들쭉날쭉해지지 않도록 상태바와 같은 톤으로 고정한다. -->
+        <item name="android:windowBackground">@color/gray_300</item>
         <item name="colorAccent">@color/purple</item>
     </style>
 

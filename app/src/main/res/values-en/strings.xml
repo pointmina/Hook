@@ -89,7 +89,7 @@
     <string name="yes">Yes!</string>
     <string name="no">No!</string>
 
-    <string name="add_first_hook">Press the pencil shape to \nadd a hook! \n👇</string>
+    <string name="add_first_hook">Press the + button to \nadd a hook! \n👇</string>
     <string name="tutorial_again">Watch the tutorial again</string>
     <string name="question_tut_again">Would you like to watch the tutorial again?</string>
     <string name="question_really_delete_tag">Are you sure you want to delete?</string>

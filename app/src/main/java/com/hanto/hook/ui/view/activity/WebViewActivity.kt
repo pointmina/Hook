@@ -119,6 +119,10 @@ class WebViewActivity : BaseActivity() {
                 useWideViewPort = true
                 loadWithOverviewMode = true
                 mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
+                // 쿠팡 등 일부 사이트는 WebView 표시(" wv")가 붙은 UA를 비정상
+                // 클라이언트로 간주해 접근을 차단한다. 일반 브라우저 UA로 보이도록
+                // 표시만 제거한다.
+                userAgentString = userAgentString.replace("; wv", "")
             }
         }
     }
@@ -127,7 +131,29 @@ class WebViewActivity : BaseActivity() {
         Log.d(TAG, "handleCustomScheme 호출됨: $url")
 
         try {
-            val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+            // intent://...#Intent;scheme=...;package=...;end 형식은 일반 Uri.parse로
+            // 해석할 수 없다(scheme=intent인 불투명 Uri가 되어 버림). Chrome/Play
+            // 스토어가 발급하는 이 형식은 Intent.parseUri(URI_INTENT_SCHEME)로만
+            // package/scheme 등의 필드가 올바르게 채워진다.
+            val intent = if (url.startsWith("intent://")) {
+                Intent.parseUri(url, Intent.URI_INTENT_SCHEME)
+            } else {
+                Intent(Intent.ACTION_VIEW, url.toUri())
+            }
+
+            // intent:// 페이로드는 component/package/selector 필드를 임의로 지정할 수 있어,
+            // 신뢰할 수 없는 웹 콘텐츠가 우리 앱 자신의(비공개일 수도 있는) 컴포넌트를
+            // 조작된 extra와 함께 실행시키는 데 악용될 수 있다. 자기 자신을 대상으로 하거나
+            // selector로 다른 intent를 중첩 지정하는 경우는 차단한다.
+            val targetsSelf = intent.`package` == packageName ||
+                intent.component?.packageName == packageName ||
+                intent.selector?.`package` == packageName ||
+                intent.selector?.component?.packageName == packageName
+            if (targetsSelf) {
+                Log.w(TAG, "자체 앱을 대상으로 하는 intent 스킴 차단: $url")
+                return true
+            }
+            intent.selector = null
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
             try {
@@ -135,7 +161,13 @@ class WebViewActivity : BaseActivity() {
                 Log.d(TAG, "앱 실행 성공: $url")
                 return true
             } catch (e: ActivityNotFoundException) {
-                Log.d(TAG, "앱이 설치되어 있지 않음: $url")
+                val fallbackUrl = intent.getStringExtra("browser_fallback_url")
+                if (fallbackUrl != null) {
+                    Log.d(TAG, "앱이 설치되어 있지 않음, 브라우저 폴백으로 이동: $fallbackUrl")
+                    webView.loadUrl(fallbackUrl)
+                } else {
+                    Log.d(TAG, "앱이 설치되어 있지 않음: $url")
+                }
                 return true
             }
 

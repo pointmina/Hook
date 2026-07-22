@@ -23,6 +23,8 @@ class HookRepositoryImpl @Inject constructor(
 
     // ---------------------- 조회 ---------------------- //
 
+    override suspend fun hasAnyHook(): Boolean = hookDao.hasAnyHook()
+
     override fun observeHooks(): Flow<List<Hook>> =
         hookDao.getHooksWithTags().map { it.toDomain() }
 
@@ -54,6 +56,15 @@ class HookRepositoryImpl @Inject constructor(
             hookDao.updateHookWithTags(hook.toEntity(), hook.toTagEntities())
         } catch (e: Exception) {
             Log.e(TAG, "Error updating hook: ${hook.hookId}", e)
+            throw e
+        }
+    }
+
+    override suspend fun updateHookImage(hookId: String, imageUrl: String) {
+        try {
+            hookDao.updateHookImageUrl(hookId, imageUrl)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error updating hook image: $hookId", e)
             throw e
         }
     }
