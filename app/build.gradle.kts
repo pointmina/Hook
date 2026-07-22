@@ -41,13 +41,6 @@ android {
         versionCode = 18
         versionName = "1.1.5"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        externalNativeBuild {
-            cmake {
-                // [수정됨] 16KB 페이지 사이즈 지원을 위한 올바른 설정
-                arguments("-DCMAKE_SHARED_LINKER_FLAGS=-Wl,-z,max-page-size=16384")
-            }
-        }
     }
 
     compileOptions {
