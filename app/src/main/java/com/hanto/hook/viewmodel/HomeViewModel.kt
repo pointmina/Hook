@@ -11,8 +11,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,6 +29,7 @@ class HomeViewModel @Inject constructor(
 
     companion object {
         private const val TAG = "HomeViewModel"
+        private const val SEARCH_DEBOUNCE_MS = 300L
     }
 
     private val _searchQuery = MutableStateFlow("")
@@ -33,7 +38,14 @@ class HomeViewModel @Inject constructor(
         _searchQuery.value = query
     }
 
-    val hookUiState: StateFlow<UiState> = searchHooks(_searchQuery)
+    // 첫 구독 시 현재 값은 즉시 흘려보내고, 이후 타이핑만 디바운스한다.
+    // (전체에 debounce를 걸면 최초 목록 표시까지 딜레이가 생긴다)
+    private val debouncedSearchQuery = merge(
+        _searchQuery.take(1),
+        _searchQuery.drop(1).debounce(SEARCH_DEBOUNCE_MS)
+    )
+
+    val hookUiState: StateFlow<UiState> = searchHooks(debouncedSearchQuery)
         .map<List<Hook>, UiState> { UiState.Success(it) }
         .catch { e -> emit(UiState.Error(e.message ?: "Unknown Error")) }
         .stateIn(
