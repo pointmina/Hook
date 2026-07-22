@@ -60,9 +60,9 @@ class HookRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateHookImage(hookId: String, imageUrl: String) {
+    override suspend fun updateHookImage(hookId: String, url: String?, imageUrl: String) {
         try {
-            hookDao.updateHookImageUrl(hookId, imageUrl)
+            hookDao.updateHookImageUrl(hookId, url, imageUrl)
         } catch (e: Exception) {
             Log.e(TAG, "Error updating hook image: $hookId", e)
             throw e

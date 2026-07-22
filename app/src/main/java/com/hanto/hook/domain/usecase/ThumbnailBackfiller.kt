@@ -27,7 +27,7 @@ class ThumbnailBackfiller @Inject constructor(
             try {
                 val imageUrl = metadataRepository.fetchOgImageUrl(url)
                 if (!imageUrl.isNullOrBlank()) {
-                    hookRepository.updateHookImage(hookId, imageUrl)
+                    hookRepository.updateHookImage(hookId, url, imageUrl)
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to backfill thumbnail for $hookId", e)
