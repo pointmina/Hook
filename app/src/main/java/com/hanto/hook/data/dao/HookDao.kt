@@ -43,10 +43,13 @@ interface HookDao {
 
     // ---------------------- 업데이트 ---------------------- //
     // 업데이트 기준을 비즈니스 키(hookId)로 삼아, 도메인 모델이 surrogate id에 의존하지 않도록 한다.
+    // imageUrl은 의도적으로 제외한다: 썸네일 백필(updateHookImageUrl)이 비동기로 별도
+    // 진행되는 동안 사용자가 제목/설명/태그만 수정해도 이 쿼리가 함께 실행되면, 화면에
+    // 아직 반영되지 않은 최신 imageUrl을 옛 값(또는 null)으로 덮어써 버리는 레이스가 생긴다.
     @Query(
         """
         UPDATE Hook
-        SET title = :title, url = :url, description = :description, imageUrl = :imageUrl
+        SET title = :title, url = :url, description = :description
         WHERE hookId = :hookId
         """
     )
@@ -54,13 +57,12 @@ interface HookDao {
         hookId: String,
         title: String,
         url: String?,
-        description: String?,
-        imageUrl: String?
+        description: String?
     )
 
     @Transaction
     suspend fun updateHookWithTags(hook: HookEntity, tags: List<TagEntity>) {
-        updateHookByHookId(hook.hookId, hook.title, hook.url, hook.description, hook.imageUrl)
+        updateHookByHookId(hook.hookId, hook.title, hook.url, hook.description)
         deleteTagByHookId(hook.hookId)
         tags.forEach { insertTag(it) }
     }
@@ -71,7 +73,13 @@ interface HookDao {
     @Query("UPDATE Hook SET isPinned = :isPinned WHERE hookId = :hookId")
     suspend fun updatePinStatus(hookId: String, isPinned: Boolean)
 
+    @Query("UPDATE Hook SET imageUrl = :imageUrl WHERE hookId = :hookId")
+    suspend fun updateHookImageUrl(hookId: String, imageUrl: String)
+
     // ---------------------- 조회 ---------------------- //
+    @Query("SELECT EXISTS(SELECT 1 FROM Hook LIMIT 1)")
+    suspend fun hasAnyHook(): Boolean
+
     @Transaction
     @Query("SELECT * FROM Hook ORDER BY isPinned DESC, id DESC")
     fun getHooksWithTags(): Flow<List<HookWithTagsEntity>>

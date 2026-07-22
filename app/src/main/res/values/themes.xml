@@ -5,6 +5,16 @@
         <item name="windowNoTitle">true</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:statusBarColor">@color/gray_300</item>
+        <!-- colorPrimary/colorPrimaryDark를 지정하지 않으면 MaterialComponents.Light의
+             기본 보라색(#6200EE 계열)이 적용되어, 엣지 투 엣지가 강제되는
+             targetSdk 35+ 기기에서 statusBarColor 대신 이 기본 보라색이
+             상태바(시계/배터리 영역)에 새어나온다. 의도한 무채색 톤으로 고정한다. -->
+        <item name="colorPrimary">@color/gray_300</item>
+        <item name="colorPrimaryDark">@color/gray_700</item>
+        <!-- 엣지 투 엣지 강제 환경에서는 statusBarColor가 무시되고, BaseActivity가
+             화면 최상단에 둔 상태바 높이만큼의 패딩 영역은 windowBackground로
+             채워진다. 화면마다 색이 들쭉날쭉해지지 않도록 상태바와 같은 톤으로 고정한다. -->
+        <item name="android:windowBackground">@color/gray_300</item>
         <item name="colorAccent">@color/purple</item>
     </style>
 

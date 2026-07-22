@@ -2,33 +2,35 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="10dp">
 
     <View
         android:id="@+id/view_blank"
-        android:layout_width="375dp"
+        android:layout_width="0dp"
         android:layout_height="10dp"
         app:layout_constraintBottom_toTopOf="@id/tv_tag_select"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/tv_tag_select"
-        android:layout_width="375dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:text="@string/select_tag"
         android:textColor="@color/black"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@id/lv_Tags"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/view_blank" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/lv_Tags"
-        android:layout_width="375dp"
+        android:layout_width="0dp"
         android:layout_height="300dp"
         android:choiceMode="multipleChoice"
         android:contentDescription="@string/tag_list"
@@ -36,6 +38,7 @@
         android:paddingStart="3dp"
         android:paddingEnd="3dp"
         app:layout_constraintBottom_toTopOf="@id/tv_add_newTag"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_tag_select"
         tools:listitem="@layout/item_tag" />

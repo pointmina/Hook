@@ -23,7 +23,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>().configureEa
 
 android {
     namespace = "com.hanto.hook"
-    compileSdk = 36 // 주의: Android 16(Preview)입니다. 안정적인 배포를 원하시면 35로 낮추세요.
+    compileSdk = 36
 
     signingConfigs {
         create("release") {
@@ -38,8 +38,8 @@ android {
         applicationId = "com.hanto.hook"
         minSdk = 24
         targetSdk = 36
-        versionCode = 18
-        versionName = "1.1.5"
+        versionCode = 19
+        versionName = "1.1.6"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -50,9 +50,15 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 
     buildTypes {
+        getByName("debug") {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+            resValue("string", "app_title", "DEBUG")
+        }
         getByName("release") {
             signingConfig = signingConfigs.getByName("release")
         }

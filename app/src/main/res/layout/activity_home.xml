@@ -6,10 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.view.activity.HomeActivity">
 
-    <!--app:defaultNavHost="true"
-       app:navGraph="@navigation/home_graph"
-       네브호스트 자동완성 안됨; : androidx.navigation.fragment.NavHostFragment -->
-
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/container_home"
         android:name="androidx.navigation.fragment.NavHostFragment"
@@ -40,17 +36,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/home_navigation_menu">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/mainFAB"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="7dp"
-            android:backgroundTint="@color/purple_100"
+            android:layout_marginTop="11dp"
+            android:background="@drawable/bg_main_fab"
             android:contentDescription="@string/add_new_hook"
-            android:src="@drawable/ic_draw"
-            app:borderWidth="0dp"
-            app:elevation="0dp" />
+            android:padding="14dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_add"
+            android:tint="@color/white" />
 
     </com.google.android.material.bottomnavigation.BottomNavigationView>
 

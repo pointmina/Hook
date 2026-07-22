@@ -2,19 +2,18 @@ package com.hanto.hook.domain.usecase
 
 import com.hanto.hook.domain.model.Hook
 import com.hanto.hook.domain.repository.HookRepository
-import com.hanto.hook.domain.repository.MetadataRepository
 import javax.inject.Inject
 
 /**
- * 훅을 저장한다. 저장 전에 링크의 썸네일을 크롤링해 함께 붙인다.
- * (썸네일 크롤링 + 저장의 조합이 이 앱의 핵심 비즈니스 규칙)
+ * 훅을 저장한다. 썸네일 크롤링은 저장을 막지 않도록 백그라운드에서 진행하고,
+ * 완료되면 imageUrl만 갱신한다(Room Flow 구독으로 화면에 자동 반영).
  */
 class AddHookUseCase @Inject constructor(
     private val hookRepository: HookRepository,
-    private val metadataRepository: MetadataRepository
+    private val thumbnailBackfiller: ThumbnailBackfiller
 ) {
     suspend operator fun invoke(hook: Hook, tags: List<String>) {
-        val imageUrl = metadataRepository.fetchOgImageUrl(hook.url)
-        hookRepository.addHook(hook.copy(imageUrl = imageUrl, tags = tags))
+        hookRepository.addHook(hook.copy(tags = tags))
+        thumbnailBackfiller.backfill(hook.hookId, hook.url)
     }
 }

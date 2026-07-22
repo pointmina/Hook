@@ -3,14 +3,15 @@ package com.hanto.hook.ui.view.activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import com.hanto.hook.R
 import com.hanto.hook.data.model.OnboardingItem
 import com.hanto.hook.databinding.ActivityOnboardingBinding
 import com.hanto.hook.ui.adapter.OnboardingAdapter
+import dagger.hilt.android.AndroidEntryPoint
 
-class OnboardingActivity : AppCompatActivity() {
+@AndroidEntryPoint
+class OnboardingActivity : BaseActivity() {
 
     private lateinit var binding: ActivityOnboardingBinding
 

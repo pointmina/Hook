@@ -3,17 +3,18 @@ package com.hanto.hook.ui.view.activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hanto.hook.R
 import com.hanto.hook.data.model.ChatMessage
 import com.hanto.hook.databinding.ActivityTutorialBinding
 import com.hanto.hook.ui.adapter.ChatAdapter
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class TutorialActivity : AppCompatActivity() {
+@AndroidEntryPoint
+class TutorialActivity : BaseActivity() {
 
     companion object {
         private const val TAG = "TutorialActivity"
