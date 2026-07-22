@@ -29,6 +29,15 @@ class HookAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         private val tagRecyclerView: RecyclerView = binding.rvTagContainer
+        private val tagAdapter = TagHomeAdapter()
+
+        init {
+            tagRecyclerView.layoutManager = FlexboxLayoutManager(binding.root.context).apply {
+                flexDirection = FlexDirection.ROW
+                justifyContent = JustifyContent.FLEX_START
+            }
+            tagRecyclerView.adapter = tagAdapter
+        }
 
         fun bind(hook: Hook) {
             val tags = hook.tags
@@ -69,18 +78,7 @@ class HookAdapter(
                 onItemClickListener.onOptionButtonClick(bindingAdapterPosition)
             }
 
-            setupTagRecyclerView(tags)
-        }
-
-        private fun setupTagRecyclerView(tags: List<String>) {
-            val sortedTags = tags.distinct().sorted()
-
-            val tagAdapter = TagHomeAdapter(sortedTags)
-            tagRecyclerView.layoutManager = FlexboxLayoutManager(binding.root.context).apply {
-                flexDirection = FlexDirection.ROW
-                justifyContent = JustifyContent.FLEX_START
-            }
-            tagRecyclerView.adapter = tagAdapter
+            tagAdapter.updateTags(tags.distinct().sorted())
         }
     }
 

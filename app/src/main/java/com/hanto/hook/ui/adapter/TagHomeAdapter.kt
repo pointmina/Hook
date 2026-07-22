@@ -5,8 +5,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.hanto.hook.databinding.ItemHomeTagBinding
 
-class TagHomeAdapter(private var tags: List<String>) :
+class TagHomeAdapter(private var tags: List<String> = emptyList()) :
     RecyclerView.Adapter<TagHomeAdapter.TagViewHolder>() {
+
+    fun updateTags(newTags: List<String>) {
+        tags = newTags
+        notifyDataSetChanged()
+    }
 
     inner class TagViewHolder(val binding: ItemHomeTagBinding) :
         RecyclerView.ViewHolder(binding.root) {
