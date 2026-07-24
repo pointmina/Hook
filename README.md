@@ -46,7 +46,6 @@ Instead of losing links in chats, notes, or browser bookmarks, Hook keeps them o
 - 🖼️ Automatically fetch webpage metadata & thumbnails
 - 🏷️ Organize bookmarks with tags
 - 📝 Add notes to saved links
-- 🔍 Fast search with Korean initial-consonant support
 - 📌 Pin important links
 
 ---
